@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
+import android.renderscript.ScriptGroup;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.BoringLayout;
@@ -28,7 +29,7 @@ import java.util.HashMap;
 
 
 /**
- * Created by kvprasad on 10/3/2015.
+ * Created by Val on 10/3/2015.
  */
 
 
@@ -46,7 +47,7 @@ public class BarcodeScanner extends AppCompatActivity {
 
     EditText Inputname;
     Button Saveid;
-
+    String accountname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +58,6 @@ public class BarcodeScanner extends AppCompatActivity {
         Saveid = (Button)findViewById(R.id.Saveid);
         Inputname.setVisibility(View.GONE);
         Saveid.setVisibility(View.GONE);
-
 
         initControls();
 
@@ -183,31 +183,37 @@ public class BarcodeScanner extends AppCompatActivity {
         final HashMap<String,String> hashmap;
         hashmap = DataManager.getInstance().getdevice();
         final ArrayList<String> names;
-        names = DataManager.getInstance().getaccoutname();
+        names = DataManager.getInstance().getdevicename();
         //Toast.makeText(BarcodeScanner.this, message,Toast.LENGTH_SHORT).show();
         //==========Device key: message(device ID), value: device name
         if(hashmap.get(message)== null) {
             Inputname.setVisibility(View.VISIBLE);
             Saveid.setVisibility(View.VISIBLE);
-
             Saveid.setOnClickListener(new View.OnClickListener() {
+
                 @Override
                 public void onClick(View v) {
-                    String accountname = Inputname.getText().toString();
-                    if (accountname != "") {
-                        hashmap.put(message, accountname);
-                        DataManager.getInstance().setdevice(hashmap); //store back to datamanger
-                        Inputname.setVisibility(View.GONE);
-                        Saveid.setVisibility(View.GONE);
 
-                    } else if (accountname == "") {
+                    accountname = Inputname.getText().toString();
+
+                    if (accountname.isEmpty()) {
                         Toast.makeText(getApplicationContext(), "No name is given"
                                 , Toast.LENGTH_LONG).show();
-                    }else if (names.contains(accountname))
-                    {
-                        Toast.makeText(getApplicationContext(), "Device already exists"
+
+                    } else if (names.contains(accountname)) {
+                        Toast.makeText(getApplicationContext(), "Name already exists, please change the name of the device"
                                 , Toast.LENGTH_LONG).show();
+
+                    } else {
+
+                        hashmap.put(message, accountname);
+                        DataManager.getInstance().setdevice(hashmap); //store back to datamanger
+
+                        Inputname.setText("");
+                        Inputname.setVisibility(View.GONE);
+                        Saveid.setVisibility(View.GONE);
                     }
+
 
                 }
             });

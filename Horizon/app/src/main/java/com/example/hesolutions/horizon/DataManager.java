@@ -64,7 +64,7 @@ public class DataManager {
     }
     public ArrayList getdevicename ()
     {
-        datagetvalue(devicename, "account.txt");
+        datagetvalue(devicename, "device.txt");
         return devicename;
     }
     //==================Sector Setting: Key = SectorName, Value = Hashmap of contained devices
@@ -195,7 +195,10 @@ public class DataManager {
                 Map<String, String> readmap = (HashMap) ois.readObject();
                 for (Map.Entry<String, String> entry : readmap.entrySet()) {
                     String value = entry.getValue();
-                    values.add(value);
+                    if (!values.contains(value))
+                    {
+                        values.add(value);
+                    }
                 }
 
             } catch (FileNotFoundException e) {
