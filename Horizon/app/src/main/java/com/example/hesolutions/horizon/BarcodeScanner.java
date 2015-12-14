@@ -28,10 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-/**
- * Created by Val on 10/3/2015.
- */
-
 
 public class BarcodeScanner extends AppCompatActivity {
 
