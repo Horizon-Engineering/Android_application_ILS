@@ -2,10 +2,6 @@ package com.example.hesolutions.horizon;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,18 +13,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         LOAD = (Button)findViewById(R.id.LOAD);
         LOGIN = (Button)findViewById(R.id.LOGIN);
         setSupportActionBar(toolbar);
-        System.out.println("Inside oncreate");
         MSG = (EditText)findViewById(R.id.MSG);
         CODE = (EditText)findViewById(R.id.CODE);
         textView = (TextView)findViewById(R.id.textView);

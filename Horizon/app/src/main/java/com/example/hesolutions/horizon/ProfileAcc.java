@@ -77,8 +77,6 @@ public class ProfileAcc extends AppCompatActivity {
                         startNewActivityIntent.putExtra("CorrespondingAccounts", Caccount);
                         startActivity(startNewActivityIntent);
 
-
-                        startActivity(startNewActivityIntent);
                     } else {
                         Toast.makeText(getApplicationContext(), "No Accounts exist", Toast.LENGTH_SHORT).show();
                         CODE1.setText("");

@@ -6,4 +6,8 @@
     <string name="title_activity_devices_check">DevicesCheck</string>
     <string name="title_activity_barcode_scanner">BarcodeScanner</string>
     <string name="title_activity_qrscanner">QRScanner</string>
+    <string name="title_activity_main_screen">MainScreen</string>
+    <string name="title_activity_MainActivity">MainActivity</string>
+    <string name="title_activity_create_matrix">CreateMatrix</string>
+    <string name="title_activity_create_grid">CreateGrid</string>
 </resources>
