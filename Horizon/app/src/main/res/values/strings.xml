@@ -10,4 +10,9 @@
     <string name="title_activity_MainActivity">MainActivity</string>
     <string name="title_activity_create_matrix">CreateMatrix</string>
     <string name="title_activity_create_grid">CreateGrid</string>
+    <string name="title_activity_admin_page">AdminPage</string>
+    <string name="title_activity_home_page">HomePage</string>
+    <string name="title_activity_unlock_login">UnlockLogin</string>
+    <string name="title_activity_access_permission">AccessPermission</string>
+    <string name="title_activity_total_device">TotalDevice</string>
 </resources>

@@ -10,32 +10,19 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="orientation"
-            android:label="@string/title_activity_MainActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ProfileAcc"
-            android:configChanges="orientation"
-            android:label="@string/title_activity_profile_acc"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.Transparent" />
-        <activity
-            android:name=".DevicesCheck"
-            android:configChanges="orientation"
-            android:label="@string/title_activity_devices_check"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar" />
+        android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
         <activity
             android:name=".BarcodeScanner"
             android:label="@string/title_activity_barcode_scanner"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MainScreen"
+            android:name=".AdminPage"
+            android:label="@string/title_activity_admin_page"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".HomePage"
             android:label="@string/app_name"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar">
@@ -46,8 +33,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CreateGrid"
-            android:label="@string/title_activity_create_grid"
+            android:name=".UnlockLogin"
+            android:label="@string/title_activity_unlock_login"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.Transparent" />
+        <activity
+            android:name=".AccessPermission"
+            android:label="@string/title_activity_access_permission"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".TotalDevice"
+            android:label="@string/title_activity_total_device"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

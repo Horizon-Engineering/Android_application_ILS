@@ -1,6 +1,7 @@
 package com.example.hesolutions.horizon;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ public class BarcodeScanner extends AppCompatActivity {
     EditText Inputname;
     Button Saveid;
     String accountname;
+    Button cancelcam;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +56,18 @@ public class BarcodeScanner extends AppCompatActivity {
         Saveid = (Button)findViewById(R.id.Saveid);
         Inputname.setVisibility(View.GONE);
         Saveid.setVisibility(View.GONE);
-
+        cancelcam = (Button)findViewById(R.id.cancelcam);
         initControls();
+        cancelcam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                barcodeScanned = false;
+                previewing = false;
+                releaseCamera();
+                Intent startNewActivityIntent = new Intent(BarcodeScanner.this, AdminPage.class);
+                startActivity(startNewActivityIntent);
+            }
+        });
 
     }
 
@@ -88,6 +100,7 @@ public class BarcodeScanner extends AppCompatActivity {
                 }
             }
         });
+
     }
 
 

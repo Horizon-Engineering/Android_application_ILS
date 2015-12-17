@@ -3,6 +3,7 @@ package com.example.hesolutions.horizon;
 import android.content.Context;
 import android.os.Environment;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +47,16 @@ public class DataManager {
         return accountname;
     }
 
-
+    public String Username;
+    public String getUsername()
+    {
+        return Username;
+    }
+    public String setUsername(String name)
+    {
+        this.Username = name;
+        return Username;
+    }
     //---------------------------------------------------------------------------------
     //==================Device Setting: Key = Serial ID, Value = DeviceName
     public HashMap<String, String> device = new HashMap<String, String>();
@@ -100,21 +111,58 @@ public class DataManager {
         return manager;
     }
 
-    public static class AppendingObjectOutputStream extends ObjectOutputStream {
+    //==================================================LOAD THE GRID=========================
 
-        public AppendingObjectOutputStream(OutputStream out) throws IOException {
-            super(out);
+    public Integer totalsum;
+    public Integer setGrid(Integer number)
+    {
+        this.totalsum = number;
+        writeGrid();
+        return totalsum;
+    }
+
+    public ArrayList<String> numberlist = new ArrayList<String>();
+    public ArrayList writeGrid ()
+    {
+        Integer number = 0;
+        numberlist.clear();
+        for (int i = 0; i < totalsum; i++)
+        {
+            number = number + 1;
+            numberlist.add(number.toString());
+        }
+        writedata(numberlist, "grid.txt");
+        numberlist.clear();
+        return numberlist;
+    }
+
+    public ArrayList getGrid()
+    {
+
+        //====================read data from arraylist===============================
+
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon");
+        File file = new File(dir, "grid.txt");
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                numberlist = (ArrayList<String>) ois.readObject();
+         } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
-        @Override
-        public void writeStreamHeader() throws IOException {
-            // do not write a header, but reset:
-            // this line added after another question
-            // showed a problem with the original
-            reset();
-        }
+    return numberlist;
 
     }
+
+    //===========================================Writedata for Hashmap=============================================
 
     public static void writedata(HashMap hashmap, String filename) {
         String state;
@@ -139,6 +187,35 @@ public class DataManager {
         }
     }
 
+
+
+    // ============================================Writedata for Arraylist=========================
+    public static void writedata(ArrayList arrayList, String filename) {
+        String state;
+        state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            File root = Environment.getExternalStorageDirectory();
+            File dir = new File(root.getAbsolutePath() + "/Horizon");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            File file = new File(dir, filename);
+            try {
+                FileOutputStream fos = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(arrayList);
+                oos.flush();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    //==========================read data from hashmap=======================
     public static void readdata(String filename) {
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Horizon");
@@ -149,7 +226,6 @@ public class DataManager {
 
             Map myNewlyReadInMap = (HashMap) ois.readObject();
             ois.close();
-            System.out.println("Reading From " + file + " and the data readed from file is " + myNewlyReadInMap.toString());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -184,6 +260,7 @@ public class DataManager {
             }
         }
     }
+
     public static void datagetvalue(ArrayList values, String filename) {
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Horizon");
@@ -210,6 +287,13 @@ public class DataManager {
             }
         }
     }
+
+
+
+
+
+
+
 }
 
 
