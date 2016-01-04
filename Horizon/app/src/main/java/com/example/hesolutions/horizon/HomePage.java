@@ -52,7 +52,7 @@ public class HomePage extends AppCompatActivity {
         });
         GridView gridView = (GridView)findViewById(R.id.gridView);
 
-        ArrayList<String> numberlist = new ArrayList<>();
+        ArrayList<String> numberlist;
         numberlist = DataManager.getInstance().getGrid();
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,numberlist);
         gridView.setAdapter(adapter);

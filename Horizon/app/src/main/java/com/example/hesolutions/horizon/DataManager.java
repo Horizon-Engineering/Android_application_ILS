@@ -17,9 +17,14 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.alamkanak.weekview.WeekViewEvent;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.BiMap;
 /**
  * Created by hesolutions on 2015-12-10.
  */
@@ -27,26 +32,22 @@ public class DataManager {
 
 
     //==================Account Setting: Key = Password, Value = AccountName
-    public HashMap<String, String> account = new HashMap<String, String>();
-    public ArrayList<String> accountname = new ArrayList<String>();
-    public HashMap getaccount() {
+    public BiMap<String,String> account = HashBiMap.create();
+    public BiMap getaccount() {
 
-        dataupdate(account, "account.txt");
+        dataupdate(account, "account");
         return account;
     }
 
-    public HashMap setaccount(HashMap accountinfo) {
-        dataupdate(account,"account.txt");
+    public BiMap setaccount(BiMap accountinfo) {
+
         this.account = accountinfo;
-        writedata(account, "account.txt");
+        writedata(account, "account");
         return account;
     }
-    public ArrayList getaccoutname ()
-    {
-        datagetvalue(accountname, "account.txt");
-        return accountname;
-    }
 
+
+    //====================================Showing the user name ==============================
     public String Username;
     public String getUsername()
     {
@@ -59,25 +60,21 @@ public class DataManager {
     }
     //---------------------------------------------------------------------------------
     //==================Device Setting: Key = Serial ID, Value = DeviceName
-    public HashMap<String, String> device = new HashMap<String, String>();
+    public BiMap<String, String> device = HashBiMap.create();
     public ArrayList<String> devicename = new ArrayList<String>();
-    public HashMap getdevice() {
-        dataupdate(device,"device.txt");
+    public BiMap getdevice() {
+        dataupdate(device,"device");
         return device;
     }
 
-    public HashMap setdevice(HashMap deviceinfo) {
+    public BiMap setdevice(BiMap deviceinfo) {
 
-        dataupdate(device,"device.txt");
+        dataupdate(device,"device");
         this.device = deviceinfo;
-        writedata(device, "device.txt");
+        writedata(device, "device");
         return device;
     }
-    public ArrayList getdevicename ()
-    {
-        datagetvalue(devicename, "device.txt");
-        return devicename;
-    }
+
     //==================Sector Setting: Key = SectorName, Value = Hashmap of contained devices
     public HashMap<String, HashMap> sector = new HashMap<String, HashMap>();
 
@@ -87,7 +84,7 @@ public class DataManager {
 
     public HashMap setsector(HashMap sectorinfo) {
         this.sector = sectorinfo;
-        writedata(sector, "sector.txt");
+       // writedata(sector, "sector.txt");
         return sector;
     }
 
@@ -101,7 +98,7 @@ public class DataManager {
 
     public HashMap setzone(HashMap zoneinfo) {
         this.zone = zoneinfo;
-        writedata(zone, "zone.txt");
+       // writedata(zone, "zone.txt");
         return zone;
     }
 
@@ -136,10 +133,28 @@ public class DataManager {
         return numberlist;
     }
 
+
+
+
+    //==================================Arraylist for calendar events====================
+
+    public List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+    public List getevents()
+    {
+        return events;
+    }
+    public List setevents(WeekViewEvent event)
+    {
+        events.add(event);
+        return events;
+    }
+
+
+
+    //====================read data from arraylist===============================
+
     public ArrayList getGrid()
     {
-
-        //====================read data from arraylist===============================
 
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Horizon");
@@ -162,9 +177,9 @@ public class DataManager {
 
     }
 
-    //===========================================Writedata for Hashmap=============================================
+    //===========================================Writedata for BiMap=============================================
 
-    public static void writedata(HashMap hashmap, String filename) {
+    public static void writedata(BiMap bimap, String filename) {
         String state;
         state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -177,7 +192,7 @@ public class DataManager {
             try {
                 FileOutputStream fos = new FileOutputStream(file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(hashmap);
+                oos.writeObject(bimap);
                 oos.flush();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -216,27 +231,8 @@ public class DataManager {
 
 
     //==========================read data from hashmap=======================
-    public static void readdata(String filename) {
-        File root = Environment.getExternalStorageDirectory();
-        File dir = new File(root.getAbsolutePath() + "/Horizon");
-        File file = new File(dir, filename);
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            ObjectInputStream ois = new ObjectInputStream(fis);
 
-            Map myNewlyReadInMap = (HashMap) ois.readObject();
-            ois.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public static void dataupdate(HashMap hashmap, String filename) {
+    public static void dataupdate(BiMap bimap, String filename) {
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Horizon");
         File file = new File(dir, filename);
@@ -244,11 +240,11 @@ public class DataManager {
             try {
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois = new ObjectInputStream(fis);
-                Map<String, String> readmap = (HashMap) ois.readObject();
+                Map<String, String> readmap = (BiMap) ois.readObject();
                 for (Map.Entry<String, String> entry : readmap.entrySet()) {
                     String key = entry.getKey();
                     String value = entry.getValue();
-                    hashmap.put(key, value);
+                    bimap.put(key, value);
                 }
 
             } catch (FileNotFoundException e) {
@@ -260,39 +256,6 @@ public class DataManager {
             }
         }
     }
-
-    public static void datagetvalue(ArrayList values, String filename) {
-        File root = Environment.getExternalStorageDirectory();
-        File dir = new File(root.getAbsolutePath() + "/Horizon");
-        File file = new File(dir, filename);
-        if (file.exists()) {
-            try {
-                FileInputStream fis = new FileInputStream(file);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                Map<String, String> readmap = (HashMap) ois.readObject();
-                for (Map.Entry<String, String> entry : readmap.entrySet()) {
-                    String value = entry.getValue();
-                    if (!values.contains(value))
-                    {
-                        values.add(value);
-                    }
-                }
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-
-
-
-
 
 }
 

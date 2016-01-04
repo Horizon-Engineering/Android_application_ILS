@@ -19,6 +19,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.common.collect.BiMap;
+
 import net.sourceforge.zbar.Config;
 import net.sourceforge.zbar.Image;
 import net.sourceforge.zbar.ImageScanner;
@@ -189,13 +191,11 @@ public class BarcodeScanner extends AppCompatActivity {
 
     public void RunComplete(final String message)
     {
-        final HashMap<String,String> hashmap;
-        hashmap = DataManager.getInstance().getdevice();
-        final ArrayList<String> names;
-        names = DataManager.getInstance().getdevicename();
+        final BiMap<String,String> bimap;
+        bimap = DataManager.getInstance().getdevice();
         //Toast.makeText(BarcodeScanner.this, message,Toast.LENGTH_SHORT).show();
         //==========Device key: message(device ID), value: device name
-        if(hashmap.get(message)== null) {
+        if(bimap.get(message)== null) {
             Inputname.setVisibility(View.VISIBLE);
             Saveid.setVisibility(View.VISIBLE);
             Saveid.setOnClickListener(new View.OnClickListener() {
@@ -209,14 +209,15 @@ public class BarcodeScanner extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "No name is given"
                                 , Toast.LENGTH_LONG).show();
 
-                    } else if (names.contains(accountname)) {
+                    } else if (!bimap.inverse().get(accountname).isEmpty()) {
+                        Inputname.setText("");
                         Toast.makeText(getApplicationContext(), "Name already exists, please change the name of the device"
                                 , Toast.LENGTH_LONG).show();
 
                     } else {
 
-                        hashmap.put(message, accountname);
-                        DataManager.getInstance().setdevice(hashmap); //store back to datamanger
+                        bimap.put(message, accountname);
+                        DataManager.getInstance().setdevice(bimap); //store back to datamanger
 
                         Inputname.setText("");
                         Inputname.setVisibility(View.GONE);
@@ -228,7 +229,7 @@ public class BarcodeScanner extends AppCompatActivity {
             });
 
         }else {
-            String Cname = hashmap.get(message);
+            String Cname = bimap.get(message);
             Toast.makeText(getApplicationContext(), "Device already exists, the name of the device is " + Cname
                     , Toast.LENGTH_LONG).show();
         }

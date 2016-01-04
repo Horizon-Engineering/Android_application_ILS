@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.common.collect.BiMap;
+
 import java.util.HashMap;
 
 public class UnlockLogin extends AppCompatActivity {
@@ -68,14 +70,17 @@ public class UnlockLogin extends AppCompatActivity {
                     String code4 = CODE4.getText().toString();
                     String code = code1 + code2 + code3 + code4;
 
-                    HashMap<String, String> hashmap;
-                    hashmap = DataManager.getInstance().getaccount();
-                    if (hashmap.get(code) != null) {
-                        String Caccount = hashmap.get(code);
+                    BiMap<String, String> bimap;
+                    bimap = DataManager.getInstance().getaccount();
+                    if ( code.equals("0000"))
+                    {
                         Intent startNewActivityIntent = new Intent(UnlockLogin.this, AdminPage.class);
+                        startActivity(startNewActivityIntent);
+                    } else if (bimap.get(code) != null) {
+                        String Caccount = bimap.get(code);
+                        Intent startNewActivityIntent = new Intent(UnlockLogin.this, UserPage.class);
                         DataManager.getInstance().setUsername(Caccount);
                         startActivity(startNewActivityIntent);
-
                     } else {
                         Toast.makeText(getApplicationContext(), "No Accounts exist", Toast.LENGTH_SHORT).show();
                         CODE1.setText("");

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.hesolutions.horizon.CalendarTask">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Start Date"
+        android:id="@+id/startdate"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/starttime"
+        android:layout_toStartOf="@+id/starttime"
+        android:layout_marginRight="92dp"
+        android:layout_marginEnd="92dp"
+        android:layout_marginTop="78dp" />
+
+    <TextClock
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Start Time"
+        android:id="@+id/starttime"
+        android:format12Hour="HH:mm"
+        android:layout_alignBaseline="@+id/startdate"
+        android:layout_alignBottom="@+id/startdate"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="128dp"
+        android:layout_marginEnd="128dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Start Time"
+        android:id="@+id/textView2"
+        android:layout_alignBottom="@+id/startdate"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Finish Time"
+        android:id="@+id/textView3"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Finish Date"
+        android:id="@+id/finishdate"
+        android:layout_alignTop="@+id/textView3"
+        android:layout_alignLeft="@+id/startdate"
+        android:layout_alignStart="@+id/startdate" />
+
+    <TextClock
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Finish Time"
+        android:id="@+id/finishtime"
+        android:layout_alignTop="@+id/finishdate"
+        android:format12Hour="HH:mm"
+        android:layout_alignLeft="@+id/starttime"
+        android:layout_alignStart="@+id/starttime" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/cancelTOcalendar"
+        android:layout_alignTop="@+id/Apply"
+        android:layout_toLeftOf="@+id/Apply"
+        android:layout_toStartOf="@+id/Apply" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apply"
+        android:id="@+id/Apply"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+
+</RelativeLayout>

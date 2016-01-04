@@ -76,5 +76,14 @@
         android:layout_alignLeft="@+id/SAVE"
         android:layout_alignStart="@+id/SAVE" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:id="@+id/DELETE"
+        android:layout_alignTop="@+id/LOAD"
+        android:layout_toRightOf="@+id/LOAD"
+        android:layout_toEndOf="@+id/LOAD" />
+
 
 </RelativeLayout>

@@ -2,10 +2,7 @@ package com.example.hesolutions.horizon;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,7 +15,7 @@ import java.util.ArrayList;
 
 public class AdminPage extends AppCompatActivity {
 
-    TextView accountname;
+
     Button scannerButton;
     Button AccessPermit;
     Button Logout;
@@ -27,12 +24,6 @@ public class AdminPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_page);
-
-
-        accountname = (TextView)findViewById(R.id.accountname);
-        String account = DataManager.getInstance().getUsername();
-        accountname.setText(account);
-
 
         scannerButton = (Button) findViewById(R.id.scannerButton);
         AccessPermit = (Button)findViewById(R.id.AccessPermit);
@@ -76,15 +67,6 @@ public class AdminPage extends AppCompatActivity {
         numberlist = DataManager.getInstance().getGrid();
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, numberlist);
         gridView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        gridView.invalidateViews();
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(AdminPage.this, ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
     }
 

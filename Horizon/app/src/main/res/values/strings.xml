@@ -15,4 +15,7 @@
     <string name="title_activity_unlock_login">UnlockLogin</string>
     <string name="title_activity_access_permission">AccessPermission</string>
     <string name="title_activity_total_device">TotalDevice</string>
+    <string name="title_activity_user_page">UserPage</string>
+    <string name="title_activity_global_calendar">GlobalCalendar</string>
+
 </resources>

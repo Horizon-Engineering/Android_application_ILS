@@ -17,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.google.common.collect.BiMap;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,7 @@ public class AccessPermission extends AppCompatActivity {
     Button SAVE;
     Button LOAD;
     Button cancelback;
+    Button DELETE;
 
     //Button button;
     // Loginaccount key = MSG, value = CODE;
@@ -42,6 +45,7 @@ public class AccessPermission extends AppCompatActivity {
         LOAD = (Button)findViewById(R.id.LOAD);
         MSG = (EditText)findViewById(R.id.MSG);
         CODE = (EditText)findViewById(R.id.CODE);
+        DELETE = (Button)findViewById(R.id.DELETE);
         textView = (TextView)findViewById(R.id.textView);
         textView.setVisibility(View.GONE);
         cancelback = (Button)findViewById(R.id.cancelback);
@@ -62,20 +66,18 @@ public class AccessPermission extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+
                 String Accounts = MSG.getText().toString();    //value
                 String Passwords = CODE.getText().toString();  //key
-
-                HashMap<String, String> hashmap;
-                hashmap = DataManager.getInstance().getaccount();
-                ArrayList<String> names;
-                names = DataManager.getInstance().getaccoutname();
+                BiMap<String, String> bimap;
+                bimap = DataManager.getInstance().getaccount();
 
                 if (Accounts.isEmpty()||Passwords.isEmpty())
                 {
                     Toast.makeText(getApplicationContext(), "Missing Accounts or Passwords", Toast.LENGTH_LONG).show();
-                }else if (hashmap.get(Passwords) != null)
+                }else if (bimap.get(Passwords) != null)
                 {
-                    String accountname = hashmap.get(Passwords);
+                    String accountname =  bimap.get(Passwords);
                     Toast.makeText(getApplicationContext(), "Existant accout: " + accountname, Toast.LENGTH_LONG).show();
                     MSG.setText("");
                     CODE.setText("");
@@ -83,16 +85,10 @@ public class AccessPermission extends AppCompatActivity {
                 {
                     Toast.makeText(getApplicationContext(), "The Password must be 4 digits", Toast.LENGTH_LONG).show();
                     CODE.setText("");
-                }else if (names.contains(Accounts))
-                {
-                    Toast.makeText(getApplicationContext(), "Accoutname already exists", Toast.LENGTH_LONG).show();
-                    MSG.setText("");
-                    CODE.setText("");
                 }
-
                 else{
-                    hashmap.put(Passwords, Accounts);
-                    DataManager.getInstance().setaccount(hashmap);
+                    bimap.put(Passwords, Accounts);
+                    DataManager.getInstance().setaccount(bimap);
                     MSG.setText("");
                     CODE.setText("");
                     Toast.makeText(getApplicationContext(), "DATA saved", Toast.LENGTH_LONG).show();
@@ -106,16 +102,39 @@ public class AccessPermission extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                HashMap<String,String> hashmap;
-                hashmap = DataManager.getInstance().getaccount();
-                ArrayList<String> names;
-                names = DataManager.getInstance().getaccoutname();
-                textView.setText(hashmap.toString()+"           " + names.toString());
+                BiMap<String,String> bimap;
+                bimap = DataManager.getInstance().getaccount();
+                textView.setText(bimap.toString());
                 textView.setVisibility(View.VISIBLE);
 
             }
         });
 
+        DELETE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String Accounts = MSG.getText().toString();    //value
+                String Passwords = CODE.getText().toString();  //key
+                BiMap<String,String> bimap;
+                bimap = DataManager.getInstance().getaccount();
+
+                if (Accounts.equals(bimap.get(Passwords)))
+                {
+                    bimap.remove(Passwords);
+                    MSG.setText("");
+                    CODE.setText("");
+                    Toast.makeText(getApplicationContext(), bimap.toString(), Toast.LENGTH_LONG).show();
+                    DataManager.getInstance().setaccount(bimap);
+                    Toast.makeText(getApplicationContext(), "Account deleted successfully", Toast.LENGTH_LONG).show();
+                }else
+                {
+                    MSG.setText("");
+                    CODE.setText("");
+                    Toast.makeText(getApplicationContext(), "Enter a valid account", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
 
     }
 
