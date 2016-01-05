@@ -30,8 +30,8 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-             </intent-filter>
-         </activity>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".UnlockLogin"
             android:label="@string/title_activity_unlock_login"
@@ -57,12 +57,18 @@
             android:label="@string/title_activity_global_calendar"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".CalendarTask"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".SetZone"
+            android:label="@string/title_activity_set_zone"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".ZoneSet"
+            android:label="@string/title_activity_zone_set"></activity>
     </application>
 
 </manifest>

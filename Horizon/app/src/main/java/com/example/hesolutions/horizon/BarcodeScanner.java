@@ -209,11 +209,6 @@ public class BarcodeScanner extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "No name is given"
                                 , Toast.LENGTH_LONG).show();
 
-                    } else if (!bimap.inverse().get(accountname).isEmpty()) {
-                        Inputname.setText("");
-                        Toast.makeText(getApplicationContext(), "Name already exists, please change the name of the device"
-                                , Toast.LENGTH_LONG).show();
-
                     } else {
 
                         bimap.put(message, accountname);

@@ -20,6 +20,7 @@ public class AdminPage extends AppCompatActivity {
     Button AccessPermit;
     Button Logout;
     Button SetDevice;
+    Button Setzone;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +30,7 @@ public class AdminPage extends AppCompatActivity {
         AccessPermit = (Button)findViewById(R.id.AccessPermit);
         Logout = (Button)findViewById(R.id.Logout);
         SetDevice = (Button)findViewById(R.id.SetDevice);
+        Setzone = (Button)findViewById(R.id.Setzone);
         scannerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +60,14 @@ public class AdminPage extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent1 = new Intent(v.getContext(), TotalDevice.class);
+                startActivity(intent1);
+            }
+        });
+        Setzone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent1 = new Intent(v.getContext(),SetZone.class);
                 startActivity(intent1);
             }
         });

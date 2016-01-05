@@ -61,7 +61,6 @@ public class DataManager {
     //---------------------------------------------------------------------------------
     //==================Device Setting: Key = Serial ID, Value = DeviceName
     public BiMap<String, String> device = HashBiMap.create();
-    public ArrayList<String> devicename = new ArrayList<String>();
     public BiMap getdevice() {
         dataupdate(device,"device");
         return device;
@@ -75,14 +74,16 @@ public class DataManager {
         return device;
     }
 
-    //==================Sector Setting: Key = SectorName, Value = Hashmap of contained devices
-    public HashMap<String, HashMap> sector = new HashMap<String, HashMap>();
 
-    public HashMap getsector() {
+
+    //==================Sector Setting: Key = SectorName, Value = Hashmap of contained devices
+    public BiMap<String, BiMap> sector = HashBiMap.create();
+
+    public BiMap getsector() {
         return sector;
     }
 
-    public HashMap setsector(HashMap sectorinfo) {
+    public BiMap setsector(BiMap sectorinfo) {
         this.sector = sectorinfo;
        // writedata(sector, "sector.txt");
         return sector;
@@ -90,13 +91,13 @@ public class DataManager {
 
 
     //==================Zone Setting: Key = ZoneName, Value = Hashmap of contained sectors
-    public HashMap<String, HashMap> zone = new HashMap<String, HashMap>();
+    public BiMap<String, BiMap> zone = HashBiMap.create();
 
-    public HashMap getzone() {
+    public BiMap getzone() {
         return zone;
     }
 
-    public HashMap setzone(HashMap zoneinfo) {
+    public BiMap setzone(BiMap zoneinfo) {
         this.zone = zoneinfo;
        // writedata(zone, "zone.txt");
         return zone;

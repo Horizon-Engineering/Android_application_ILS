@@ -17,11 +17,10 @@
         android:text="Start Date"
         android:id="@+id/startdate"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/starttime"
-        android:layout_toStartOf="@+id/starttime"
-        android:layout_marginRight="92dp"
-        android:layout_marginEnd="92dp"
-        android:layout_marginTop="78dp" />
+        android:layout_toRightOf="@+id/textView3"
+        android:layout_toEndOf="@+id/textView3"
+        android:layout_marginLeft="80dp"
+        android:layout_marginStart="80dp" />
 
     <TextClock
         android:layout_width="wrap_content"
@@ -43,7 +42,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Start Time"
         android:id="@+id/textView2"
-        android:layout_alignBottom="@+id/startdate"
+        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
     <TextView
@@ -52,7 +51,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Finish Time"
         android:id="@+id/textView3"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/textView2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
