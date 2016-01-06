@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 
-public class CalendarTask extends Activity {
+public class EditEvent extends Activity {
 
     TextView startdate;
     TextView starttime;
@@ -45,12 +45,18 @@ public class CalendarTask extends Activity {
         cancelTOcalendar = (Button)findViewById(R.id.cancelTOcalendar);
         delete = (Button)findViewById(R.id.delete);
 
-        String currentdate = DateFormat.getDateInstance().format(new java.util.Date());
-        startdate.setText(currentdate);
-        finishdate.setText(currentdate);
-        String currenttime = DateFormat.getTimeInstance().format(new java.util.Date());
-        starttime.setText(currenttime);
-        finishtime.setText(currenttime);
+        String start1 = getIntent().getStringExtra("startdate");
+        String start2 = getIntent().getStringExtra("starttime");
+        String end1 = getIntent().getStringExtra("finishdate");
+        String end2 = getIntent().getStringExtra("finishtime");
+
+
+        starttime.setText(start2);
+        finishtime.setText(end2);
+        startdate.setText(start1);
+        finishdate.setText(end1);
+
+
         final Calendar startTime = Calendar.getInstance();
         final Calendar finishTime = Calendar.getInstance();
 
@@ -76,7 +82,7 @@ public class CalendarTask extends Activity {
 
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(CalendarTask.this, date, startTime
+                new DatePickerDialog(EditEvent.this, date, startTime
                         .get(Calendar.YEAR), startTime.get(Calendar.MONTH),
                         startTime.get(Calendar.DAY_OF_MONTH)).show();
 
@@ -97,7 +103,7 @@ public class CalendarTask extends Activity {
 
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(CalendarTask.this, time, startTime.get(Calendar.HOUR), startTime.get(Calendar.MINUTE), false).show();
+                new TimePickerDialog(EditEvent.this, time, startTime.get(Calendar.HOUR), startTime.get(Calendar.MINUTE), false).show();
             }
         });
 
@@ -123,7 +129,7 @@ public class CalendarTask extends Activity {
 
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(CalendarTask.this, date, finishTime
+                new DatePickerDialog(EditEvent.this, date, finishTime
                         .get(Calendar.YEAR), finishTime.get(Calendar.MONTH),
                         finishTime.get(Calendar.DAY_OF_MONTH)).show();
 
@@ -144,10 +150,10 @@ public class CalendarTask extends Activity {
             };
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(CalendarTask.this, time, finishTime.get(Calendar.HOUR),finishTime.get(Calendar.MINUTE),false).show();
+                new TimePickerDialog(EditEvent.this, time, finishTime.get(Calendar.HOUR),finishTime.get(Calendar.MINUTE),false).show();
             }
         });
-    //===================================================================================================
+        //===================================================================================================
 
         cancelTOcalendar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,7 +179,7 @@ public class CalendarTask extends Activity {
                     DataManager.getInstance().setevents(event);
                     startActivity(intent);
                 }else{
-                    Toast.makeText(CalendarTask.this, "Unvalid Time", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditEvent.this, "Unvalid Time", Toast.LENGTH_SHORT).show();
                 }
             }
 

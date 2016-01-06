@@ -9,7 +9,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.hesolutions.horizon.SetZone">
 
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,11 +18,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <RelativeLayout
-        android:id="@+id/Sectorlayout"
-        android:layout_below="@id/Sector"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+
 
     <Button
         android:layout_width="wrap_content"
@@ -47,6 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/Apply"
+        android:layout_below="@id/Sector"
         android:orientation="horizontal"
         android:background="@android:color/background_dark"
         android:id="@+id/linearLayout">
@@ -83,14 +79,12 @@
     </LinearLayout>
 
 
-    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Sector Name:"
-        android:hint="Enter the name of sector here"
         android:id="@+id/Sectorname"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -99,6 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/sectorname"
+        android:hint="Enter the name of sector here"
         android:layout_toRightOf="@+id/Sectorname"
         android:layout_toEndOf="@+id/Sectorname"
         android:singleLine="true"

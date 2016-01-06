@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Parcelable;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,17 +13,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.Toast;
-import com.alamkanak.weekview.DateTimeInterpreter;
-import com.alamkanak.weekview.MonthLoader;
-import com.alamkanak.weekview.WeekView;
-import com.alamkanak.weekview.WeekViewEvent;
+import com.example.hesolutions.mylibrary.WeekViewEvent;
+import com.example.hesolutions.mylibrary.WeekView;
+import com.example.hesolutions.mylibrary.MonthLoader;
 
+import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-
 
 public class GlobalCalendar extends Activity{
     Button addevent;
@@ -46,26 +45,12 @@ public class GlobalCalendar extends Activity{
         sevendays = (Button)findViewById(R.id.sevendays);
         mWeekView = (WeekView) findViewById(R.id.weekView);
 
-        WeekView.EventClickListener mEventClickListener = new WeekView.EventClickListener()
-        {
-            @Override
-            public void onEventClick(WeekViewEvent event, RectF eventRect)
-            {
-
-            }
-
-        };
-        // Show a toast message about the touched event.
-        mWeekView.setOnEventClickListener(mEventClickListener);
 
         MonthLoader.MonthChangeListener mMonthChangeListener = new MonthLoader.MonthChangeListener() {
             @Override
             public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
                 // Populate the week view with some events.
                 List<WeekViewEvent> events;
-
-
-
 
                 events = DataManager.getInstance().getevents();
                 return events;
@@ -80,6 +65,25 @@ public class GlobalCalendar extends Activity{
         WeekView.EventLongPressListener mEventLongPressListener = new WeekView.EventLongPressListener() {
             @Override
             public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
+                if (event.getName() == DataManager.getInstance().getUsername())
+                {
+                    Intent editevent = new Intent(GlobalCalendar.this, EditEvent.class);
+
+                    Date starttime = event.getStartTime().getTime();
+                    Date endtime = event.getEndTime().getTime();
+                    SimpleDateFormat date = new SimpleDateFormat("MMM dd, yyyy");
+                    SimpleDateFormat time = new SimpleDateFormat("h:mm:ss a");
+
+                    editevent.putExtra("startdate", date.format(starttime));
+                    editevent.putExtra("starttime",time.format(starttime));
+                    editevent.putExtra("finishdate",date.format(endtime));
+                    editevent.putExtra("finishtime",time.format(endtime));
+
+                    startActivity(editevent);
+                }else
+                {
+                    Toast.makeText(GlobalCalendar.this, "Don not have permission", Toast.LENGTH_SHORT).show();
+                }
 
             }
         };
@@ -87,6 +91,19 @@ public class GlobalCalendar extends Activity{
         // Set long press listener for events.
         mWeekView.setEventLongPressListener(mEventLongPressListener);
 
+        WeekView.EventClickListener mEventClickListener = new WeekView.EventClickListener()
+        {
+            @Override
+            public void onEventClick(final WeekViewEvent event, RectF eventRect)
+            {
+                Toast.makeText(GlobalCalendar.this, "Created by " + event.getName() + "\nStarting at "
+                        + event.getStartTime().getTime()+
+                        "\nFinishing at " + event.getEndTime().getTime() , Toast.LENGTH_SHORT).show();
+            }
+
+        };
+        // Show a toast message about the touched event.
+        mWeekView.setOnEventClickListener(mEventClickListener);
 
 
 

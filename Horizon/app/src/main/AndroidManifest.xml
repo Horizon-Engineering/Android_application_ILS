@@ -65,10 +65,17 @@
             android:name=".SetZone"
             android:label="@string/title_activity_set_zone"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ZoneSet"
-            android:label="@string/title_activity_zone_set"></activity>
+            android:label="@string/title_activity_zone_set"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".EditEvent"
+            android:label="@string/title_activity_edit_event"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

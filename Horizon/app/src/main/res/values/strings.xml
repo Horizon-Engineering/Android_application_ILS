@@ -19,5 +19,6 @@
     <string name="title_activity_global_calendar">GlobalCalendar</string>
     <string name="title_activity_set_zone">SetZone</string>
     <string name="title_activity_zone_set">ZoneSet</string>
+    <string name="title_activity_edit_event">EditEvent</string>
 
 </resources>

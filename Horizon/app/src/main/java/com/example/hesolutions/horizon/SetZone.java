@@ -1,32 +1,21 @@
 package com.example.hesolutions.horizon;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ImageView;
 
 import android.widget.Toast;
 
@@ -136,6 +125,7 @@ public class SetZone extends AppCompatActivity {
 
                 HashBiMapAdapter list2Adapter = (HashBiMapAdapter) (listView2.getAdapter());
                 items2.put(selectedKey, selectedValue);
+                view.invalidate();
                 list2Adapter.notifyDataSetChanged();
                 myItemsListAdapter2 = new HashBiMapAdapter(items2);
                 listView2.setAdapter(myItemsListAdapter2);
@@ -189,7 +179,7 @@ public class SetZone extends AppCompatActivity {
 
                 } else {
                     Sector.put(name, items2);
-                    DataManager.getInstance().setdevice(Sector); //store back to datamanger
+                    DataManager.getInstance().setsector(Sector); //store back to datamanger
 
                     sectorname.setText("");
                     sectorname.setVisibility(View.GONE);
@@ -213,6 +203,14 @@ public class SetZone extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent1 = new Intent(v.getContext(), ZoneSet.class);
+                startActivity(intent1);
+            }
+        });
+        Sector.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent1 = new Intent(v.getContext(), SetZone.class);
                 startActivity(intent1);
             }
         });

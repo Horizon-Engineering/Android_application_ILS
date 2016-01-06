@@ -2,6 +2,7 @@ package com.example.hesolutions.horizon;
 
 import android.content.Context;
 import android.os.Environment;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -21,8 +22,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.alamkanak.weekview.WeekViewEvent;
+import com.example.hesolutions.mylibrary.WeekViewEvent;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.BiMap;
 /**
@@ -68,7 +68,6 @@ public class DataManager {
 
     public BiMap setdevice(BiMap deviceinfo) {
 
-        dataupdate(device,"device");
         this.device = deviceinfo;
         writedata(device, "device");
         return device;
@@ -80,12 +79,13 @@ public class DataManager {
     public BiMap<String, BiMap> sector = HashBiMap.create();
 
     public BiMap getsector() {
+        dataupdateBi(sector, "sector");
         return sector;
     }
 
     public BiMap setsector(BiMap sectorinfo) {
         this.sector = sectorinfo;
-       // writedata(sector, "sector.txt");
+        writedata(sector, "sector");
         return sector;
     }
 
@@ -94,12 +94,14 @@ public class DataManager {
     public BiMap<String, BiMap> zone = HashBiMap.create();
 
     public BiMap getzone() {
+
+        dataupdateBi(zone, "zone");
         return zone;
     }
 
     public BiMap setzone(BiMap zoneinfo) {
         this.zone = zoneinfo;
-       // writedata(zone, "zone.txt");
+        writedata(zone, "zone");
         return zone;
     }
 
@@ -142,11 +144,19 @@ public class DataManager {
     public List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     public List getevents()
     {
+        dataupdateList(events,"calendar");
         return events;
     }
     public List setevents(WeekViewEvent event)
     {
         events.add(event);
+        writedata(events,"calendar");
+        return events;
+    }
+    public List deleteevent(WeekViewEvent event)
+    {
+        events.remove(event);
+        writedata(events, "calendar");
         return events;
     }
 
@@ -229,6 +239,29 @@ public class DataManager {
         }
     }
 
+    // ============================================Writedata for List=========================
+    public static void writedata(List<WeekViewEvent> list, String filename) {
+        String state;
+        state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            File root = Environment.getExternalStorageDirectory();
+            File dir = new File(root.getAbsolutePath() + "/Horizon");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            File file = new File(dir, filename);
+            try {
+                FileOutputStream fos = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(list);
+                oos.flush();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 
     //==========================read data from hashmap=======================
@@ -246,6 +279,57 @@ public class DataManager {
                     String key = entry.getKey();
                     String value = entry.getValue();
                     bimap.put(key, value);
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    public static void dataupdateBi(BiMap bimap, String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon");
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                Map<String, BiMap> readmap = (BiMap) ois.readObject();
+                for (Map.Entry<String, BiMap> entry : readmap.entrySet()) {
+                    String key = entry.getKey();
+                    BiMap value = entry.getValue();
+                    bimap.put(key, value);
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void dataupdateList(List<WeekViewEvent> list, String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon");
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                List<WeekViewEvent> listone = (List)ois.readObject();
+                for (int i = 0; i < listone.size(); i++)
+                {
+                    list.add(listone.get(i));
                 }
 
             } catch (FileNotFoundException e) {
