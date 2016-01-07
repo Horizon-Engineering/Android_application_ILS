@@ -28,7 +28,6 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Start Time"
         android:id="@+id/starttime"
-        android:format12Hour="HH:mm"
         android:layout_alignBaseline="@+id/startdate"
         android:layout_alignBottom="@+id/startdate"
         android:layout_alignParentRight="true"
@@ -72,7 +71,6 @@
         android:text="Finish Time"
         android:id="@+id/finishtime"
         android:layout_alignTop="@+id/finishdate"
-        android:format12Hour="HH:mm"
         android:layout_alignLeft="@+id/starttime"
         android:layout_alignStart="@+id/starttime" />
 

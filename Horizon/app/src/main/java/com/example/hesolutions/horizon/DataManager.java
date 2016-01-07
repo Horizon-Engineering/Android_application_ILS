@@ -62,7 +62,7 @@ public class DataManager {
     //==================Device Setting: Key = Serial ID, Value = DeviceName
     public BiMap<String, String> device = HashBiMap.create();
     public BiMap getdevice() {
-        dataupdate(device,"device");
+        dataupdate(device, "device");
         return device;
     }
 
@@ -145,7 +145,22 @@ public class DataManager {
     public List getevents()
     {
         dataupdateList(events,"calendar");
+
         return events;
+    }
+
+
+    WeekViewEvent event;
+    List<Long> ID = new ArrayList<Long>();
+    public List<Long> getEventID(String cname)
+    {
+        events = getevents();
+        for (int i =0 ; i<events.size();i++)
+        {
+            event = events.get(i);
+            if (cname == event.getName()) ID.add(event.getId());
+        }
+        return ID;
     }
     public List setevents(WeekViewEvent event)
     {

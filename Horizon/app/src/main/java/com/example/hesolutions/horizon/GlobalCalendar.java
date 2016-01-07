@@ -67,17 +67,37 @@ public class GlobalCalendar extends Activity{
             public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
                 if (event.getName() == DataManager.getInstance().getUsername())
                 {
+
+                    String name = event.getName();
+                    long Id = event.getId();
+                    List<WeekViewEvent> listevent;
+                    listevent = DataManager.getInstance().getevents();
+                    for (int i = 0; i< listevent.size();i++)
+                    {
+                        WeekViewEvent Event;
+                        Event = listevent.get(i);
+                        if (name == Event.getName())
+                        {
+                            if (Id == Event.getId())
+                            {
+                                DataManager.getInstance().deleteevent(event);
+                            }
+                        }
+                    }
+
+
                     Intent editevent = new Intent(GlobalCalendar.this, EditEvent.class);
 
                     Date starttime = event.getStartTime().getTime();
                     Date endtime = event.getEndTime().getTime();
                     SimpleDateFormat date = new SimpleDateFormat("MMM dd, yyyy");
-                    SimpleDateFormat time = new SimpleDateFormat("h:mm:ss a");
+                    SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss ");
 
+                    editevent.putExtra("eventID", event.getId());
                     editevent.putExtra("startdate", date.format(starttime));
                     editevent.putExtra("starttime",time.format(starttime));
                     editevent.putExtra("finishdate",date.format(endtime));
-                    editevent.putExtra("finishtime",time.format(endtime));
+                    editevent.putExtra("finishtime", time.format(endtime));
 
                     startActivity(editevent);
                 }else

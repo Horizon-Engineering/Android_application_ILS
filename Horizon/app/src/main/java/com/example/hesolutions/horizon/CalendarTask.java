@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 
 public class CalendarTask extends Activity {
@@ -45,10 +46,12 @@ public class CalendarTask extends Activity {
         cancelTOcalendar = (Button)findViewById(R.id.cancelTOcalendar);
         delete = (Button)findViewById(R.id.delete);
 
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+
         String currentdate = DateFormat.getDateInstance().format(new java.util.Date());
         startdate.setText(currentdate);
         finishdate.setText(currentdate);
-        String currenttime = DateFormat.getTimeInstance().format(new java.util.Date());
+        String currenttime = sdf.format(new java.util.Date());
         starttime.setText(currenttime);
         finishtime.setText(currenttime);
         final Calendar startTime = Calendar.getInstance();
@@ -68,7 +71,6 @@ public class CalendarTask extends Activity {
                     startTime.set(Calendar.MONTH, monthOfYear);
                     startTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     startdate.setText(DateFormat.getDateInstance().format(startTime.getTime()));
-                    finishdate.setText(DateFormat.getDateInstance().format(startTime.getTime()));
                 }
 
             };
@@ -88,16 +90,16 @@ public class CalendarTask extends Activity {
             TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int Hour, int Minute) {
-                    startTime.set(Calendar.HOUR, Hour);
+                    startTime.set(Calendar.HOUR_OF_DAY, Hour);
                     startTime.set(Calendar.MINUTE, Minute);
-                    starttime.setText(DateFormat.getTimeInstance().format(startTime.getTime()));
-                    finishtime.setText(DateFormat.getTimeInstance().format(startTime.getTime()));
-                }
+                    starttime.setText(sdf.format(startTime.getTime()));
+                   }
             };
 
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(CalendarTask.this, time, startTime.get(Calendar.HOUR), startTime.get(Calendar.MINUTE), false).show();
+                new TimePickerDialog(CalendarTask.this, time, startTime.get(Calendar.HOUR_OF_DAY), startTime.get(Calendar.MINUTE), true).show();
+
             }
         });
 
@@ -137,14 +139,14 @@ public class CalendarTask extends Activity {
                 @Override
                 public void onTimeSet(TimePicker view, int Hour, int Minute)
                 {
-                    finishTime.set(Calendar.HOUR, Hour);
+                    finishTime.set(Calendar.HOUR_OF_DAY, Hour);
                     finishTime.set(Calendar.MINUTE, Minute);
-                    finishtime.setText(DateFormat.getTimeInstance().format(finishTime.getTime()));
+                    finishtime.setText(sdf.format(finishTime.getTime()));
                 }
             };
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(CalendarTask.this, time, finishTime.get(Calendar.HOUR),finishTime.get(Calendar.MINUTE),false).show();
+                new TimePickerDialog(CalendarTask.this, time, finishTime.get(Calendar.HOUR_OF_DAY),finishTime.get(Calendar.MINUTE),true).show();
             }
         });
     //===================================================================================================
@@ -159,6 +161,8 @@ public class CalendarTask extends Activity {
 
         Apply.setOnClickListener(new View.OnClickListener() {
             String cname = DataManager.getInstance().getUsername();
+            long id;
+            List<Long> IDlist = DataManager.getInstance().getEventID(cname);
             @Override
             public void onClick(View v) {
 
@@ -167,7 +171,15 @@ public class CalendarTask extends Activity {
 
                     Intent intent = new Intent(v.getContext(), GlobalCalendar.class);
 
-                    WeekViewEvent event = new WeekViewEvent(1, cname, startTime, finishTime);
+                    for (int i = 0; i<IDlist.size();i++)
+                    {
+                        if (id == IDlist.get(i))
+                        {
+                            id = id + 1;
+                        }
+                    }
+
+                    WeekViewEvent event = new WeekViewEvent(id, cname, startTime, finishTime);
                     event.setColor(getResources().getColor(R.color.event_color_01));
 
                     DataManager.getInstance().setevents(event);
