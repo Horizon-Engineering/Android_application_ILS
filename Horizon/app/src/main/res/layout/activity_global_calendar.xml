@@ -86,4 +86,13 @@
         android:layout_toRightOf="@+id/threedays"
         android:layout_toEndOf="@+id/threedays" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/Name"
+        android:layout_alignBottom="@+id/addevent"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

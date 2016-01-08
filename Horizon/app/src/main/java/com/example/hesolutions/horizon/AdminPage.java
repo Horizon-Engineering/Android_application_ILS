@@ -71,13 +71,15 @@ public class AdminPage extends AppCompatActivity {
                 startActivity(intent1);
             }
         });
+
+        /*
         GridView gridView = (GridView)findViewById(R.id.gridView);
 
         ArrayList<String> numberlist;
         numberlist = DataManager.getInstance().getGrid();
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, numberlist);
         gridView.setAdapter(adapter);
-
+*/
     }
 
 }

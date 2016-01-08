@@ -6,12 +6,14 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Parcelable;
+import android.provider.ContactsContract;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.example.hesolutions.mylibrary.WeekViewEvent;
 import com.example.hesolutions.mylibrary.WeekView;
@@ -31,6 +33,7 @@ public class GlobalCalendar extends Activity{
     Button threedays;
     Button sevendays;
     private WeekView mWeekView;
+    TextView Name;
 
 
     @Override
@@ -44,8 +47,9 @@ public class GlobalCalendar extends Activity{
         threedays = (Button)findViewById(R.id.threedays);
         sevendays = (Button)findViewById(R.id.sevendays);
         mWeekView = (WeekView) findViewById(R.id.weekView);
+        Name = (TextView)findViewById(R.id.Name);
 
-
+        Name.setText(DataManager.getInstance().getUsername());
         MonthLoader.MonthChangeListener mMonthChangeListener = new MonthLoader.MonthChangeListener() {
             @Override
             public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
@@ -53,7 +57,10 @@ public class GlobalCalendar extends Activity{
                 List<WeekViewEvent> events;
 
                 events = DataManager.getInstance().getevents();
+                System.out.println(events.toString()+"+++++++++++++++++++++++++++");
                 return events;
+
+
             }
 
         };
@@ -65,25 +72,15 @@ public class GlobalCalendar extends Activity{
         WeekView.EventLongPressListener mEventLongPressListener = new WeekView.EventLongPressListener() {
             @Override
             public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
-                if (event.getName() == DataManager.getInstance().getUsername())
+
+                if (event.getName().equals(DataManager.getInstance().getUsername()))
                 {
 
-                    String name = event.getName();
-                    long Id = event.getId();
-                    List<WeekViewEvent> listevent;
-                    listevent = DataManager.getInstance().getevents();
-                    for (int i = 0; i< listevent.size();i++)
-                    {
-                        WeekViewEvent Event;
-                        Event = listevent.get(i);
-                        if (name == Event.getName())
-                        {
-                            if (Id == Event.getId())
-                            {
-                                DataManager.getInstance().deleteevent(event);
-                            }
-                        }
-                    }
+                    List<WeekViewEvent> listevent=DataManager.getInstance().getevents();
+                    System.out.println(event.getName() + event.getId()+"++++++++++++++++++++++" + event.getName()+event.getId());
+                    listevent.remove(event);
+                    DataManager.getInstance().setevents(listevent);
+
 
 
                     Intent editevent = new Intent(GlobalCalendar.this, EditEvent.class);
@@ -92,8 +89,8 @@ public class GlobalCalendar extends Activity{
                     Date endtime = event.getEndTime().getTime();
                     SimpleDateFormat date = new SimpleDateFormat("MMM dd, yyyy");
                     SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss ");
-
-                    editevent.putExtra("eventID", event.getId());
+                    System.out.println("--------------------------------------------------------------------");
+                    editevent.putExtra("eventID", Long.toString(event.getId()));
                     editevent.putExtra("startdate", date.format(starttime));
                     editevent.putExtra("starttime",time.format(starttime));
                     editevent.putExtra("finishdate",date.format(endtime));
@@ -118,7 +115,8 @@ public class GlobalCalendar extends Activity{
             {
                 Toast.makeText(GlobalCalendar.this, "Created by " + event.getName() + "\nStarting at "
                         + event.getStartTime().getTime()+
-                        "\nFinishing at " + event.getEndTime().getTime() , Toast.LENGTH_SHORT).show();
+                        "\nFinishing at " + event.getEndTime().getTime()
+                        +"\nName is: " + event.getName() + " ID is: "+event.getId(), Toast.LENGTH_SHORT).show();
             }
 
         };

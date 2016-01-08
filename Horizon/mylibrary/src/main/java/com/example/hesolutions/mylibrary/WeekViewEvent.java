@@ -4,13 +4,19 @@ package com.example.hesolutions.mylibrary;
  * Created by hesolutions on 2016-01-05.
  */
 
+import android.graphics.Color;
+
+import java.io.IOError;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
  * Created by Raquib-ul-Alam Kanak on 7/21/2014.
  * Website: http://april-shower.com
  */
-public class WeekViewEvent {
+public class WeekViewEvent implements Serializable{
     private long mId;
     private Calendar mStartTime;
     private Calendar mEndTime;
@@ -36,8 +42,9 @@ public class WeekViewEvent {
      * @param endDay Day when the event ends.
      * @param endHour Hour (in 24-hour format) when the event ends.
      * @param endMinute Minute when the event ends.
+     * @param color color of the event.
      */
-    public WeekViewEvent(long id, String name, int startYear, int startMonth, int startDay, int startHour, int startMinute, int endYear, int endMonth, int endDay, int endHour, int endMinute) {
+    public WeekViewEvent(long id, String name, int startYear, int startMonth, int startDay, int startHour, int startMinute, int endYear, int endMonth, int endDay, int endHour, int endMinute, int color) {
         this.mId = id;
 
         this.mStartTime = Calendar.getInstance();
@@ -47,12 +54,14 @@ public class WeekViewEvent {
         this.mStartTime.set(Calendar.HOUR_OF_DAY, startHour);
         this.mStartTime.set(Calendar.MINUTE, startMinute);
 
+
         this.mEndTime = Calendar.getInstance();
         this.mEndTime.set(Calendar.YEAR, endYear);
         this.mEndTime.set(Calendar.MONTH, endMonth-1);
         this.mEndTime.set(Calendar.DAY_OF_MONTH, endDay);
         this.mEndTime.set(Calendar.HOUR_OF_DAY, endHour);
         this.mEndTime.set(Calendar.MINUTE, endMinute);
+        this.mColor = color;
 
         this.mName = name;
     }
@@ -65,12 +74,13 @@ public class WeekViewEvent {
      * @param startTime The time when the event starts.
      * @param endTime The time when the event ends.
      */
-    public WeekViewEvent(long id, String name, String location, Calendar startTime, Calendar endTime) {
+    public WeekViewEvent(long id, String name, String location, Calendar startTime, Calendar endTime, int color) {
         this.mId = id;
         this.mName = name;
         this.mLocation = location;
         this.mStartTime = startTime;
         this.mEndTime = endTime;
+        this.mColor = color;
     }
 
     /**
@@ -80,8 +90,8 @@ public class WeekViewEvent {
      * @param startTime The time when the event starts.
      * @param endTime The time when the event ends.
      */
-    public WeekViewEvent(long id, String name, Calendar startTime, Calendar endTime) {
-        this(id, name, null, startTime, endTime);
+    public WeekViewEvent(long id, String name, Calendar startTime, Calendar endTime, int color) {
+        this(id, name, null, startTime, endTime, color);
     }
 
 
@@ -148,4 +158,6 @@ public class WeekViewEvent {
     public int hashCode() {
         return (int) (mId ^ (mId >>> 32));
     }
+
+
 }

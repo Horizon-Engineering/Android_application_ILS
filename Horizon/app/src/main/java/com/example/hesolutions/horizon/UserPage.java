@@ -40,6 +40,7 @@ public class UserPage extends Activity {
                 startActivity(intent);
             }
         });
+        /*
         GridView gridView = (GridView)findViewById(R.id.gridView);
 
         ArrayList<String> numberlist;
@@ -53,7 +54,7 @@ public class UserPage extends Activity {
                 Toast.makeText(UserPage.this, ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
             }
         });
-
+*/
         Calendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

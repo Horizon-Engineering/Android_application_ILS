@@ -48,7 +48,7 @@ public class TotalDevice extends AppCompatActivity {
                     int sum = Integer.parseInt(getmessage);
                     if (sum > 0)
                     {
-                        DataManager.getInstance().setGrid(sum);
+                        //DataManager.getInstance().setGrid(sum);
                         Intent startgrid = new Intent(TotalDevice.this, AdminPage.class);
                         startActivity(startgrid);
                     }else

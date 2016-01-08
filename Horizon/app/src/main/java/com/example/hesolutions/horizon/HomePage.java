@@ -50,6 +50,7 @@ public class HomePage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        /*
         GridView gridView = (GridView)findViewById(R.id.gridView);
 
         ArrayList<String> numberlist;
@@ -64,7 +65,7 @@ public class HomePage extends AppCompatActivity {
                 Toast.makeText(HomePage.this, ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
             }
         });
-
+*/
 
     }
 

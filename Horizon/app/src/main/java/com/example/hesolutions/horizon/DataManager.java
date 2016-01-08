@@ -17,11 +17,15 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.example.hesolutions.mylibrary.WeekView;
 import com.example.hesolutions.mylibrary.WeekViewEvent;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.BiMap;
@@ -30,12 +34,13 @@ import com.google.common.collect.BiMap;
  */
 public class DataManager {
 
-
+    SimpleDateFormat date = new SimpleDateFormat("MMM dd, yyyy");
+    SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss ");
     //==================Account Setting: Key = Password, Value = AccountName
-    public BiMap<String,String> account = HashBiMap.create();
+    public BiMap<String,ArrayList> account = HashBiMap.create();
     public BiMap getaccount() {
 
-        dataupdate(account, "account");
+        dataupdateBiAr(account, "account");
         return account;
     }
 
@@ -45,7 +50,6 @@ public class DataManager {
         writedata(account, "account");
         return account;
     }
-
 
     //====================================Showing the user name ==============================
     public String Username;
@@ -58,6 +62,18 @@ public class DataManager {
         this.Username = name;
         return Username;
     }
+
+    public String colorname;
+    public String getcolorname()
+    {
+        return colorname;
+    }
+    public String setcolorname(String name)
+    {
+        this.colorname = name;
+        return colorname;
+    }
+
     //---------------------------------------------------------------------------------
     //==================Device Setting: Key = Serial ID, Value = DeviceName
     public BiMap<String, String> device = HashBiMap.create();
@@ -112,7 +128,7 @@ public class DataManager {
     }
 
     //==================================================LOAD THE GRID=========================
-
+/*
     public Integer totalsum;
     public Integer setGrid(Integer number)
     {
@@ -131,60 +147,54 @@ public class DataManager {
             number = number + 1;
             numberlist.add(number.toString());
         }
-        writedata(numberlist, "grid.txt");
+        writedata(numberlist, "grid");
         numberlist.clear();
         return numberlist;
     }
 
 
-
+*/
 
     //==================================Arraylist for calendar events====================
 
     public List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     public List getevents()
     {
-        dataupdateList(events,"calendar");
-
+        dataupdateList(events, "calendar");
         return events;
     }
 
-
-    WeekViewEvent event;
-    List<Long> ID = new ArrayList<Long>();
-    public List<Long> getEventID(String cname)
+    public List setevents(List<WeekViewEvent> list)
     {
-        events = getevents();
-        for (int i =0 ; i<events.size();i++)
+        this.events = list;
+        writedata1(events, "calendar");
+        return events;
+    }
+
+    public List<Long> listID = new ArrayList<Long>();
+    public List getEventID()
+    {
+        for (int i= 0; i<events.size(); i++)
         {
-            event = events.get(i);
-            if (cname == event.getName()) ID.add(event.getId());
+            WeekViewEvent event = events.get(i);
+            listID.add(event.getId());
         }
-        return ID;
+        return listID;
     }
-    public List setevents(WeekViewEvent event)
+    public List setEventID(List list)
     {
-        events.add(event);
-        writedata(events,"calendar");
-        return events;
+        this.listID= list;
+        return listID;
     }
-    public List deleteevent(WeekViewEvent event)
-    {
-        events.remove(event);
-        writedata(events, "calendar");
-        return events;
-    }
-
-
 
     //====================read data from arraylist===============================
-
+/*
     public ArrayList getGrid()
     {
 
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Horizon");
-        File file = new File(dir, "grid.txt");
+        File file = new File(dir, "grid");
         if (file.exists()) {
             try {
                 FileInputStream fis = new FileInputStream(file);
@@ -202,7 +212,7 @@ public class DataManager {
     return numberlist;
 
     }
-
+*/
     //===========================================Writedata for BiMap=============================================
 
     public static void writedata(BiMap bimap, String filename) {
@@ -229,7 +239,7 @@ public class DataManager {
     }
 
 
-
+/*
     // ============================================Writedata for Arraylist=========================
     public static void writedata(ArrayList arrayList, String filename) {
         String state;
@@ -245,6 +255,7 @@ public class DataManager {
                 FileOutputStream fos = new FileOutputStream(file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
                 oos.writeObject(arrayList);
+                System.out.println(arrayList.isEmpty() + "++++++++++++++nothingwritten+++++++++++++++++++++++");
                 oos.flush();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -253,24 +264,32 @@ public class DataManager {
             }
         }
     }
-
+*/
     // ============================================Writedata for List=========================
-    public static void writedata(List<WeekViewEvent> list, String filename) {
+    public static void writedata1(List<WeekViewEvent> list, String filename) {
         String state;
         state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
+
             File root = Environment.getExternalStorageDirectory();
             File dir = new File(root.getAbsolutePath() + "/Horizon");
             if (!dir.exists()) {
                 dir.mkdir();
             }
             File file = new File(dir, filename);
+
             try {
+
+
                 FileOutputStream fos = new FileOutputStream(file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+                System.out.println(list.size()+"size+++++++++++++++++++++++");
                 oos.writeObject(list);
+
                 oos.flush();
             } catch (FileNotFoundException e) {
+
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -333,6 +352,31 @@ public class DataManager {
         }
     }
 
+    public static void dataupdateBiAr(BiMap bimap, String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon");
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                Map<String, ArrayList> readmap = (BiMap) ois.readObject();
+                for (Map.Entry<String, ArrayList> entry : readmap.entrySet()) {
+                    String key = entry.getKey();
+                    ArrayList value = entry.getValue();
+                    bimap.put(key, value);
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void dataupdateList(List<WeekViewEvent> list, String filename) {
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Horizon");
@@ -342,10 +386,12 @@ public class DataManager {
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 List<WeekViewEvent> listone = (List)ois.readObject();
-                for (int i = 0; i < listone.size(); i++)
+                list.clear();
+                for (int i =0; i<listone.size();i++)
                 {
                     list.add(listone.get(i));
                 }
+                System.out.println(list.size()+"size+++++++++++++++++++++++++++++++++++++++++++++++");
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();

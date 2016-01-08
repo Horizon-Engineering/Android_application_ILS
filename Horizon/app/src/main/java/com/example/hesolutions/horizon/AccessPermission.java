@@ -22,6 +22,7 @@ import com.google.common.collect.BiMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class AccessPermission extends AppCompatActivity {
 
@@ -69,16 +70,24 @@ public class AccessPermission extends AppCompatActivity {
 
                 String Accounts = MSG.getText().toString();    //value
                 String Passwords = CODE.getText().toString();  //key
-                BiMap<String, String> bimap;
+                BiMap<String, ArrayList> bimap;
                 bimap = DataManager.getInstance().getaccount();
+                ArrayList<String> accout = new ArrayList<String>();
+
+                String [] arr = {"#59dbe0", "#f57f68", "#87d288", "#f8b552","#39add1","#3079ab","#c25975","#e15258",
+                        "#f9845b","#838cc7","#7d669e","#53bbb4","#51b46d","#e0ab18","#637a91","#f092b0","#b7c0c7"};
+                Random random = new Random();
+                int select = random.nextInt(arr.length);
+                String color = arr[select];
 
                 if (Accounts.isEmpty()||Passwords.isEmpty())
                 {
                     Toast.makeText(getApplicationContext(), "Missing Accounts or Passwords", Toast.LENGTH_LONG).show();
                 }else if (bimap.get(Passwords) != null)
                 {
-                    String accountname =  bimap.get(Passwords);
-                    Toast.makeText(getApplicationContext(), "Existant accout: " + accountname, Toast.LENGTH_LONG).show();
+                    accout =  bimap.get(Passwords);
+                    String accoutname = accout.get(0);
+                    Toast.makeText(getApplicationContext(), "Existant accout: " + accoutname, Toast.LENGTH_LONG).show();
                     MSG.setText("");
                     CODE.setText("");
                 }else if(Passwords.length()!=4)
@@ -87,8 +96,11 @@ public class AccessPermission extends AppCompatActivity {
                     CODE.setText("");
                 }
                 else{
-                    bimap.put(Passwords, Accounts);
+                    accout.add(Accounts);
+                    accout.add(color);
+                    bimap.put(Passwords, accout);
                     DataManager.getInstance().setaccount(bimap);
+
                     MSG.setText("");
                     CODE.setText("");
                     Toast.makeText(getApplicationContext(), "DATA saved", Toast.LENGTH_LONG).show();
@@ -102,7 +114,7 @@ public class AccessPermission extends AppCompatActivity {
         {
             @Override
             public void onClick(View v) {
-                BiMap<String,String> bimap;
+                BiMap<String,ArrayList> bimap;
                 bimap = DataManager.getInstance().getaccount();
                 textView.setText(bimap.toString());
                 textView.setVisibility(View.VISIBLE);
@@ -115,15 +127,15 @@ public class AccessPermission extends AppCompatActivity {
             public void onClick(View v) {
                 String Accounts = MSG.getText().toString();    //value
                 String Passwords = CODE.getText().toString();  //key
-                BiMap<String,String> bimap;
+                BiMap<String,ArrayList> bimap;
+                ArrayList<String> nameset = new ArrayList<String>();
                 bimap = DataManager.getInstance().getaccount();
-
-                if (Accounts.equals(bimap.get(Passwords)))
+                nameset = bimap.get(Passwords);
+                if (Accounts.equals(nameset.get(0)))
                 {
                     bimap.remove(Passwords);
                     MSG.setText("");
                     CODE.setText("");
-                    Toast.makeText(getApplicationContext(), bimap.toString(), Toast.LENGTH_LONG).show();
                     DataManager.getInstance().setaccount(bimap);
                     Toast.makeText(getApplicationContext(), "Account deleted successfully", Toast.LENGTH_LONG).show();
                 }else

@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -32,7 +37,10 @@ public class CalendarTask extends Activity {
     Button Apply;
     Button cancelTOcalendar;
     Button delete;
-    long eventID;
+    Switch switch1;
+    EditText weeknumber;
+    TextView textView4,textView5;
+    Integer weeks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +53,11 @@ public class CalendarTask extends Activity {
         Apply = (Button)findViewById(R.id.Apply);
         cancelTOcalendar = (Button)findViewById(R.id.cancelTOcalendar);
         delete = (Button)findViewById(R.id.delete);
+        switch1 =(Switch)findViewById(R.id.switch1);
+        weeknumber = (EditText)findViewById(R.id.weeknumber);
+        textView4 = (TextView)findViewById(R.id.textView4);
+        textView5 = (TextView)findViewById(R.id.textView5);
+
 
         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
@@ -56,7 +69,6 @@ public class CalendarTask extends Activity {
         finishtime.setText(currenttime);
         final Calendar startTime = Calendar.getInstance();
         final Calendar finishTime = Calendar.getInstance();
-
 
 
 //=======================================start date and time===============================================
@@ -161,37 +173,77 @@ public class CalendarTask extends Activity {
 
         Apply.setOnClickListener(new View.OnClickListener() {
             String cname = DataManager.getInstance().getUsername();
+            String colorname = DataManager.getInstance().getcolorname();
+            int colorName = Color.parseColor(colorname);
             long id;
-            List<Long> IDlist = DataManager.getInstance().getEventID(cname);
             @Override
             public void onClick(View v) {
+                if (switch1.isChecked()) {
+                    weeks = Integer.parseInt(weeknumber.getText().toString());
 
-                if (finishTime.after(startTime)) {
+                    // Repetition
+                    if ((finishTime.after(startTime))) {
+                        Intent intent = new Intent(v.getContext(), GlobalCalendar.class);
 
-
-                    Intent intent = new Intent(v.getContext(), GlobalCalendar.class);
-
-                    for (int i = 0; i<IDlist.size();i++)
-                    {
-                        if (id == IDlist.get(i))
-                        {
-                            id = id + 1;
+                        for (int i = 0; i < weeks; i++) {
+                            List<Long> IDlist = DataManager.getInstance().getEventID();
+                            List<WeekViewEvent> list = DataManager.getInstance().getevents();
+                            WeekViewEvent event;
+                            if (!IDlist.isEmpty()) {
+                                id = IDlist.get((IDlist.size() - 1)) + 1;
+                            }
+                            if (i >0) {
+                                startTime.add(Calendar.DAY_OF_MONTH, 7);
+                                finishTime.add(Calendar.DAY_OF_MONTH, 7);
+                            }
+                            event = new WeekViewEvent(id, cname, startTime, finishTime, colorName);
+                            list.add(event);
+                            IDlist.add(id);
+                            DataManager.getInstance().setevents(list);
+                            DataManager.getInstance().setEventID(IDlist);
                         }
+                        startActivity(intent);
+                    }else {
+                        Toast.makeText(CalendarTask.this, "Unvalid Time", Toast.LENGTH_SHORT).show();
                     }
+                }else {
+                    if ((finishTime.after(startTime))) {
+                        List<Long> IDlist = DataManager.getInstance().getEventID();
 
-                    WeekViewEvent event = new WeekViewEvent(id, cname, startTime, finishTime);
-                    event.setColor(getResources().getColor(R.color.event_color_01));
-
-                    DataManager.getInstance().setevents(event);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(CalendarTask.this, "Unvalid Time", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(v.getContext(), GlobalCalendar.class);
+                        if (!IDlist.isEmpty()) {
+                            id = IDlist.get((IDlist.size() - 1)) + 1;
+                        }
+                        List<WeekViewEvent> list = new ArrayList<WeekViewEvent>();
+                        list = DataManager.getInstance().getevents();
+                        WeekViewEvent event = new WeekViewEvent(id, cname, startTime, finishTime, colorName);
+                        list.add(event);
+                        IDlist.add(id);
+                        DataManager.getInstance().setevents(list);
+                        DataManager.getInstance().setEventID(IDlist);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(CalendarTask.this, "Unvalid Time", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
         });
 
-
+        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked == true) {
+                    weeknumber.setEnabled(true);
+                    textView4.setEnabled(true);
+                    textView4.setEnabled(true);
+                } else {
+                    weeknumber.setEnabled(false);
+                    textView4.setEnabled(false);
+                    textView4.setEnabled(false);
+                }
+            }
+        });
 
     }
 }
