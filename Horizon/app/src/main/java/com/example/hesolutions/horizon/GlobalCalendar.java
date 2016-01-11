@@ -57,7 +57,14 @@ public class GlobalCalendar extends Activity{
                 List<WeekViewEvent> events;
 
                 events = DataManager.getInstance().getevents();
-                System.out.println(events.toString()+"+++++++++++++++++++++++++++");
+                if (events.size()!=0)
+                {
+                    for (int i = 0; i< events.size(); i++)
+                    {
+                        WeekViewEvent event = events.get(i);
+                        System.out.println(event.getStartTime().getTime()+"+++"+event.getEndTime().getTime()+"++++++++++++++++++++");
+                    }
+                }
                 return events;
 
 

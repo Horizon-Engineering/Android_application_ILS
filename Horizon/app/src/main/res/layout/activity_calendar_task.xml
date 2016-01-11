@@ -94,23 +94,27 @@
 
 
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/finishtime"
-
-             >
 
 
-            <Switch
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Repetition"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:id="@+id/switch1"
-                android:checked="false"
-                android:layout_marginTop="20dp" />
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Repetition"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/finishdate"
+        android:id="@+id/switch1"
+        android:checked="false" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/switch1"
+        android:layout_marginTop="20dp"
+        android:id="@+id/layout1"
+        android:enabled="false"
+
+        >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -119,8 +123,6 @@
                 android:text="Every"
                 android:id="@+id/textView4"
                 android:enabled="false"
-                android:layout_marginTop="20dp"
-                android:layout_below="@id/switch1"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
@@ -130,11 +132,11 @@
                 android:inputType="number"
                 android:ems="2"
                 android:id="@+id/weeknumber"
+                android:enabled="false"
                 android:layout_alignBottom="@+id/textView4"
                 android:layout_toRightOf="@+id/textView4"
                 android:layout_toEndOf="@+id/textView4"
                 android:singleLine="true"
-                android:enabled="false"
                 android:imeOptions="actionDone"/>
 
             <TextView
@@ -147,7 +149,86 @@
                 android:layout_alignTop="@+id/textView4"
                 android:layout_toRightOf="@+id/weeknumber"
                 android:layout_toEndOf="@+id/weeknumber" />
-            </RelativeLayout>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sun"
+                android:id="@+id/Sunday"
+                android:checked="false"
+                android:enabled="false"
+                android:layout_below="@+id/textView4"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="20dp" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mon"
+                android:id="@+id/Monday"
+                android:enabled="false"
+                android:checked="false"
+                android:layout_alignTop="@+id/Sunday"
+                android:layout_toRightOf="@+id/textView4"
+                android:layout_toEndOf="@+id/textView4" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tue"
+                android:id="@+id/Tuesday"
+                android:checked="false"
+                android:enabled="false"
+                android:layout_alignTop="@+id/Monday"
+                android:layout_toRightOf="@+id/Monday"
+                android:layout_toEndOf="@+id/Monday" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wed"
+                android:id="@+id/Wednesday"
+                android:enabled="false"
+                android:checked="false"
+                android:layout_alignTop="@+id/Tuesday"
+                android:layout_toRightOf="@+id/textView5"
+                android:layout_toEndOf="@+id/textView5" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Thu"
+                android:id="@+id/Thursday"
+                android:checked="false"
+                android:enabled="false"
+                android:layout_alignTop="@+id/Wednesday"
+                android:layout_toRightOf="@+id/Wednesday"
+                android:layout_toEndOf="@+id/Wednesday" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fri"
+                android:id="@+id/Friday"
+                android:enabled="false"
+                android:checked="false"
+                android:layout_alignTop="@+id/Thursday"
+                android:layout_toRightOf="@+id/Thursday"
+                android:layout_toEndOf="@+id/Thursday" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sat"
+                android:id="@+id/Saturday"
+                android:checked="false"
+                android:enabled="false"
+                android:layout_alignTop="@+id/Friday"
+                android:layout_toRightOf="@+id/Friday"
+                android:layout_toEndOf="@+id/Friday" />
+
+        </RelativeLayout>
 
 
 </RelativeLayout>
