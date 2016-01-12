@@ -104,5 +104,14 @@
         android:layout_toLeftOf="@+id/Apply"
         android:layout_toStartOf="@+id/Apply"  />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Make change for all relative events"
+        android:id="@+id/group"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
 
 </RelativeLayout>

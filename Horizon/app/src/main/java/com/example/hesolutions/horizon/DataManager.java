@@ -187,6 +187,8 @@ public class DataManager {
         return listID;
     }
 
+
+
     //====================read data from arraylist===============================
 /*
     public ArrayList getGrid()
