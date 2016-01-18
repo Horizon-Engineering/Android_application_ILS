@@ -33,11 +33,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UnlockLogin"
-            android:label="@string/title_activity_unlock_login"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.Transparent" />
-        <activity
             android:name=".AccessPermission"
             android:label="@string/title_activity_access_permission"
             android:screenOrientation="landscape"
@@ -60,7 +55,8 @@
         <activity
             android:name=".CalendarTask"
             android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".SetZone"
             android:label="@string/title_activity_set_zone"
@@ -76,6 +72,16 @@
             android:label="@string/title_activity_edit_event"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UnlockScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.Transparent"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".Test"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_test"></activity>
     </application>
 
 </manifest>

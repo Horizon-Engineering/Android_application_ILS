@@ -1,5 +1,6 @@
 package com.example.hesolutions.horizon;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,7 +13,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
@@ -21,35 +24,24 @@ import java.util.ArrayList;
 
 public class HomePage extends AppCompatActivity {
 
-    Button LOGIN;
-    Button Quit;
+    ImageButton LOGIN;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        LOGIN = (Button)findViewById(R.id.LOGIN);
-        Quit = (Button)findViewById(R.id.Quit);
+        LOGIN = (ImageButton)findViewById(R.id.LOGIN);
+
         LOGIN.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Intent startNewActivityIntent = new Intent(HomePage.this, UnlockLogin.class);
+                Intent startNewActivityIntent = new Intent(HomePage.this, UnlockScreen.class);
                 startActivity(startNewActivityIntent);
 
             }
         });
-        Quit.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                finish();
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-            }
-        });
         /*
         GridView gridView = (GridView)findViewById(R.id.gridView);
 

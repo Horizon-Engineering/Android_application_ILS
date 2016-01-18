@@ -3,12 +3,16 @@ package com.example.hesolutions.horizon;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.inputmethod.InputMethod;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -32,10 +36,13 @@ public class EditEvent extends Activity {
     TextView starttime;
     TextView finishdate;
     TextView finishtime;
+    TextView textView6;
     Button Apply;
     Button cancelTOcalendar;
     Button delete;
-
+    CheckBox group;
+    final List<WeekViewEvent> listevent = DataManager.getInstance().getevents();
+    final List<List<Long>> grouplist = DataManager.getInstance().getGroupID();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +54,8 @@ public class EditEvent extends Activity {
         Apply = (Button)findViewById(R.id.Apply);
         cancelTOcalendar = (Button)findViewById(R.id.cancelTOcalendar);
         delete = (Button)findViewById(R.id.delete);
+        textView6 = (TextView)findViewById(R.id.textView6);
+        group = (CheckBox)findViewById(R.id.group);
 
         final String start1 = getIntent().getStringExtra("startdate");
         final String start2 = getIntent().getStringExtra("starttime");
@@ -59,8 +68,8 @@ public class EditEvent extends Activity {
         final String cname = DataManager.getInstance().getUsername();
         final String colorname = DataManager.getInstance().getcolorname();
         final int colorName = Color.parseColor(colorname);
+        final SimpleDateFormat ddf = new SimpleDateFormat("MMM dd, yyyy");
         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-
         starttime.setText(start2);
         finishtime.setText(end2);
         startdate.setText(start1);
@@ -92,6 +101,9 @@ public class EditEvent extends Activity {
         finishTime.set(Calendar.DAY_OF_MONTH, date2);
         finishTime.set(Calendar.HOUR_OF_DAY, hour2);
         finishTime.set(Calendar.MINUTE, min2);
+
+
+
 //=======================================start date and time===============================================
         startdate.setOnClickListener(new View.OnClickListener() {
 
@@ -103,7 +115,11 @@ public class EditEvent extends Activity {
                     startTime.set(Calendar.YEAR, year);
                     startTime.set(Calendar.MONTH, monthOfYear);
                     startTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    startdate.setText(DateFormat.getDateInstance().format(startTime.getTime()));
+                    startdate.setText(ddf.format(startTime.getTime()));
+                    finishTime.set(Calendar.YEAR, year);
+                    finishTime.set(Calendar.MONTH, monthOfYear);
+                    finishTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    finishdate.setText(ddf.format(startTime.getTime()));
 
                 }
 
@@ -112,9 +128,7 @@ public class EditEvent extends Activity {
 
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(EditEvent.this, date, year1, getMonth(month1),date1).show();
-
-
+                new DatePickerDialog(EditEvent.this, date, year1, getMonth(month1), date1).show();
 
             }
         });
@@ -127,6 +141,9 @@ public class EditEvent extends Activity {
                     startTime.set(Calendar.HOUR_OF_DAY, Hour);
                     startTime.set(Calendar.MINUTE, Minute);
                     starttime.setText(sdf.format(startTime.getTime()));
+                    finishTime.set(Calendar.HOUR_OF_DAY, Hour);
+                    finishTime.set(Calendar.MINUTE, Minute);
+                    finishtime.setText(sdf.format(startTime.getTime()));
                 }
             };
 
@@ -150,7 +167,7 @@ public class EditEvent extends Activity {
                     finishTime.set(Calendar.YEAR, year);
                     finishTime.set(Calendar.MONTH, monthOfYear);
                     finishTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    finishdate.setText(DateFormat.getDateInstance().format(finishTime.getTime()));
+                    finishdate.setText(ddf.format(finishTime.getTime()));
                 }
 
             };
@@ -185,15 +202,7 @@ public class EditEvent extends Activity {
         cancelTOcalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(v.getContext(),GlobalCalendar.class);
-
-                List<WeekViewEvent> list = new ArrayList<WeekViewEvent>();
-                list = DataManager.getInstance().getevents();
-                WeekViewEvent event = new WeekViewEvent(ID, cname, startTime, finishTime,colorName);
-                list.add(event);
-                DataManager.getInstance().setevents(list);
-
-                startActivity(intent1);
+                finish();
             }
 
 
@@ -202,32 +211,153 @@ public class EditEvent extends Activity {
         delete.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
+                textView6.setVisibility(View.VISIBLE);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                Intent intent1 = new Intent(v.getContext(),GlobalCalendar.class);
-                startActivity(intent1);
+
+                        if (group.isChecked()==false)
+                        {
+                            int ite = getGroup(ID);
+                            if (ite!=(-1) &&ite!=(-2)) {
+                                List<Long> groupid = grouplist.get(ite);
+                                if (!groupid.equals(null)) {
+                                    groupid.remove(ID);
+                                }
+                                grouplist.set(ite, groupid);
+                                DataManager.getInstance().setGroupID(grouplist);
+                            }
+                            Intent intent1 = new Intent(v.getContext(), GlobalCalendar.class);
+                            listevent.remove(getEvent(ID));
+                            DataManager.getInstance().setevents(listevent);
+                            startActivity(intent1);
+
+                        }else
+                        {
+                            int ite = getGroup(ID);
+                            if (ite!= (-1) && ite!=(-2)) {
+                                List<Long> groupid = grouplist.get(ite);
+                                Intent intent1 = new Intent(v.getContext(), GlobalCalendar.class);
+                                if (!groupid.equals(null)) {
+                                    for (int i = 0; i < groupid.size(); i++) {
+                                        Long id = groupid.get(i);
+                                        listevent.remove(getEvent(id));
+                                    }
+                                    grouplist.remove(groupid);
+                                }
+                                DataManager.getInstance().setevents(listevent);
+                                DataManager.getInstance().setGroupID(grouplist);
+                                startActivity(intent1);
+                            }else if (ite == (-2)){
+                                runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(EditEvent.this, "No relative events", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                                textView6.setVisibility(View.GONE);
+                            }else if (ite == (-1)){
+                                runOnUiThread(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(EditEvent.this, "No grouping files found", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                                textView6.setVisibility(View.GONE);
+                            }
+                        }
+
+
+                    }
+                }).start();
             }
         });
 
         Apply.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
+                textView6.setVisibility(View.VISIBLE);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                if (finishTime.after(startTime)) {
+                        if (finishTime.after(startTime)) {
+                            if (group.isChecked()==false) {
+                                int ite = getGroup(ID);
+                                if (ite != (-1) && ite != (-2)) {
+                                    List<Long> groupid = grouplist.get(ite);
+                                    if (!groupid.equals(null)) {
+                                        groupid.remove(ID);
+                                    }
+                                    grouplist.set(ite, groupid);
+                                    listevent.remove(getEvent(ID));
+                                    DataManager.getInstance().setGroupID(grouplist);
+                                    DataManager.getInstance().setevents(listevent);
+                                }
 
+                                listevent.remove(getEvent(ID));
+                                WeekViewEvent event = new WeekViewEvent(ID, cname, startTime, finishTime, colorName);
+                                listevent.add(event);
+                                DataManager.getInstance().setevents(listevent);
+                                Intent intent1 = new Intent(v.getContext(), GlobalCalendar.class);
+                                startActivity(intent1);
+                            }else
+                            {
+                                int ite = getGroup(ID);
+                                if (ite!= (-1) && ite!=(-2)) {
+                                    List<Long> groupid = grouplist.get(ite);
+                                    Intent intent1 = new Intent(v.getContext(), GlobalCalendar.class);
+                                    if (!groupid.equals(null)) {
+                                        for (int i = 0; i < groupid.size(); i++) {
+                                            Long id = groupid.get(i);
+                                            WeekViewEvent event = getEvent(id);
+                                            listevent.remove(getEvent(id));
+                                            Calendar start = Calendar.getInstance(), finish = Calendar.getInstance();
+                                            start.set(Calendar.YEAR,event.getStartTime().get(Calendar.YEAR));
+                                            start.set(Calendar.MONTH,event.getStartTime().get(Calendar.MONTH));
+                                            start.set(Calendar.DAY_OF_MONTH, event.getStartTime().get(Calendar.DAY_OF_MONTH));
+                                            start.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                            start.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
 
-                    Intent intent = new Intent(v.getContext(), GlobalCalendar.class);
+                                            finish.set(Calendar.YEAR, event.getEndTime().get(Calendar.YEAR));
+                                            finish.set(Calendar.MONTH, event.getEndTime().get(Calendar.MONTH));
+                                            finish.set(Calendar.DAY_OF_MONTH, event.getEndTime().get(Calendar.DAY_OF_MONTH));
+                                            finish.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                            finish.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                            WeekViewEvent newevent = new WeekViewEvent(id, cname, start, finish, colorName);
+                                            listevent.add(newevent);
+                                        }
+                                    }
+                                    DataManager.getInstance().setevents(listevent);
+                                    startActivity(intent1);
+                                }else if (ite == (-2)){
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            Toast.makeText(EditEvent.this, "No relative events", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    textView6.setVisibility(View.GONE);
+                                }else if (ite == (-1)){
+                                    runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            Toast.makeText(EditEvent.this, "No grouping files found", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    textView6.setVisibility(View.GONE);
+                                }
+                            }
+                        } else {
+                            runOnUiThread(new Runnable() {
+                                public void run() {
 
-                    List<WeekViewEvent> list = new ArrayList<WeekViewEvent>();
-                    list = DataManager.getInstance().getevents();
-                    WeekViewEvent event = new WeekViewEvent(ID, cname, startTime, finishTime,colorName);
-                    list.add(event);
-                    DataManager.getInstance().setevents(list);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(EditEvent.this, "Unvalid Time", Toast.LENGTH_SHORT).show();
-                }
+                                    Toast.makeText(EditEvent.this, "Unvalid Time", Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+
+                    }
+                }).start();
             }
 
         });
@@ -254,5 +384,30 @@ public class EditEvent extends Activity {
             case "Dec": return 11;
         }
         return 15;
+    }
+
+    public WeekViewEvent getEvent(Long id) {
+        for (int i = 0; i < listevent.size(); i++) {
+            WeekViewEvent event = listevent.get(i);
+            if (id == event.getId()) return event;
+        }
+        return null;
+    }
+
+
+    public int getGroup(Long id) {
+        if (!grouplist.isEmpty()) {
+            for (int i = 0; i < grouplist.size(); i++) {
+                List<Long> groupedlist = grouplist.get(i);
+               for (int j = 0; j < groupedlist.size(); j++) {
+                    if (groupedlist.get(j).equals(id)) {
+                        return i;
+                    }
+                }
+            }
+            return -2;
+        }
+
+        return -1;
     }
 }

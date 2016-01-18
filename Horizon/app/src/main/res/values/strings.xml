@@ -21,5 +21,7 @@
     <string name="title_activity_zone_set">ZoneSet</string>
     <string name="title_activity_edit_event">EditEvent</string>
     <string name="title_activity_loading_circle">LoadingCircle</string>
+    <string name="title_activity_unlock_screen">UnlockScreen</string>
+    <string name="title_activity_test">Test</string>
 
 </resources>

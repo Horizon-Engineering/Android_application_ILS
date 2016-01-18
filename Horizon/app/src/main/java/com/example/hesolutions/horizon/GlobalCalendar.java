@@ -83,13 +83,6 @@ public class GlobalCalendar extends Activity{
                 if (event.getName().equals(DataManager.getInstance().getUsername()))
                 {
 
-                    List<WeekViewEvent> listevent=DataManager.getInstance().getevents();
-                    System.out.println(event.getName() + event.getId()+"++++++++++++++++++++++" + event.getName()+event.getId());
-                    listevent.remove(event);
-                    DataManager.getInstance().setevents(listevent);
-
-
-
                     Intent editevent = new Intent(GlobalCalendar.this, EditEvent.class);
 
                     Date starttime = event.getStartTime().getTime();

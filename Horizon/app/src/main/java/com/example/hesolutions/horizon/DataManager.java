@@ -187,7 +187,18 @@ public class DataManager {
         return listID;
     }
 
-
+    public List<List<Long>> groupID = new ArrayList<List<Long>>();
+    public List getGroupID()
+    {
+        dataupdateList2(groupID,"group");
+        return groupID;
+    }
+    public List setGroupID(List<List<Long>> list)
+    {
+        this.groupID = list;
+        writedata2(groupID,"group");
+        return groupID;
+    }
 
     //====================read data from arraylist===============================
 /*
@@ -286,7 +297,6 @@ public class DataManager {
                 FileOutputStream fos = new FileOutputStream(file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
 
-                System.out.println(list.size()+"size+++++++++++++++++++++++");
                 oos.writeObject(list);
 
                 oos.flush();
@@ -298,6 +308,36 @@ public class DataManager {
             }
         }
     }
+
+    public static void writedata2(List<List<Long>> list, String filename) {
+        String state;
+        state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+
+            File root = Environment.getExternalStorageDirectory();
+            File dir = new File(root.getAbsolutePath() + "/Horizon");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            File file = new File(dir, filename);
+
+            try {
+
+
+                FileOutputStream fos = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(list);
+
+                oos.flush();
+            } catch (FileNotFoundException e) {
+
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 
     //==========================read data from hashmap=======================
@@ -387,14 +427,45 @@ public class DataManager {
             try {
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois = new ObjectInputStream(fis);
+
                 List<WeekViewEvent> listone = (List)ois.readObject();
                 list.clear();
                 for (int i =0; i<listone.size();i++)
                 {
                     list.add(listone.get(i));
                 }
-                System.out.println(list.size()+"size+++++++++++++++++++++++++++++++++++++++++++++++");
 
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public static void dataupdateList2(List<List<Long>> list, String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon");
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                List<List<Long>> listone = (List)ois.readObject();
+                list.clear();
+                for (int i =0; i<listone.size();i++)
+                {
+                    List<Long> list2 = listone.get(i);
+                    List<Long> list3 = new ArrayList<>();
+                    for (int j = 0; j < list2.size();j++)
+                    {
+                       list3.add(list2.get(j));
+                    }
+                    list.add(list3);
+                }
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {

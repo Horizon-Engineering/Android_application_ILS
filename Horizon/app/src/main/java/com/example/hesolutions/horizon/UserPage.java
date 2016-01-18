@@ -19,6 +19,7 @@ public class UserPage extends Activity {
     TextView Username;
     Button logout;
     Button Calendar;
+    Button testButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,7 @@ public class UserPage extends Activity {
         Username = (TextView)findViewById(R.id.Username);
         logout = (Button) findViewById(R.id.logout);
         Calendar = (Button)findViewById(R.id.Calendar);
+        testButton = (Button)findViewById(R.id.testButton);
 
         String cname = DataManager.getInstance().getUsername();
         Username.setText(cname);
@@ -60,6 +62,17 @@ public class UserPage extends Activity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(v.getContext(),GlobalCalendar.class);
+                startActivity(intent);
+
+
+            }
+        });
+
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(v.getContext(),Test.class);
                 startActivity(intent);
 
 
