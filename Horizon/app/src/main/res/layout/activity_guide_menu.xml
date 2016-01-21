@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:background="@drawable/background_pic" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.homa.hls.widgetcustom.CustomGallery android:id="@id/gallery3" android:focusable="false" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+    <RelativeLayout android:id="@id/guide_menu_head" android:background="@drawable/top_menu" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <ImageView android:id="@id/back_blank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/setting_blank" />
+        <ImageView android:id="@id/back_blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/left_back" android:layout_toRightOf="@id/back_blank" android:layout_centerVertical="true" />
+        <Button android:id="@id/btn_back_adddevice" android:background="@drawable/back" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" />
+        <TextView android:textSize="14.0dip" android:textColor="@color/white" android:gravity="left" android:id="@id/back_tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/back_text" android:layout_toRightOf="@id/back_blank2" android:layout_centerVertical="true" />
+        <TextView android:textSize="20.0dip" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/scene_tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/tips_guide" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <ImageView android:id="@id/Imageview_gone" android:background="@drawable/setting_gone" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_toLeftOf="@id/listView1" android:layout_below="@id/guide_menu_head" />
+    <ImageView android:id="@id/blank21" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank3" android:layout_alignParentRight="true" />
+    <RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@id/blank21">
+        <ImageView android:id="@id/img_left" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="69.0dip" android:src="@drawable/item_left" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+        <TextView android:textSize="13.0dip" android:textColor="#ff373737" android:gravity="center" android:id="@id/textView_num" android:layout_width="50.0dip" android:layout_height="wrap_content" android:layout_marginRight="18.0dip" android:maxLines="1" android:layout_alignParentRight="true" />
+        <ImageView android:id="@id/img_right" android:layout_width="8.0dip" android:layout_height="wrap_content" android:layout_marginRight="10.0dip" android:src="@drawable/item_right" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <ListView android:id="@id/listView1" android:background="@drawable/guide_right_bgr" android:visibility="gone" android:layout_width="200.0dip" android:layout_height="fill_parent" android:drawSelectorOnTop="false" android:cacheColorHint="#00000000" android:divider="@null" android:layout_below="@id/guide_menu_head" android:layout_alignParentRight="true" android:fastScrollEnabled="false" />
+</RelativeLayout>

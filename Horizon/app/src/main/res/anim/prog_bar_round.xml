@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list android:oneshot="false"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:duration="200" android:drawable="@drawable/progr_bar_item1" />
+    <item android:duration="200" android:drawable="@drawable/progr_bar_item2" />
+    <item android:duration="200" android:drawable="@drawable/progr_bar_item3" />
+    <item android:duration="200" android:drawable="@drawable/progr_bar_item4" />
+    <item android:duration="200" android:drawable="@drawable/progr_bar_item5" />
+    <item android:duration="200" android:drawable="@drawable/progr_bar_item6" />
+    <item android:duration="200" android:drawable="@drawable/progr_bar_item7" />
+    <item android:duration="200" android:drawable="@drawable/progr_bar_item8" />
+</animation-list>

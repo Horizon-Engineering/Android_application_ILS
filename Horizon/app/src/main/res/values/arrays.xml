@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="bottom_menu_text_data">
+        <item>Scenes</item>
+        <item>Areas</item>
+        <item>Settings</item>
+    </string-array>
+    <string-array name="init_scene_text_data">
+        <item>Sunset</item>
+        <item>Sea</item>
+        <item>Bamboo</item>
+        <item>Sakura</item>
+    </string-array>
+    <string-array name="init_scene_text_data1">
+        <item>Energizer</item>
+        <item>Relax</item>
+        <item>Concentrate</item>
+        <item>Reading</item>
+    </string-array>
+    <string-array name="choose_devicetype_text_data">
+        <item>Full color</item>
+        <item>Smart socket</item>
+        <item>Single color</item>
+        <item>Color temp</item>
+        <item>Curtain controller</item>
+    </string-array>
+    <string-array name="choose_devicetype_text_data_area">
+        <item>Full color</item>
+        <item>Smart socket</item>
+        <item>Single color</item>
+        <item>Color temp</item>
+        <item>Photot sensor</item>
+        <item>Motion sensor</item>
+        <item>Curtain controller</item>
+        <item>Temperature sensor</item>
+    </string-array>
+    <string-array name="choose_devicetype_textgroup_data">
+        <item>Full color group</item>
+        <item>Smart socket group</item>
+        <item>Single color group</item>
+        <item>Color temp group</item>
+        <item>Curtain group</item>
+    </string-array>
+    <string-array name="setting_menu_item">
+        <item>Add device</item>
+        <item>Edit device</item>
+        <item>Add group</item>
+        <item>Edit group</item>
+    </string-array>
+    <string-array name="setting_list_text_data_Pair">
+        <item>Import data</item>
+        <item>Export data</item>
+        <item>Help</item>
+        <item>App information</item>
+    </string-array>
+    <string-array name="hue_effect">
+        <item>Jump</item>
+        <item>Warning</item>
+        <item>Flash</item>
+        <item>Fader</item>
+        <item>Candle</item>
+    </string-array>
+    <string-array name="hue_effect_color">
+        <item>Jump</item>
+        <item>Fader</item>
+        <item>Candle</item>
+    </string-array>
+    <string-array name="time_interval">
+        <item>level 1</item>
+        <item>level 2</item>
+        <item>level 3</item>
+        <item>level 4</item>
+        <item>level 5</item>
+        <item>level 6</item>
+        <item>level 7</item>
+        <item>level 8</item>
+        <item>level 9</item>
+        <item>level 10</item>
+    </string-array>
+    <string-array name="mode_minparam">
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+        <item>100</item>
+    </string-array>
+    <string-array name="mode_maxparam_ab">
+        <item>Invaild</item>
+        <item>500</item>
+        <item>550</item>
+        <item>600</item>
+        <item>650</item>
+        <item>700</item>
+        <item>750</item>
+        <item>800</item>
+        <item>850</item>
+        <item>900</item>
+        <item>1000</item>
+    </string-array>
+    <string-array name="mode_maxparam">
+        <item>500</item>
+        <item>550</item>
+        <item>600</item>
+        <item>650</item>
+        <item>700</item>
+        <item>750</item>
+        <item>800</item>
+        <item>850</item>
+        <item>900</item>
+        <item>1000</item>
+    </string-array>
+    <string-array name="mode_upparamb">
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+        <item>90</item>
+    </string-array>
+    <string-array name="min_param">
+        <item>0</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+        <item>70</item>
+        <item>80</item>
+    </string-array>
+    <string-array name="guide_menu">
+        <item>WLAN Settings</item>
+        <item>Network settings</item>
+        <item>Add by QR code</item>
+        <item>Add by binding</item>
+        <item>Edit device</item>
+        <item>New group</item>
+        <item>Edit group</item>
+        <item>New scene</item>
+        <item>Edit scene</item>
+        <item>Download scene</item>
+        <item>New area</item>
+        <item>Edit area</item>
+        <item>Timer</item>
+        <item>Alarm</item>
+        <item>Import data</item>
+        <item>Export data</item>
+        <item>Binding settings</item>
+        <item>Gateway password</item>
+    </string-array>
+    <string-array name="light_mode">
+        <item>Enhancement mode</item>
+        <item>Opposite mode</item>
+        <item>Hold mode</item>
+    </string-array>
+    <string-array name="light_param">
+        <item>50</item>
+        <item>100</item>
+        <item>150</item>
+        <item>200</item>
+        <item>250</item>
+        <item>300</item>
+        <item>350</item>
+        <item>400</item>
+        <item>450</item>
+        <item>500</item>
+    </string-array>
+    <string-array name="timper_param">
+        <item>0</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+        <item>30</item>
+        <item>35</item>
+        <item>40</item>
+        <item>45</item>
+        <item>50</item>
+    </string-array>
+</resources>

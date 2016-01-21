@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="horizontal" android:background="@drawable/header_line" android:layout_width="fill_parent" android:layout_height="70.0px"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView android:id="@id/groupIcon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0px" android:src="@drawable/header_a" android:layout_centerVertical="true" />
+    <TextView android:textSize="18.0dip" android:textColor="#ff373737" android:id="@id/groupto" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="15.0px" android:layout_marginRight="35.0px" android:text="NO DATA FOUND" android:lines="1" android:layout_toRightOf="@id/groupIcon" android:layout_centerVertical="true" />
+    <ImageView android:id="@id/openIcon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="15.0px" android:src="@drawable/group_close" android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+</RelativeLayout>

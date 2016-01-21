@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="vertical" android:background="@drawable/background_pic" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:id="@id/choosedevice_head" android:background="@drawable/top_menu" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <ImageView android:id="@id/back_blank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/setting_blank" />
+        <ImageView android:id="@id/back_blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/left_back" android:layout_toRightOf="@id/back_blank" android:layout_centerVertical="true" />
+        <Button android:id="@id/btn_back_choosedevice" android:background="@drawable/back" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" />
+        <TextView android:textSize="14.0dip" android:textColor="@color/white" android:gravity="left" android:id="@id/back_tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/back_text" android:layout_toRightOf="@id/back_blank2" android:layout_centerVertical="true" />
+        <TextView android:textSize="20.0dip" android:textColor="@color/white" android:gravity="center" android:id="@id/btn_back_choosedevice_tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/choose_device" android:layout_toLeftOf="@id/sequence" android:layout_toRightOf="@id/btn_back_choosedevice" android:layout_centerVertical="true" />
+        <Button android:textSize="13.0dip" android:textColor="@color/white" android:id="@id/sequence" android:background="@drawable/seque" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/name" android:layout_toLeftOf="@id/time_sequence" android:layout_centerVertical="true" />
+        <Button android:textSize="13.0dip" android:textColor="@color/white" android:id="@id/time_sequence" android:background="@drawable/time_seque" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/time" android:layout_toLeftOf="@id/blank" android:layout_centerVertical="true" />
+        <ImageView android:id="@id/blank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank1" android:layout_alignParentRight="true" />
+    </RelativeLayout>
+    <RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_above="@id/btn_save_choosedevice" android:layout_below="@id/choosedevice_head">
+        <ListView android:id="@id/listView1" android:clickable="false" android:layout_width="fill_parent" android:layout_height="fill_parent" android:layout_marginTop="13.0dip" android:listSelector="#00000000" android:drawSelectorOnTop="false" android:cacheColorHint="@null" android:divider="@drawable/blank0101" android:layout_alignParentLeft="true" />
+    </RelativeLayout>
+    <ImageView android:id="@id/blankdshe" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank2" />
+    <ImageView android:id="@id/blankhrb" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank2" android:layout_alignParentRight="true" />
+    <Button android:textSize="15.0dip" android:textColor="@color/white" android:id="@id/btn_save_choosedevice" android:background="@drawable/buttoncolor_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/save" android:layout_toLeftOf="@id/blankhrb" android:layout_toRightOf="@id/blankdshe" android:layout_above="@id/blankfeegb" />
+    <ImageView android:id="@id/blankfeegb" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank3" android:layout_alignParentBottom="true" />
+</RelativeLayout>

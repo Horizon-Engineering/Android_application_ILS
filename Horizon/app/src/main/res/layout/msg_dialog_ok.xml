@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:layout_centerVertical="true">
+        <RelativeLayout android:background="@drawable/setting_add_bgr" android:layout_width="wrap_content" android:layout_height="wrap_content">
+            <RelativeLayout android:id="@+id/pass_rllt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="15.0dip">
+                <Button android:id="@+id/textViewa" android:background="@drawable/setting_blank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentLeft="true" />
+                <TextView android:textSize="15.0dip" android:textColor="#ff373737" android:gravity="center" android:id="@+id/textinfor" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toLeftOf="@+id/textViewb" android:layout_toRightOf="@+id/textViewa" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+                <Button android:id="@+id/textViewb" android:background="@drawable/setting_blank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" />
+            </RelativeLayout>
+            <RelativeLayout android:id="@+id/pass_rllt2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:layout_below="@+id/pass_rllt" android:layout_centerHorizontal="true">
+                <Button android:textColor="#ff373737" android:id="@+id/btn_ok" android:background="@drawable/button_ok_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/ok" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+            </RelativeLayout>
+            <Button android:id="@+id/textViewc" android:background="@drawable/blank0100" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/pass_rllt2" />
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>

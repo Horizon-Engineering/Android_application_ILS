@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="vertical" android:background="@drawable/background_pic" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:id="@id/adddevice_head" android:background="@drawable/top_menu" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <ImageView android:id="@id/back_blank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/setting_blank" />
+        <ImageView android:id="@id/back_blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/left_back" android:layout_toRightOf="@id/back_blank" android:layout_centerVertical="true" />
+        <Button android:id="@id/btn_back_adddevice" android:background="@drawable/back" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" />
+        <TextView android:textSize="14.0dip" android:textColor="@color/white" android:gravity="left" android:id="@id/back_tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/back_text" android:layout_toRightOf="@id/back_blank2" android:layout_centerVertical="true" />
+        <TextView android:textSize="20.0dip" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/scene_tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/add_device_text" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <ImageView android:id="@id/back_blankgac" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank3" android:layout_below="@id/adddevice_head" />
+    <ScrollView android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_above="@id/bottom_gridview" android:layout_below="@id/back_blankgac">
+        <RelativeLayout android:focusable="true" android:focusableInTouchMode="true" android:layout_width="wrap_content" android:layout_height="fill_parent">
+            <RelativeLayout android:id="@id/device_Name" android:layout_width="fill_parent" android:layout_height="wrap_content">
+                <ImageView android:id="@id/blank" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                <ImageView android:id="@id/blank2" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" />
+                <ImageView android:id="@id/blank3" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toRightOf="@id/blank" />
+                <EditText android:textColor="#ff373737" android:id="@id/editText1" android:background="@drawable/edittext_backgroud" android:paddingLeft="10.0dip" android:focusable="true" android:focusableInTouchMode="true" android:layout_width="wrap_content" android:layout_height="wrap_content" android:hint="@string/name" android:singleLine="true" android:maxLength="20" android:layout_toLeftOf="@id/ed_blank" android:layout_toRightOf="@id/blank" android:layout_centerVertical="true" android:inputType="text" android:imeOptions="actionDone" />
+                <ImageView android:id="@id/ed_blank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank2" android:layout_alignParentRight="true" />
+            </RelativeLayout>
+            <ImageView android:id="@id/da_blank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank3" android:layout_below="@id/device_Name" android:layout_alignParentRight="true" />
+            <RelativeLayout android:id="@id/adddevice_networkinfo_layout" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/da_blank">
+                <RelativeLayout android:id="@id/network_llt" android:layout_width="fill_parent" android:layout_height="wrap_content">
+                    <ImageView android:id="@id/blank4" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    <ImageView android:id="@id/blank4fdhgf" android:background="@drawable/blank1" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    <TextView android:textSize="15.0dip" android:textColor="#ff373737" android:id="@id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/network_address" android:layout_toRightOf="@id/blank4" android:layout_centerVertical="true" />
+                    <ImageView android:id="@id/blank5" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" />
+                    <TextView android:textSize="15.0dip" android:textColor="#ff373737" android:gravity="right" android:id="@id/device_addr" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toLeftOf="@id/blank5" android:layout_toRightOf="@id/textView2" android:layout_centerVertical="true" />
+                </RelativeLayout>
+            </RelativeLayout>
+            <ImageView android:id="@id/dfa_blank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank3" android:layout_below="@id/adddevice_networkinfo_layout" android:layout_alignParentRight="true" />
+            <RelativeLayout android:id="@id/choose_area" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="5.0dip" android:layout_below="@id/dfa_blank">
+                <ImageView android:id="@id/blank7" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentLeft="true" />
+                <ImageView android:id="@id/blankwsa" android:background="@drawable/blank1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" />
+                <ImageView android:id="@id/blank8" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" />
+                <TextView android:textSize="15.0dip" android:textColor="#ff373737" android:id="@id/choose_area_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/choose_area" android:layout_toRightOf="@id/blank7" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+                <Spinner android:id="@id/choose_area_btn" android:background="@drawable/buttonshort_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_toLeftOf="@id/blank8" android:layout_toRightOf="@id/choose_area_text" android:layout_centerVertical="true" />
+            </RelativeLayout>
+            <ImageView android:id="@id/fas_blank" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank3" android:layout_below="@id/choose_area" android:layout_alignParentRight="true" />
+            <RelativeLayout android:id="@id/choose_devicetype" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/fas_blank">
+                <ImageView android:id="@id/blank07" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentLeft="true" />
+                <ImageView android:id="@id/blank08" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" />
+                <TextView android:textSize="15.0dip" android:textColor="#ff373737" android:id="@id/choose_devicetype_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/choose_devicetype" android:layout_toRightOf="@id/blank07" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+                <ImageView android:id="@id/choose_devicetype_btn" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toLeftOf="@id/blank08" android:layout_alignLeft="@id/devicetype_text" android:layout_alignRight="@id/devicetype_text" android:layout_centerHorizontal="true" />
+                <TextView android:textSize="12.0dip" android:textColor="#ff6d6d6d" android:gravity="center" android:id="@id/devicetype_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toLeftOf="@id/blank08" android:layout_below="@id/choose_devicetype_btn" />
+            </RelativeLayout>
+            <ImageView android:id="@id/blank012" android:background="@drawable/blank3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@id/choose_devicetype" />
+            <TextView android:textSize="15.0dip" android:textColor="@color/red" android:gravity="center" android:id="@id/adddevice_savetextview" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pair_tips" android:layout_below="@id/blank012" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+            <ImageView android:id="@id/blank010" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentLeft="true" />
+            <ImageView android:id="@id/ed_blank0100" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank3" android:layout_below="@id/adddevice_savebtn" />
+            <ImageView android:id="@id/ed_blank000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank2" android:layout_alignParentRight="true" />
+            <ImageView android:id="@id/ed_blank011" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank3" android:layout_below="@id/adddevice_savetextview" />
+            <Button android:textSize="15.0dip" android:textColor="@color/white" android:id="@id/adddevice_savebtn" android:background="@drawable/buttoncolor_selector" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/save" android:layout_toLeftOf="@id/ed_blank000" android:layout_toRightOf="@id/blank010" android:layout_below="@id/ed_blank011" />
+        </RelativeLayout>
+    </ScrollView>
+    <RelativeLayout android:id="@id/bottom_gridview" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentBottom="true">
+        <GridView android:id="@id/scene_adddevice_set" android:background="@drawable/bottom_menu" android:scrollbars="none" android:layout_width="fill_parent" android:layout_height="wrap_content" android:numColumns="3" />
+    </RelativeLayout>
+</RelativeLayout>

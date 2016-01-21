@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout android:id="@id/rllt_photograph" android:background="@drawable/button_dialog_bgr" android:layout_width="fill_parent" android:layout_height="wrap_content">
+        <ImageView android:id="@id/imageView1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank" />
+        <Button android:textSize="15.0dip" android:textColor="#ff373737" android:id="@id/photograph_btn" android:background="@drawable/button_dialog_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/photograph" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <RelativeLayout android:id="@id/rllt_choosefromphoto" android:background="@drawable/button_dialog_bgr" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/rllt_photograph">
+        <ImageView android:id="@id/imageView2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank" />
+        <Button android:textSize="15.0dip" android:textColor="#ff373737" android:id="@id/choosefromphoto_btn" android:background="@drawable/button_dialog_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/choosefromphoto" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <RelativeLayout android:id="@id/rllt_delimg" android:background="@drawable/button_dialog_bgr" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/rllt_choosefromphoto">
+        <ImageView android:id="@id/imageView_delimg" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank" />
+        <Button android:textSize="15.0dip" android:textColor="#ff373737" android:id="@id/delimg_btn" android:background="@drawable/button_dialog_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/del_img" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+    </RelativeLayout>
+    <RelativeLayout android:background="@drawable/button_dialog_bgr" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_below="@id/rllt_delimg">
+        <ImageView android:id="@id/imageView3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank" />
+        <Button android:textSize="15.0dip" android:textColor="#ff373737" android:id="@id/cancle_btn" android:background="@drawable/button_dialog_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/cancel" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+    </RelativeLayout>
+</RelativeLayout>

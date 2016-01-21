@@ -72,7 +72,7 @@ public class UserPage extends Activity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(v.getContext(),Test.class);
+                Intent intent = new Intent(v.getContext(),AddSceneActivity.class);
                 startActivity(intent);
 
 
