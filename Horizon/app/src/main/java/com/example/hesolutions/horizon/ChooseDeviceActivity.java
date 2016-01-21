@@ -36,6 +36,7 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.allin.activity.action.DataStorage;
 import com.allin.activity.action.SysApplication;
@@ -3167,7 +3168,7 @@ public class ChooseDeviceActivity extends Activity {
             }
         }
     }
-
+/*  Valeria changed
     class WeightListen implements OnClickListener {
         WeightListen() {
         }
@@ -3365,7 +3366,7 @@ public class ChooseDeviceActivity extends Activity {
             }
         }
     }
-
+*/
     public ChooseDeviceActivity() {
         this.mList = null;
         this.devicelist = null;
@@ -3451,10 +3452,12 @@ public class ChooseDeviceActivity extends Activity {
         this.index = getIntent().getStringExtra("index");
         this.photo = getIntent().getStringExtra("photo");
         this.picturePath = getIntent().getStringExtra("picturePath");
+        /* Valeria
         this.mChoosedeviceBackButton.setOnClickListener(new WeightListen());
         this.mChoosedeviceSaveButton.setOnClickListener(new WeightListen());
         this.time_sequence.setOnClickListener(new WeightListen());
         this.sequence.setOnClickListener(new WeightListen());
+        */
         this.mThreadGC = new ThreadGC();
         this.mThreadGC.start();
         this.thread = new ChangeBrightthread();
@@ -3527,11 +3530,8 @@ public class ChooseDeviceActivity extends Activity {
     }
 
     private void LoadDeviceList() {
-        if (this.mScene != null) {
-            this.allDeviceList = DatabaseManager.getInstance().getDeviceListExceptKnobandsenor();
-        } else if (this.mArea != null) {
-            this.allDeviceList = DatabaseManager.getInstance().getDeviceListExceptKnobandsenor();
-        }
+
+        this.allDeviceList = DatabaseManager.getInstance().getDeviceListExceptKnobandsenor();
         if (this.allDeviceList != null && this.allDeviceList.getmDeviceList() != null) {
             this.devicelist = this.allDeviceList.getmDeviceList();
             if (SysApplication.mSequece) {
@@ -3539,63 +3539,41 @@ public class ChooseDeviceActivity extends Activity {
             }
             if (this.devicelist != null) {
                 for (int i = 0; i < this.devicelist.size(); i++) {
-                    byte[] mScenePar = new byte[5];
-                    int[] SceneDeviceMac = new int[5];
-                    if (this.mScene != null) {
-                        if (this.index == null || !this.index.equals("AddSceneToChooseDevice")) {
-                            ((Device) this.devicelist.get(i)).setSceneParams(DatabaseManager.getInstance().getScenelightingofDevice((Device) this.devicelist.get(i), this.mScene));
-                            ((Device) this.devicelist.get(i)).setSceneDeviceMac(DatabaseManager.getInstance().getScenePosofDevice((Device) this.devicelist.get(i), this.mScene));
+
+                    short devicetype = ((Device) this.devicelist.get(i)).getDeviceType();
+                    Device device;
+                    byte[] bArr;
+                    if (devicetype == (short) 1 || devicetype == (short) 97) {
+                        device = (Device) this.devicelist.get(i);
+                        bArr = new byte[5];
+                        bArr[0] = (byte) -64;
+                        device.setSceneParams(bArr);
+                    } else if (devicetype == (short) 2 || devicetype == (short) 98 || devicetype == (short) 3 || devicetype == (short) 99 || devicetype == (short) 4 || devicetype == (short) 100 || devicetype == (short) 15 || devicetype == (short) 111) {
+                        device = (Device) this.devicelist.get(i);
+                        bArr = new byte[5];
+                        bArr[0] = (byte) 17;
+                        device.setSceneParams(bArr);
+                    } else if (devicetype == (short) 5) {
+                        if (((Device) this.devicelist.get(i)).getSubDeviceType() == (short) 1) {
+                            device = (Device) this.devicelist.get(i);
+                            bArr = new byte[5];
+                            bArr[0] = (byte) 48;
+                            device.setSceneParams(bArr);
+                        } else if (((Device) this.devicelist.get(i)).getSubDeviceType() == (short) 3) {
+                            device = (Device) this.devicelist.get(i);
+                            bArr = new byte[5];
+                            bArr[0] = (byte) 52;
+                            device.setSceneParams(bArr);
                         } else {
-                            short devicetype = ((Device) this.devicelist.get(i)).getDeviceType();
-                            Device device;
-                            byte[] bArr;
-                            if (devicetype == (short) 1 || devicetype == (short) 97) {
-                                device = (Device) this.devicelist.get(i);
-                                bArr = new byte[5];
-                                bArr[0] = (byte) -64;
-                                device.setSceneParams(bArr);
-                            } else if (devicetype == (short) 2 || devicetype == (short) 98 || devicetype == (short) 3 || devicetype == (short) 99 || devicetype == (short) 4 || devicetype == (short) 100 || devicetype == (short) 15 || devicetype == (short) 111) {
-                                device = (Device) this.devicelist.get(i);
-                                bArr = new byte[5];
-                                bArr[0] = (byte) 17;
-                                device.setSceneParams(bArr);
-                            } else if (devicetype == (short) 5) {
-                                if (((Device) this.devicelist.get(i)).getSubDeviceType() == (short) 1) {
-                                    device = (Device) this.devicelist.get(i);
-                                    bArr = new byte[5];
-                                    bArr[0] = (byte) 48;
-                                    device.setSceneParams(bArr);
-                                } else if (((Device) this.devicelist.get(i)).getSubDeviceType() == (short) 3) {
-                                    device = (Device) this.devicelist.get(i);
-                                    bArr = new byte[5];
-                                    bArr[0] = (byte) 52;
-                                    device.setSceneParams(bArr);
-                                } else {
-                                    device = (Device) this.devicelist.get(i);
-                                    bArr = new byte[5];
-                                    bArr[0] = (byte) 58;
-                                    device.setSceneParams(bArr);
-                                }
-                            }
+                            device = (Device) this.devicelist.get(i);
+                            bArr = new byte[5];
+                            bArr[0] = (byte) 58;
+                            device.setSceneParams(bArr);
                         }
                     }
+
                 }
-                if (this.mArea != null) {
-                    DataStorage.getInstance(this).putInt("PageIndex", 1);
-                    mDeviceListOfCurrAreaOrScene = DatabaseManager.getInstance().getDeviceListOfArea(this.mArea).getmDeviceList();
-                }
-                if (this.mScene != null) {
-                    DataStorage.getInstance(this).putInt("PageIndex", 3);
-                    mDeviceListOfCurrAreaOrScene = DatabaseManager.getInstance().getDeviceListOfScene(this.mScene).getmDeviceList();
-                }
-                if (this.index != null && this.index.equals("AddAreaToChooseDevice")) {
-                    DataStorage.getInstance(this).putInt("PageIndex", 0);
-                    mDeviceListOfCurrAreaOrScene = new ArrayList();
-                }
-                if (this.index != null && this.index.equals("AddSceneToChooseDevice")) {
-                    DataStorage.getInstance(this).putInt("PageIndex", 2);
-                    mDeviceListOfCurrAreaOrScene = new ArrayList();
-                }
+
                 this.adapter = new MyAdapter();
                 this.mList.setAdapter(this.adapter);
                 this.mList.setRecyclerListener(new C01751());

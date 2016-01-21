@@ -574,13 +574,6 @@ public class LogoActivity extends Activity {
         this.inflater = ((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE));
         DataStorage.getInstance(this).putInt("deviceid", -1);
         DataStorage.getInstance(this).putInt("scene_gridview_item", -1);
-        RelativeLayout rl = (RelativeLayout)findViewById(R.id.logo);
-        this.sdpath1 = (Environment.getExternalStorageDirectory().getAbsoluteFile() + "/iLightsIn/homeSystemlogoImage/logo.jpg");
-        this.sdpath2 = (Environment.getExternalStorageDirectory().getAbsoluteFile() + "/iLightsIn/homeSystemlogoImage/logo.png");
-        this.sdpath3 = (Environment.getExternalStorageDirectory().getAbsoluteFile() + "/iLightsIn/homeSystemlogoImage/logo.bmp");
-        this.file1 = new File(this.sdpath1);
-        this.file2 = new File(this.sdpath2);
-        this.file3 = new File(this.sdpath3);
 
         try {
 

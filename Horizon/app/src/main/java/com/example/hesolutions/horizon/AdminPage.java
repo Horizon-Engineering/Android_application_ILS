@@ -80,12 +80,10 @@ public class AdminPage extends AppCompatActivity {
         });
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        System.out.println("****************"+ "HHHHHHHHHHHHHHHHHHHH" + " Right place");
         if (requestCode != 0) {
             Toast.makeText(this, getResources().getString(R.string.scanerfail), Toast.LENGTH_LONG).show();
         } else if (resultCode == -1) {
             String contents = data.getExtras().getString("result");
-            System.out.println("****************"+contents + " Right place");
             boolean boolresu = false;
             if (contents != null && contents.length() == 7) {
                 int devtype;
