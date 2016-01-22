@@ -611,17 +611,30 @@ public class ZxingToAddDeviceActivity extends Activity {
                     view = ZxingToAddDeviceActivity.this.inflater.inflate(R.layout.msg_dialog, null);
                     Button btn_ok = (Button) view.findViewById(R.id.btn_ok);
                     Button btn_no = (Button) view.findViewById(R.id.btn_cancel);
-                    btn_no.setText(ZxingToAddDeviceActivity.this.getResources().getString(R.string.test_text));
+                    btn_no.setText("Back to Admin");
+                    btn_ok.setText("Scan Another");
                     ((TextView) view.findViewById(R.id.textinfor)).setText(ZxingToAddDeviceActivity.this.getResources().getString(R.string.add_success));
                     ZxingToAddDeviceActivity.this.mdialog = new Dialog(ZxingToAddDeviceActivity.this, R.style.Theme_dialog);
                     ZxingToAddDeviceActivity.this.mdialog.setContentView(view);
                     ZxingToAddDeviceActivity.this.mdialog.setCancelable(true);
                     ZxingToAddDeviceActivity.this.mdialog.setCanceledOnTouchOutside(false);
                     ZxingToAddDeviceActivity.this.mdialog.show();
-                    /*
-                    btn_ok.setOnClickListener(new C00402());
-                    btn_no.setOnClickListener(new C00413());
-                    */
+                    btn_ok.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            ZxingToAddDeviceActivity.this.startActivityForResult(new Intent(ZxingToAddDeviceActivity.this, CaptureActivity.class), 0);
+                            ZxingToAddDeviceActivity.this.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                        }
+                    });
+                    btn_no.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent1 = new Intent(v.getContext(), AdminPage.class);
+                            startActivity(intent1);
+                        }
+                    });
+
                 default:
             }
         }

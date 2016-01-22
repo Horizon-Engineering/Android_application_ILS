@@ -45,7 +45,7 @@
                 <TextView android:textSize="12.0dip" android:textColor="#ff6d6d6d" android:gravity="center" android:id="@id/devicetype_text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_toLeftOf="@id/blank08" android:layout_below="@id/choose_devicetype_btn" />
             </RelativeLayout>
             <ImageView android:id="@id/blank012" android:background="@drawable/blank3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@id/choose_devicetype" />
-            <TextView android:textSize="15.0dip" android:textColor="@color/red" android:gravity="center" android:id="@id/adddevice_savetextview" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pair_tips" android:layout_below="@id/blank012" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
+            <TextView android:textSize="15.0dip" android:textColor="@color/red" android:gravity="center" android:id="@id/adddevice_savetextview" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="" android:layout_below="@id/blank012" android:layout_centerHorizontal="true" android:layout_centerVertical="true" />
             <ImageView android:id="@id/blank010" android:background="@drawable/blank2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentLeft="true" />
             <ImageView android:id="@id/ed_blank0100" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank3" android:layout_below="@id/adddevice_savebtn" />
             <ImageView android:id="@id/ed_blank000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank2" android:layout_alignParentRight="true" />
@@ -53,7 +53,8 @@
             <Button android:textSize="15.0dip" android:textColor="@color/white" android:id="@id/adddevice_savebtn" android:background="@drawable/buttoncolor_selector" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/save" android:layout_toLeftOf="@id/ed_blank000" android:layout_toRightOf="@id/blank010" android:layout_below="@id/ed_blank011" />
         </RelativeLayout>
     </ScrollView>
-    <RelativeLayout android:id="@id/bottom_gridview" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentBottom="true">
+    <RelativeLayout android:id="@id/bottom_gridview" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_alignParentBottom="true"
+        android:visibility="gone">
         <GridView android:id="@id/scene_adddevice_set" android:background="@drawable/bottom_menu" android:scrollbars="none" android:layout_width="fill_parent" android:layout_height="wrap_content" android:numColumns="3" />
     </RelativeLayout>
 </RelativeLayout>

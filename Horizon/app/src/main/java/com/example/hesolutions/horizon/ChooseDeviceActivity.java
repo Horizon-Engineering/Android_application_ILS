@@ -3387,8 +3387,10 @@ public class ChooseDeviceActivity extends Activity {
         this.f23a = 0;
         this.effectpar = new byte[5];
         this.deviceParmats = new byte[5];
-        this.sequence = null;
-        this.time_sequence = null;
+
+        //Valeria
+        //this.sequence = null;
+       // this.time_sequence = null;
         this.thread = null;
         this.R_1 = MotionEventCompat.ACTION_MASK;
         this.G_1 = 245;
@@ -3397,9 +3399,11 @@ public class ChooseDeviceActivity extends Activity {
         this.delay_hue = 1;
         this.mThreadGC = null;
         this.allDeviceList = null;
+        /*
         this.image = new int[]{R.drawable.time_interval_1, R.drawable.time_interval_2, R.drawable.time_interval_3, R.drawable.time_interval_4, R.drawable.time_interval_5, R.drawable.time_interval_6, R.drawable.time_interval_7, R.drawable.time_interval_8, R.drawable.time_interval_9, R.drawable.time_interval_10};
         this.image_ib3 = new int[]{R.drawable.effect_saltus, R.drawable.call_police, R.drawable.effect_glint, R.drawable.effect_shade, R.drawable.candela};
         this.image_ib4 = new int[]{R.drawable.effect_saltus, R.drawable.effect_shade, R.drawable.candela};
+        */
         this.DM = null;
         this.bitmap = null;
         this.bitmapwidth = 0;
@@ -3433,6 +3437,9 @@ public class ChooseDeviceActivity extends Activity {
         getWindowManager().getDefaultDisplay().getMetrics(this.DM);
         this.bitmapwidth = this.DM.widthPixels;
         this.bitmapheight = this.DM.heightPixels / 2;
+
+        //Valeria
+        /*
         if (SysApplication.mSequece) {
             SysApplication.getInstance();
             if (SysApplication.mSequece) {
@@ -3447,6 +3454,7 @@ public class ChooseDeviceActivity extends Activity {
             this.time_sequence.setTextColor(-1);
             this.sequence.setTextColor(-14701071);
         }
+        */
         this.mArea = (Area) getIntent().getSerializableExtra("area");
         this.mScene = (Scene) getIntent().getSerializableExtra("scene");
         this.index = getIntent().getStringExtra("index");
@@ -3467,6 +3475,7 @@ public class ChooseDeviceActivity extends Activity {
     }
 
     protected void onDestroy() {
+
         super.onDestroy();
         this.mArea = null;
         this.image = null;
@@ -3525,8 +3534,10 @@ public class ChooseDeviceActivity extends Activity {
         this.mList = (ListView) findViewById(R.id.listView1);
         this.mChoosedeviceBackButton = (Button) findViewById(R.id.btn_back_choosedevice);
         this.mChoosedeviceSaveButton = (Button) findViewById(R.id.btn_save_choosedevice);
-        this.time_sequence = (Button) findViewById(R.id.time_sequence);
-        this.sequence = (Button) findViewById(R.id.sequence);
+
+        //Valeria
+        //this.time_sequence = (Button) findViewById(R.id.time_sequence);
+        //this.sequence = (Button) findViewById(R.id.sequence);
     }
 
     private void LoadDeviceList() {

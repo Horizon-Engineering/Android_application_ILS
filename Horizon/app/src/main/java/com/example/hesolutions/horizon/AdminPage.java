@@ -1,6 +1,8 @@
 package com.example.hesolutions.horizon;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -80,10 +82,12 @@ public class AdminPage extends AppCompatActivity {
         });
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("****************" + "HHHHHHHHHHHHHHHHHHHH" + " Right place");
         if (requestCode != 0) {
             Toast.makeText(this, getResources().getString(R.string.scanerfail), Toast.LENGTH_LONG).show();
         } else if (resultCode == -1) {
             String contents = data.getExtras().getString("result");
+            System.out.println("****************"+contents + " Right place");
             boolean boolresu = false;
             if (contents != null && contents.length() == 7) {
                 int devtype;
@@ -122,12 +126,28 @@ public class AdminPage extends AppCompatActivity {
                 }
             }
             if (contents != null && !boolresu) {
-                Toast.makeText(AdminPage.this, "QR Code Error", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminPage.this);
+                alertDialog.setTitle("Error");
+                alertDialog.setMessage("QR code error");
+                alertDialog.setPositiveButton("Scan Another", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        AdminPage.this.startActivityForResult(new Intent(AdminPage.this, CaptureActivity.class), 0);
+                        AdminPage.this.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    }
+                });
+
+                alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+                    }
+                });
+
+                alertDialog.show();
+
             }
         }
     }
-
-
 
         /*
         GridView gridView = (GridView)findViewById(R.id.gridView);

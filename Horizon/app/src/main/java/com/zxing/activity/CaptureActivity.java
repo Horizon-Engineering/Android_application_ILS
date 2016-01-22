@@ -20,6 +20,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.example.hesolutions.horizon.AccessPermission;
+import com.example.hesolutions.horizon.AdminPage;
 import com.example.hesolutions.horizon.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -84,6 +87,8 @@ public class CaptureActivity extends Activity implements Callback {
 
             @Override
             public void onClick(View v) {
+                Intent intent1 = new Intent(v.getContext(), AdminPage.class);
+                startActivity(intent1);
                 CaptureActivity.this.finish();
             }
         });
