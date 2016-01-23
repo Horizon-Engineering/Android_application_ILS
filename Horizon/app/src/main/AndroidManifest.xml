@@ -111,7 +111,14 @@
         <activity
             android:name=".ChooseDeviceActivity"
             android:label="@string/title_activity_choose_device" />
-
+        <activity
+            android:name=".ZoneList"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".SectorList"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

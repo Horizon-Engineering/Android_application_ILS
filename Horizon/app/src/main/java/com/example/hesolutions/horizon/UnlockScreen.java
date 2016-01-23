@@ -1,15 +1,12 @@
 package com.example.hesolutions.horizon;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.util.DisplayMetrics;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
@@ -22,25 +19,26 @@ import java.util.ArrayList;
 
 public class UnlockScreen extends Activity {
 
-    TextView CODE1,CODE2,CODE3,CODE4;
+    TextView CODE1, CODE2, CODE3, CODE4;
     GridView gridView;
-    RadioButton radioButton1,radioButton2,radioButton3,radioButton4;
+    RadioButton radioButton1, radioButton2, radioButton3, radioButton4;
     ImageButton cancel;
+    int numberOfZones = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unlock_screen);
-        CODE1 = (TextView)findViewById(R.id.CODE1);
-        CODE2 = (TextView)findViewById(R.id.CODE2);
-        CODE3 = (TextView)findViewById(R.id.CODE3);
-        CODE4 = (TextView)findViewById(R.id.CODE4);
-        gridView = (GridView)findViewById(R.id.gridView);
-        radioButton1 = (RadioButton)findViewById(R.id.radioButton1);
-        radioButton2 = (RadioButton)findViewById(R.id.radioButton2);
-        radioButton3 = (RadioButton)findViewById(R.id.radioButton3);
-        radioButton4 = (RadioButton)findViewById(R.id.radioButton4);
-        cancel = (ImageButton)findViewById(R.id.cancel);
+        CODE1 = (TextView) findViewById(R.id.CODE1);
+        CODE2 = (TextView) findViewById(R.id.CODE2);
+        CODE3 = (TextView) findViewById(R.id.CODE3);
+        CODE4 = (TextView) findViewById(R.id.CODE4);
+        gridView = (GridView) findViewById(R.id.gridView);
+        radioButton1 = (RadioButton) findViewById(R.id.radioButton1);
+        radioButton2 = (RadioButton) findViewById(R.id.radioButton2);
+        radioButton3 = (RadioButton) findViewById(R.id.radioButton3);
+        radioButton4 = (RadioButton) findViewById(R.id.radioButton4);
+        cancel = (ImageButton) findViewById(R.id.cancel);
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -50,12 +48,12 @@ public class UnlockScreen extends Activity {
 
         getWindow().setLayout((int) (height * 0.4), (int) (width * 0.31));
 
-        GridView gridView = (GridView)findViewById(R.id.gridView);
+        GridView gridView = (GridView) findViewById(R.id.gridView);
 
-        String[] numbers = new String[]{"1","2","3",
-                                        "4","5","6",
-                                        "7","8","9",
-                                        " " ,"0"," "};
+        String[] numbers = new String[]{"1", "2", "3",
+                "4", "5", "6",
+                "7", "8", "9",
+                " ", "0", " "};
 
         ArrayAdapter adapter = new ArrayAdapter(this, R.layout.arrayadapter, numbers);
         gridView.setAdapter(adapter);
@@ -88,13 +86,22 @@ public class UnlockScreen extends Activity {
                     bimap = DataManager.getInstance().getaccount();
                     ArrayList<String> nameset = new ArrayList<String>();
                     nameset = bimap.get(code);
+                    //TODO: make sure this check will be removed in final version :)
+                    Intent startNewActivityIntent;
                     if (code.equals("0000")) {
-                        Intent startNewActivityIntent = new Intent(UnlockScreen.this, AdminPage.class);
+                        startNewActivityIntent = new Intent(UnlockScreen.this, AdminPage.class);
                         startActivity(startNewActivityIntent);
                     } else if (nameset != null) {
                         String Caccount = nameset.get(0);
                         String color = nameset.get(1);
-                        Intent startNewActivityIntent = new Intent(UnlockScreen.this, UserPage.class);
+                        //TODO: Replacce this with method call from zoneset
+                        //numberOfZones = ZoneSet.getNumberofZones()
+                        numberOfZones = 5;
+                        if (numberOfZones > 1) {
+                            startNewActivityIntent = new Intent(UnlockScreen.this, ZoneList.class);
+                        } else {
+                            startNewActivityIntent = new Intent(UnlockScreen.this, UserPage.class);
+                        }
                         DataManager.getInstance().setUsername(Caccount);
                         DataManager.getInstance().setcolorname(color);
                         startActivity(startNewActivityIntent);
