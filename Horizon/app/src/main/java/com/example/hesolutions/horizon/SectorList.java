@@ -36,6 +36,7 @@ public class SectorList extends Activity {
         sector = (ListView) findViewById(R.id.sector_list);
         sector.setAdapter(adapter);
 
+
         sector.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {

@@ -96,6 +96,7 @@ public class UnlockScreen extends Activity {
                         String color = nameset.get(1);
                         //TODO: Replacce this with method call from zoneset
                         //numberOfZones = ZoneSet.getNumberofZones()
+
                         numberOfZones = 5;
                         if (numberOfZones > 1) {
                             startNewActivityIntent = new Intent(UnlockScreen.this, ZoneList.class);

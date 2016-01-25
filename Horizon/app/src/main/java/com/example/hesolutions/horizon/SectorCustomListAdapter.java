@@ -22,6 +22,7 @@ public class SectorCustomListAdapter extends ArrayAdapter<String> {
         ;
     }
 
+
     @Override
     public View getView(int position, View view, final ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
