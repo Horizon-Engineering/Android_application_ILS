@@ -32,7 +32,7 @@ public class SectorList extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sector_list);
 
-        SectorCustomListAdapter adapter = new SectorCustomListAdapter(this, sectorArray, sector_imageId, dataArray);
+        SectorCustomListAdapter adapter = new SectorCustomListAdapter(this, sectorArray);
         sector = (ListView) findViewById(R.id.sector_list);
         sector.setAdapter(adapter);
 
