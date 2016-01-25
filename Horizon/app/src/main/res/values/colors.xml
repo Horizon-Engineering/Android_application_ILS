@@ -61,5 +61,6 @@
     <color name="header">#ff58567d</color>
     <color name="grgray">#ff686868</color>
     <color name="devicelist_blue">#ff49aaed</color>
+    <color name="selected_row">#50000000</color>
 
 </resources>

@@ -3168,205 +3168,205 @@ public class ChooseDeviceActivity extends Activity {
             }
         }
     }
-/*  Valeria changed
-    class WeightListen implements OnClickListener {
-        WeightListen() {
-        }
+    /*  Valeria changed
+        class WeightListen implements OnClickListener {
+            WeightListen() {
+            }
 
-        public void onClick(View v) {
-            String AreaName;
-            Intent intent;
-            String SceneName;
-            switch (v.getId()) {
-                case R.id.btn_back_choosedevice:
-                    ChooseDeviceActivity.this.ThreadRunning = false;
-                    if ((ChooseDeviceActivity.this.index != null && ChooseDeviceActivity.this.index.toString().equals("AddAreaToChooseDevice")) || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 0) {
-                        AreaName = ChooseDeviceActivity.this.getIntent().getStringExtra("AreaName");
-                        intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
-                        intent.putExtra("AreaName", AreaName);
-                        if (ChooseDeviceActivity.this.picturePath != null) {
-                            intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
-                        } else if (ChooseDeviceActivity.this.photo != null) {
-                            intent.putExtra("photo", ChooseDeviceActivity.this.photo);
-                        }
-                        ChooseDeviceActivity.this.startActivity(intent);
-                        ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-                        ChooseDeviceActivity.this.finish();
-                    } else if (ChooseDeviceActivity.this.mArea != null || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 1) {
-                        AreaName = ChooseDeviceActivity.this.getIntent().getStringExtra("AreaName");
-                        intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
-                        intent.putExtra("AreaName", AreaName);
-                        intent.putExtra("area", ChooseDeviceActivity.this.mArea);
-                        if (ChooseDeviceActivity.this.picturePath != null) {
-                            intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
-                        } else if (ChooseDeviceActivity.this.photo != null) {
-                            intent.putExtra("photo", ChooseDeviceActivity.this.photo);
-                        }
-                        ChooseDeviceActivity.this.startActivity(intent);
-                        ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-                        ChooseDeviceActivity.this.finish();
-                    } else if ((ChooseDeviceActivity.this.index != null && ChooseDeviceActivity.this.index.toString().equals("AddSceneToChooseDevice")) || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 2) {
-                        SceneName = ChooseDeviceActivity.this.getIntent().getStringExtra("SceneName");
-                        intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
-                        intent.putExtra("SceneName", SceneName);
-                        if (ChooseDeviceActivity.this.picturePath != null) {
-                            intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
-                        } else if (ChooseDeviceActivity.this.photo != null) {
-                            intent.putExtra("photo", ChooseDeviceActivity.this.photo);
-                        }
-                        ChooseDeviceActivity.this.startActivity(intent);
-                        ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-                        ChooseDeviceActivity.this.finish();
-                    } else if (ChooseDeviceActivity.this.mScene != null || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 3) {
-                        SceneName = ChooseDeviceActivity.this.getIntent().getStringExtra("SceneName");
-                        intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
-                        intent.putExtra("scene", ChooseDeviceActivity.this.mScene);
-                        intent.putExtra("SceneName", SceneName);
-                        if (ChooseDeviceActivity.this.picturePath != null) {
-                            intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
-                        } else if (ChooseDeviceActivity.this.photo != null) {
-                            intent.putExtra("photo", ChooseDeviceActivity.this.photo);
-                        }
-                        ChooseDeviceActivity.this.startActivity(intent);
-                        ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-                        ChooseDeviceActivity.this.finish();
-                    }
-                case R.id.sequence:
-                    ChooseDeviceActivity.this.sequence.setBackgroundResource(R.drawable.seque_click);
-                    ChooseDeviceActivity.this.time_sequence.setBackgroundResource(R.drawable.time_seque);
-                    ChooseDeviceActivity.this.sequence.setTextColor(-1);
-                    ChooseDeviceActivity.this.time_sequence.setTextColor(-14701071);
-                    SysApplication.getInstance();
-                    SysApplication.mSequece = true;
-                    if (SysApplication.mSequece) {
-                        Collections.sort(ChooseDeviceActivity.this.devicelist);
-                    }
-                    ChooseDeviceActivity.this.adapter.notifyDataSetChanged();
-                case R.id.time_sequence:
-                    ChooseDeviceActivity.this.sequence.setBackgroundResource(R.drawable.seque);
-                    ChooseDeviceActivity.this.time_sequence.setBackgroundResource(R.drawable.time_seque_click);
-                    ChooseDeviceActivity.this.time_sequence.setTextColor(-1);
-                    ChooseDeviceActivity.this.sequence.setTextColor(-14701071);
-                    SysApplication.getInstance();
-                    SysApplication.mSequece = false;
-                    if (ChooseDeviceActivity.this.mScene != null) {
-                        ChooseDeviceActivity.this.allDeviceList = DatabaseManager.getInstance().getDeviceListExceptKnobandsenor();
-                    } else if (ChooseDeviceActivity.this.mArea != null) {
-                        ChooseDeviceActivity.this.allDeviceList = DatabaseManager.getInstance().getDeviceListExceptKnobandsenor();
-                    }
-                    if (ChooseDeviceActivity.this.allDeviceList != null && ChooseDeviceActivity.this.allDeviceList.getmDeviceList() != null) {
-                        ChooseDeviceActivity.this.devicelist = ChooseDeviceActivity.this.allDeviceList.getmDeviceList();
-                        ChooseDeviceActivity.this.adapter.notifyDataSetChanged();
-                    }
-                case R.id.btn_save_choosedevice:
-                    int i;
-                    for (i = 0; i < ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.size(); i++) {
-                        if (((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).getSceneParams()[0] == 0) {
-                            short devicetype = ((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).getDeviceType();
-                            Device device;
-                            byte[] bArr;
-                            if (devicetype == (short) 1 || devicetype == (short) 97) {
-                                device = (Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i);
-                                bArr = new byte[5];
-                                bArr[0] = (byte) -64;
-                                device.setSceneParams(bArr);
-                            } else if (devicetype == (short) 2 || devicetype == (short) 98 || devicetype == (short) 3 || devicetype == (short) 99 || devicetype == (short) 4 || devicetype == (short) 100 || devicetype == (short) 15 || devicetype == (short) 111) {
-                                device = (Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i);
-                                bArr = new byte[5];
-                                bArr[0] = (byte) 17;
-                                device.setSceneParams(bArr);
-                            } else if (devicetype == (short) 5) {
-                                if (((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).getSubDeviceType() == (short) 1) {
-                                    device = (Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i);
-                                    bArr = new byte[5];
-                                    bArr[0] = (byte) 48;
-                                    device.setSceneParams(bArr);
-                                } else if (((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).getSubDeviceType() == (short) 3) {
-                                    device = (Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i);
-                                    bArr = new byte[5];
-                                    bArr[0] = (byte) 52;
-                                    device.setSceneParams(bArr);
-                                } else {
-                                    device = (Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i);
-                                    bArr = new byte[5];
-                                    bArr[0] = (byte) 58;
-                                    device.setSceneParams(bArr);
-                                }
+            public void onClick(View v) {
+                String AreaName;
+                Intent intent;
+                String SceneName;
+                switch (v.getId()) {
+                    case R.id.btn_back_choosedevice:
+                        ChooseDeviceActivity.this.ThreadRunning = false;
+                        if ((ChooseDeviceActivity.this.index != null && ChooseDeviceActivity.this.index.toString().equals("AddAreaToChooseDevice")) || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 0) {
+                            AreaName = ChooseDeviceActivity.this.getIntent().getStringExtra("AreaName");
+                            intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
+                            intent.putExtra("AreaName", AreaName);
+                            if (ChooseDeviceActivity.this.picturePath != null) {
+                                intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
+                            } else if (ChooseDeviceActivity.this.photo != null) {
+                                intent.putExtra("photo", ChooseDeviceActivity.this.photo);
                             }
+                            ChooseDeviceActivity.this.startActivity(intent);
+                            ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+                            ChooseDeviceActivity.this.finish();
+                        } else if (ChooseDeviceActivity.this.mArea != null || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 1) {
+                            AreaName = ChooseDeviceActivity.this.getIntent().getStringExtra("AreaName");
+                            intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
+                            intent.putExtra("AreaName", AreaName);
+                            intent.putExtra("area", ChooseDeviceActivity.this.mArea);
+                            if (ChooseDeviceActivity.this.picturePath != null) {
+                                intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
+                            } else if (ChooseDeviceActivity.this.photo != null) {
+                                intent.putExtra("photo", ChooseDeviceActivity.this.photo);
+                            }
+                            ChooseDeviceActivity.this.startActivity(intent);
+                            ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+                            ChooseDeviceActivity.this.finish();
+                        } else if ((ChooseDeviceActivity.this.index != null && ChooseDeviceActivity.this.index.toString().equals("AddSceneToChooseDevice")) || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 2) {
+                            SceneName = ChooseDeviceActivity.this.getIntent().getStringExtra("SceneName");
+                            intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
+                            intent.putExtra("SceneName", SceneName);
+                            if (ChooseDeviceActivity.this.picturePath != null) {
+                                intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
+                            } else if (ChooseDeviceActivity.this.photo != null) {
+                                intent.putExtra("photo", ChooseDeviceActivity.this.photo);
+                            }
+                            ChooseDeviceActivity.this.startActivity(intent);
+                            ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+                            ChooseDeviceActivity.this.finish();
+                        } else if (ChooseDeviceActivity.this.mScene != null || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 3) {
+                            SceneName = ChooseDeviceActivity.this.getIntent().getStringExtra("SceneName");
+                            intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
+                            intent.putExtra("scene", ChooseDeviceActivity.this.mScene);
+                            intent.putExtra("SceneName", SceneName);
+                            if (ChooseDeviceActivity.this.picturePath != null) {
+                                intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
+                            } else if (ChooseDeviceActivity.this.photo != null) {
+                                intent.putExtra("photo", ChooseDeviceActivity.this.photo);
+                            }
+                            ChooseDeviceActivity.this.startActivity(intent);
+                            ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+                            ChooseDeviceActivity.this.finish();
                         }
-                    }
-                    if ((ChooseDeviceActivity.this.index != null && ChooseDeviceActivity.this.index.toString().equals("AddAreaToChooseDevice")) || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 0) {
-                        AreaName = ChooseDeviceActivity.this.getIntent().getStringExtra("AreaName");
-                        intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
-                        intent.putExtra("mDeviceListOfCurrAreaOrScene", ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene);
+                    case R.id.sequence:
+                        ChooseDeviceActivity.this.sequence.setBackgroundResource(R.drawable.seque_click);
+                        ChooseDeviceActivity.this.time_sequence.setBackgroundResource(R.drawable.time_seque);
+                        ChooseDeviceActivity.this.sequence.setTextColor(-1);
+                        ChooseDeviceActivity.this.time_sequence.setTextColor(-14701071);
+                        SysApplication.getInstance();
+                        SysApplication.mSequece = true;
+                        if (SysApplication.mSequece) {
+                            Collections.sort(ChooseDeviceActivity.this.devicelist);
+                        }
+                        ChooseDeviceActivity.this.adapter.notifyDataSetChanged();
+                    case R.id.time_sequence:
+                        ChooseDeviceActivity.this.sequence.setBackgroundResource(R.drawable.seque);
+                        ChooseDeviceActivity.this.time_sequence.setBackgroundResource(R.drawable.time_seque_click);
+                        ChooseDeviceActivity.this.time_sequence.setTextColor(-1);
+                        ChooseDeviceActivity.this.sequence.setTextColor(-14701071);
+                        SysApplication.getInstance();
+                        SysApplication.mSequece = false;
+                        if (ChooseDeviceActivity.this.mScene != null) {
+                            ChooseDeviceActivity.this.allDeviceList = DatabaseManager.getInstance().getDeviceListExceptKnobandsenor();
+                        } else if (ChooseDeviceActivity.this.mArea != null) {
+                            ChooseDeviceActivity.this.allDeviceList = DatabaseManager.getInstance().getDeviceListExceptKnobandsenor();
+                        }
+                        if (ChooseDeviceActivity.this.allDeviceList != null && ChooseDeviceActivity.this.allDeviceList.getmDeviceList() != null) {
+                            ChooseDeviceActivity.this.devicelist = ChooseDeviceActivity.this.allDeviceList.getmDeviceList();
+                            ChooseDeviceActivity.this.adapter.notifyDataSetChanged();
+                        }
+                    case R.id.btn_save_choosedevice:
+                        int i;
                         for (i = 0; i < ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.size(); i++) {
-                        }
-                        intent.putExtra("AreaName", AreaName);
-                        if (ChooseDeviceActivity.this.picturePath != null) {
-                            intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
-                        } else if (ChooseDeviceActivity.this.photo != null) {
-                            intent.putExtra("photo", ChooseDeviceActivity.this.photo);
-                        }
-                        ChooseDeviceActivity.this.startActivity(intent);
-                        ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-                        ChooseDeviceActivity.this.finish();
-                    } else if (ChooseDeviceActivity.this.mArea != null || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 1) {
-                        AreaName = ChooseDeviceActivity.this.getIntent().getStringExtra("AreaName");
-                        intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
-                        intent.putExtra("AreaName", AreaName);
-                        intent.putExtra("area", ChooseDeviceActivity.this.mArea);
-                        if (ChooseDeviceActivity.this.picturePath != null) {
-                            intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
-                        } else if (ChooseDeviceActivity.this.photo != null) {
-                            intent.putExtra("photo", ChooseDeviceActivity.this.photo);
-                        }
-                        intent.putExtra("mDeviceListOfCurrAreaOrScene", ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene);
-                        ChooseDeviceActivity.this.startActivity(intent);
-                        ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-                        ChooseDeviceActivity.this.finish();
-                    } else if ((ChooseDeviceActivity.this.index != null && ChooseDeviceActivity.this.index.toString().equals("AddSceneToChooseDevice")) || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 2) {
-                        SceneName = ChooseDeviceActivity.this.getIntent().getStringExtra("SceneName");
-                        intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
-                        intent.putExtra("mDeviceListOfCurrAreaOrScene", ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene);
-                        intent.putExtra("SceneName", SceneName);
-                        if (ChooseDeviceActivity.this.picturePath != null) {
-                            intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
-                        } else if (ChooseDeviceActivity.this.photo != null) {
-                            intent.putExtra("photo", ChooseDeviceActivity.this.photo);
-                        }
-                        ChooseDeviceActivity.this.startActivity(intent);
-                        ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-                        ChooseDeviceActivity.this.finish();
-                    } else if (ChooseDeviceActivity.this.mScene != null || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 3) {
-                        SceneName = ChooseDeviceActivity.this.getIntent().getStringExtra("SceneName");
-                        intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
-                        intent.putExtra("scene", ChooseDeviceActivity.this.mScene);
-                        if (ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene != null && ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.size() > 0) {
-                            for (int j = 0; j < ChooseDeviceActivity.this.devicelist.size(); j++) {
-                                for (i = 0; i < ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.size(); i++) {
-                                    if (((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).getDeviceName().equals(((Device) ChooseDeviceActivity.this.devicelist.get(j)).getDeviceName())) {
-                                        ((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).setSceneParams(((Device) ChooseDeviceActivity.this.devicelist.get(j)).getSceneParams());
-                                        ((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).setSceneDeviceMac(((Device) ChooseDeviceActivity.this.devicelist.get(j)).getMacAddress());
+                            if (((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).getSceneParams()[0] == 0) {
+                                short devicetype = ((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).getDeviceType();
+                                Device device;
+                                byte[] bArr;
+                                if (devicetype == (short) 1 || devicetype == (short) 97) {
+                                    device = (Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i);
+                                    bArr = new byte[5];
+                                    bArr[0] = (byte) -64;
+                                    device.setSceneParams(bArr);
+                                } else if (devicetype == (short) 2 || devicetype == (short) 98 || devicetype == (short) 3 || devicetype == (short) 99 || devicetype == (short) 4 || devicetype == (short) 100 || devicetype == (short) 15 || devicetype == (short) 111) {
+                                    device = (Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i);
+                                    bArr = new byte[5];
+                                    bArr[0] = (byte) 17;
+                                    device.setSceneParams(bArr);
+                                } else if (devicetype == (short) 5) {
+                                    if (((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).getSubDeviceType() == (short) 1) {
+                                        device = (Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i);
+                                        bArr = new byte[5];
+                                        bArr[0] = (byte) 48;
+                                        device.setSceneParams(bArr);
+                                    } else if (((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).getSubDeviceType() == (short) 3) {
+                                        device = (Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i);
+                                        bArr = new byte[5];
+                                        bArr[0] = (byte) 52;
+                                        device.setSceneParams(bArr);
+                                    } else {
+                                        device = (Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i);
+                                        bArr = new byte[5];
+                                        bArr[0] = (byte) 58;
+                                        device.setSceneParams(bArr);
                                     }
                                 }
                             }
                         }
-                        intent.putExtra("mDeviceListOfCurrAreaOrScene", ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene);
-                        intent.putExtra("SceneName", SceneName);
-                        if (ChooseDeviceActivity.this.picturePath != null) {
-                            intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
-                        } else if (ChooseDeviceActivity.this.photo != null) {
-                            intent.putExtra("photo", ChooseDeviceActivity.this.photo);
+                        if ((ChooseDeviceActivity.this.index != null && ChooseDeviceActivity.this.index.toString().equals("AddAreaToChooseDevice")) || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 0) {
+                            AreaName = ChooseDeviceActivity.this.getIntent().getStringExtra("AreaName");
+                            intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
+                            intent.putExtra("mDeviceListOfCurrAreaOrScene", ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene);
+                            for (i = 0; i < ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.size(); i++) {
+                            }
+                            intent.putExtra("AreaName", AreaName);
+                            if (ChooseDeviceActivity.this.picturePath != null) {
+                                intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
+                            } else if (ChooseDeviceActivity.this.photo != null) {
+                                intent.putExtra("photo", ChooseDeviceActivity.this.photo);
+                            }
+                            ChooseDeviceActivity.this.startActivity(intent);
+                            ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+                            ChooseDeviceActivity.this.finish();
+                        } else if (ChooseDeviceActivity.this.mArea != null || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 1) {
+                            AreaName = ChooseDeviceActivity.this.getIntent().getStringExtra("AreaName");
+                            intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
+                            intent.putExtra("AreaName", AreaName);
+                            intent.putExtra("area", ChooseDeviceActivity.this.mArea);
+                            if (ChooseDeviceActivity.this.picturePath != null) {
+                                intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
+                            } else if (ChooseDeviceActivity.this.photo != null) {
+                                intent.putExtra("photo", ChooseDeviceActivity.this.photo);
+                            }
+                            intent.putExtra("mDeviceListOfCurrAreaOrScene", ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene);
+                            ChooseDeviceActivity.this.startActivity(intent);
+                            ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+                            ChooseDeviceActivity.this.finish();
+                        } else if ((ChooseDeviceActivity.this.index != null && ChooseDeviceActivity.this.index.toString().equals("AddSceneToChooseDevice")) || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 2) {
+                            SceneName = ChooseDeviceActivity.this.getIntent().getStringExtra("SceneName");
+                            intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
+                            intent.putExtra("mDeviceListOfCurrAreaOrScene", ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene);
+                            intent.putExtra("SceneName", SceneName);
+                            if (ChooseDeviceActivity.this.picturePath != null) {
+                                intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
+                            } else if (ChooseDeviceActivity.this.photo != null) {
+                                intent.putExtra("photo", ChooseDeviceActivity.this.photo);
+                            }
+                            ChooseDeviceActivity.this.startActivity(intent);
+                            ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+                            ChooseDeviceActivity.this.finish();
+                        } else if (ChooseDeviceActivity.this.mScene != null || DataStorage.getInstance(ChooseDeviceActivity.this).getInt("PageIndex") == 3) {
+                            SceneName = ChooseDeviceActivity.this.getIntent().getStringExtra("SceneName");
+                            intent = new Intent(ChooseDeviceActivity.this, UserPage.class);
+                            intent.putExtra("scene", ChooseDeviceActivity.this.mScene);
+                            if (ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene != null && ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.size() > 0) {
+                                for (int j = 0; j < ChooseDeviceActivity.this.devicelist.size(); j++) {
+                                    for (i = 0; i < ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.size(); i++) {
+                                        if (((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).getDeviceName().equals(((Device) ChooseDeviceActivity.this.devicelist.get(j)).getDeviceName())) {
+                                            ((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).setSceneParams(((Device) ChooseDeviceActivity.this.devicelist.get(j)).getSceneParams());
+                                            ((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(i)).setSceneDeviceMac(((Device) ChooseDeviceActivity.this.devicelist.get(j)).getMacAddress());
+                                        }
+                                    }
+                                }
+                            }
+                            intent.putExtra("mDeviceListOfCurrAreaOrScene", ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene);
+                            intent.putExtra("SceneName", SceneName);
+                            if (ChooseDeviceActivity.this.picturePath != null) {
+                                intent.putExtra("picturePath", ChooseDeviceActivity.this.picturePath);
+                            } else if (ChooseDeviceActivity.this.photo != null) {
+                                intent.putExtra("photo", ChooseDeviceActivity.this.photo);
+                            }
+                            ChooseDeviceActivity.this.startActivity(intent);
+                            ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+                            ChooseDeviceActivity.this.finish();
                         }
-                        ChooseDeviceActivity.this.startActivity(intent);
-                        ChooseDeviceActivity.this.overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-                        ChooseDeviceActivity.this.finish();
-                    }
-                default:
+                    default:
+                }
             }
         }
-    }
-*/
+    */
     public ChooseDeviceActivity() {
         this.mList = null;
         this.devicelist = null;
@@ -3390,7 +3390,7 @@ public class ChooseDeviceActivity extends Activity {
 
         //Valeria
         //this.sequence = null;
-       // this.time_sequence = null;
+        // this.time_sequence = null;
         this.thread = null;
         this.R_1 = MotionEventCompat.ACTION_MASK;
         this.G_1 = 245;
@@ -3399,11 +3399,11 @@ public class ChooseDeviceActivity extends Activity {
         this.delay_hue = 1;
         this.mThreadGC = null;
         this.allDeviceList = null;
-        /*
+
         this.image = new int[]{R.drawable.time_interval_1, R.drawable.time_interval_2, R.drawable.time_interval_3, R.drawable.time_interval_4, R.drawable.time_interval_5, R.drawable.time_interval_6, R.drawable.time_interval_7, R.drawable.time_interval_8, R.drawable.time_interval_9, R.drawable.time_interval_10};
         this.image_ib3 = new int[]{R.drawable.effect_saltus, R.drawable.call_police, R.drawable.effect_glint, R.drawable.effect_shade, R.drawable.candela};
         this.image_ib4 = new int[]{R.drawable.effect_saltus, R.drawable.effect_shade, R.drawable.candela};
-        */
+
         this.DM = null;
         this.bitmap = null;
         this.bitmapwidth = 0;

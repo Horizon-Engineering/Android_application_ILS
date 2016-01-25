@@ -119,6 +119,7 @@
             android:name=".SectorList"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="landscape" />
+
     </application>
 
 </manifest>

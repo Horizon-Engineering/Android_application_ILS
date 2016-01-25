@@ -23,7 +23,7 @@ public class UnlockScreen extends Activity {
     GridView gridView;
     RadioButton radioButton1, radioButton2, radioButton3, radioButton4;
     ImageButton cancel;
-    int numberOfZones = 4;
+    int numberOfZones = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +96,8 @@ public class UnlockScreen extends Activity {
                         String color = nameset.get(1);
                         //TODO: Replacce this with method call from zoneset
                         //numberOfZones = ZoneSet.getNumberofZones()
-
-                        numberOfZones = 5;
+                        //TODO: Changed by Valeria
+                        //numberOfZones = 5;
                         if (numberOfZones > 1) {
                             startNewActivityIntent = new Intent(UnlockScreen.this, ZoneList.class);
                         } else {
