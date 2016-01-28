@@ -1,4 +1,4 @@
-package com.example.hesolutions.mylibrary;
+package com.mylibrary;
 
 import java.util.Calendar;
 

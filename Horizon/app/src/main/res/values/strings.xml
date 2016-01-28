@@ -256,5 +256,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_choose_device">ChooseDeviceActivity</string>
     <string name="title_activity_add_scene">AddSceneActivity</string>
+    <string name="title_activity_group">GroupActivity</string>
+    <string name="title_activity_assign_group">AssignGroup</string>
 
 </resources>

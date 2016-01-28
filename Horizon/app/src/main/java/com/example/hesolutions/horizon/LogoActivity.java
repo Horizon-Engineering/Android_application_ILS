@@ -27,6 +27,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.allin.activity.action.DataStorage;
 import com.allin.activity.action.SysApplication;
@@ -44,6 +45,7 @@ import com.homa.hls.datadeal.UserPacket;
 import com.homa.hls.socketconn.DeviceSocket;
 import com.homa.hls.socketconn.UserSession;
 import com.homa.hls.widgetcustom.CustomProgressDialog;
+import com.mylibrary.WeekViewEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,7 +78,6 @@ public class LogoActivity extends Activity {
     class C02631 extends Handler {
         C02631() {
         }
-
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             Gateway gateway;
@@ -575,6 +576,7 @@ public class LogoActivity extends Activity {
         DataStorage.getInstance(this).putInt("deviceid", -1);
         DataStorage.getInstance(this).putInt("scene_gridview_item", -1);
 
+
         try {
 
             SysApplication.getInstance().openwifi(this);
@@ -598,6 +600,7 @@ public class LogoActivity extends Activity {
                 List<Gateway> gateways = SysApplication.getInstance().SysSelectGatewayInfofirst();
                 UserSession.getInstance().init(this);
                 DeviceSocket.getInstance().init(this);
+                /*
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 6, this.mHandler);
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 8, this.mHandler);
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 18, this.mHandler);
@@ -605,6 +608,7 @@ public class LogoActivity extends Activity {
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 1, this.mHandler);
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 9, this.mHandler);
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 25, this.mHandler);
+
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 33, this.mHandler);
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 34, this.mHandler);
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 2, this.mHandler);
@@ -612,6 +616,7 @@ public class LogoActivity extends Activity {
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 35, this.mHandler);
                 SysApplication.getInstance().subscibeEvent("LogoActivity", 41, this.mHandler);
                 SysApplication.getInstance();
+                */
                 byte[] i = SysApplication._getTimeFromCurrentTo();
                 byte[] arrayOfByte1 = new byte[6];
                 arrayOfByte1[0] = ((byte)(i[0] >> 24));

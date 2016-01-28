@@ -27,9 +27,7 @@ public class AdminPage extends AppCompatActivity {
     Button AccessPermit;
     Button Logout;
     Button SetDevice;
-    Button Setzone;
-    Dialog mdialog;
-    LayoutInflater inflater;
+    Button Grouping;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +37,7 @@ public class AdminPage extends AppCompatActivity {
         AccessPermit = (Button) findViewById(R.id.AccessPermit);
         Logout = (Button) findViewById(R.id.Logout);
         SetDevice = (Button) findViewById(R.id.SetDevice);
-        Setzone = (Button) findViewById(R.id.Setzone);
+        Grouping = (Button) findViewById(R.id.Grouping);
         scannerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,11 +70,11 @@ public class AdminPage extends AppCompatActivity {
                 startActivity(intent1);
             }
         });
-        Setzone.setOnClickListener(new View.OnClickListener() {
+        Grouping.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent intent1 = new Intent(v.getContext(), SetZone.class);
+                Intent intent1 = new Intent(v.getContext(), GroupActivity.class);
                 startActivity(intent1);
             }
         });

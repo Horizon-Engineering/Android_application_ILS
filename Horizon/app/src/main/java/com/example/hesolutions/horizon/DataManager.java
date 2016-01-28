@@ -25,8 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.hesolutions.mylibrary.WeekView;
-import com.example.hesolutions.mylibrary.WeekViewEvent;
+import com.homa.hls.database.Device;
+import com.mylibrary.WeekView;
+import com.mylibrary.WeekViewEvent;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.BiMap;
 /**
@@ -92,6 +93,8 @@ public class DataManager {
 
 
     //==================Sector Setting: Key = SectorName, Value = Hashmap of contained devices
+
+
     public BiMap<String, BiMap> sector = HashBiMap.create();
 
     public BiMap getsector() {
@@ -101,9 +104,10 @@ public class DataManager {
 
     public BiMap setsector(BiMap sectorinfo) {
         this.sector = sectorinfo;
-        writedata(sector, "sector");
+        writedata(sector,"sector");
         return sector;
     }
+
 
 
     //==================Zone Setting: Key = ZoneName, Value = Hashmap of contained sectors

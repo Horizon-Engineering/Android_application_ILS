@@ -15,13 +15,20 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.hesolutions.mylibrary.WeekViewEvent;
-import com.example.hesolutions.mylibrary.WeekView;
-import com.example.hesolutions.mylibrary.MonthLoader;
+
+import com.homa.hls.database.Device;
+import com.homa.hls.datadeal.DevicePacket;
+import com.homa.hls.datadeal.Message;
+import com.homa.hls.socketconn.DeviceSocket;
+import com.mylibrary.WeekViewEvent;
+import com.mylibrary.WeekView;
+import com.mylibrary.MonthLoader;
 
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -55,19 +62,9 @@ public class GlobalCalendar extends Activity{
             public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
                 // Populate the week view with some events.
                 List<WeekViewEvent> events;
-
                 events = DataManager.getInstance().getevents();
-                if (events.size()!=0)
-                {
-                    for (int i = 0; i< events.size(); i++)
-                    {
-                        WeekViewEvent event = events.get(i);
-                        System.out.println(event.getName()+"++++++++++++++++++++"+event.getId()+"++++++++++++");
-                    }
-                }
+
                 return events;
-
-
             }
 
         };
@@ -87,6 +84,7 @@ public class GlobalCalendar extends Activity{
 
                     Date starttime = event.getStartTime().getTime();
                     Date endtime = event.getEndTime().getTime();
+                    ArrayList<Device> devicelist = event.getdeviceList();
                     SimpleDateFormat date = new SimpleDateFormat("MMM dd, yyyy");
                     SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss ");
                     System.out.println("--------------------------------------------------------------------");
@@ -95,7 +93,7 @@ public class GlobalCalendar extends Activity{
                     editevent.putExtra("starttime",time.format(starttime));
                     editevent.putExtra("finishdate",date.format(endtime));
                     editevent.putExtra("finishtime", time.format(endtime));
-
+                    editevent.putExtra("devicelist",devicelist);
                     startActivity(editevent);
                 }else
                 {

@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.hesolutions.horizon.GlobalCalendar">
 
-    <com.example.hesolutions.mylibrary.WeekView
+    <com.mylibrary.WeekView
         android:id="@+id/weekView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

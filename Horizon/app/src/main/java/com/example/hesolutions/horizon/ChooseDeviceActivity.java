@@ -50,9 +50,15 @@ import com.homa.hls.datadeal.Event;
 import com.homa.hls.datadeal.Message;
 import com.homa.hls.socketconn.DeviceSocket;
 import com.homa.hls.widgetcustom.CustomImageView;
+import com.mylibrary.WeekViewEvent;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class ChooseDeviceActivity extends Activity {
     private static ArrayList<Device> mDeviceListOfCurrAreaOrScene;
@@ -99,7 +105,6 @@ public class ChooseDeviceActivity extends Activity {
     private Paint paint;
     private String photo;
     private String picturePath;
-    Button sequence;
     ChangeBrightthread thread;
     Button time_sequence;
 
@@ -304,27 +309,57 @@ public class ChooseDeviceActivity extends Activity {
         /* renamed from: com.allin.activity.ChooseDeviceActivity.MyAdapter.13 */
         class AnonymousClass13 implements OnClickListener {
             private final /* synthetic */ Device val$LoadDevice;
-            private final /* synthetic */ ImageButton val$ib3;
-            private final /* synthetic */ ImageButton val$ib4;
-            private final /* synthetic */ ImageButton val$ib5;
+            /*
+            private final /* synthetic  ImageButton val$ib3;
+            private final /* synthetic  ImageButton val$ib4;
+            private final /* synthetic  ImageButton val$ib5;
+            */
             private final /* synthetic */ ImageView val$image_switch;
             private final /* synthetic */ SeekBar val$seekBar;
 
-            AnonymousClass13(Device device, ImageView imageView, SeekBar seekBar, ImageButton imageButton, ImageButton imageButton2, ImageButton imageButton3) {
+            AnonymousClass13(Device device, ImageView imageView, SeekBar seekBar/*, ImageButton imageButton, ImageButton imageButton2, ImageButton imageButton3*/) {
                 this.val$LoadDevice = device;
                 this.val$image_switch = imageView;
                 this.val$seekBar = seekBar;
+
+                Calendar calendar = Calendar.getInstance();
+
+                List<WeekViewEvent> events = DataManager.getInstance().getevents();
+
+                if (events.size()!=0)
+                {
+
+                    for (int i = 0; i< events.size(); i++)
+                    {
+                        WeekViewEvent event = events.get(i);
+                        Calendar starttime = event.getStartTime();
+                        Calendar finishtime = event.getEndTime();
+                        System.out.println("*********" + calendar.getTime().toString() +
+                                "/n ********" + starttime.getTime().toString()
+                                + "/n ********" + finishtime.getTime().toString());
+                        if (calendar.after(starttime)&&calendar.before(finishtime))
+                        {
+                            this.val$image_switch.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.open));
+                            this.val$seekBar.setProgress(100);
+                            DataManager.getInstance().setevents(events);
+                        }
+                    }
+                }
+                /*
                 this.val$ib5 = imageButton;
                 this.val$ib4 = imageButton2;
                 this.val$ib3 = imageButton3;
+                */
             }
 
             public void onClick(View v) {
                 byte[] data;
                 if (this.val$LoadDevice.isClick()) {
+                    /*
                     this.val$ib5.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.initiate));
                     this.val$ib4.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(ChooseDeviceActivity.this.image[0]));
                     this.val$ib3.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(ChooseDeviceActivity.this.image_ib4[0]));
+                    */
                     this.val$LoadDevice.setIsstart(true);
                     this.val$LoadDevice.setClick(false);
                     this.val$image_switch.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.close));
@@ -345,6 +380,8 @@ public class ChooseDeviceActivity extends Activity {
                         this.val$LoadDevice.setSceneParams(data);
                     }
                     this.val$seekBar.setProgress(100);
+
+                    //Toast.makeText(getApplicationContext(), "11111111111" + val$LoadDevice.getGatewayMacAddr().toString(), Toast.LENGTH_SHORT).show();
                 }
                 DatabaseManager.getInstance().updateDevice(this.val$LoadDevice);
             }
@@ -354,17 +391,21 @@ public class ChooseDeviceActivity extends Activity {
         class AnonymousClass14 implements OnSeekBarChangeListener {
             private final /* synthetic */ Device val$LoadDevice;
             private final /* synthetic */ int val$arg0;
-            private final /* synthetic */ ImageButton val$ib3;
-            private final /* synthetic */ ImageButton val$ib4;
-            private final /* synthetic */ ImageButton val$ib5;
+            /*
+            private final /* synthetic ImageButton val$ib3;
+            private final /* synthetic ImageButton val$ib4;
+            private final /* synthetic ImageButton val$ib5;
+            */
             private final /* synthetic */ ImageView val$image_switch;
 
-            AnonymousClass14(Device device, ImageView imageView, ImageButton imageButton, ImageButton imageButton2, ImageButton imageButton3, int i) {
+            AnonymousClass14(Device device, ImageView imageView /*, ImageButton imageButton, ImageButton imageButton2, ImageButton imageButton3*/, int i) {
                 this.val$LoadDevice = device;
                 this.val$image_switch = imageView;
+                /*
                 this.val$ib5 = imageButton;
                 this.val$ib4 = imageButton2;
                 this.val$ib3 = imageButton3;
+                */
                 this.val$arg0 = i;
             }
 
@@ -395,9 +436,11 @@ public class ChooseDeviceActivity extends Activity {
                             SetParams[3] = this.val$LoadDevice.getCurrentParams()[3];
                             SetParams[4] = (byte) arg1;
                         } else {
+                            /*
                             this.val$ib5.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.initiate));
                             this.val$ib4.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(ChooseDeviceActivity.this.image[0]));
                             this.val$ib3.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(ChooseDeviceActivity.this.image_ib4[0]));
+                            */
                             this.val$LoadDevice.setIsstart(true);
                             SetParams[0] = (byte) 17;
                             SetParams[1] = (byte) arg1;
@@ -2673,6 +2716,7 @@ public class ChooseDeviceActivity extends Activity {
                     mDevice_pic_tick = (ImageView) arg1.findViewById(R.id.device_pic_tick);
                     image_switch = (ImageView) arg1.findViewById(R.id.image_switch);
                     seekBar = (SeekBar) arg1.findViewById(R.id.seekBar1);
+                    /*
                     image_2 = (ImageView) arg1.findViewById(R.id.imageView11);
                     ((ImageView) arg1.findViewById(R.id.imageView9)).setVisibility(8);
                     image_2.setVisibility(8);
@@ -2680,12 +2724,13 @@ public class ChooseDeviceActivity extends Activity {
                     ib4 = (ImageButton) arg1.findViewById(R.id.imageView15);
                     ib5 = (ImageButton) arg1.findViewById(R.id.imageView16);
                     ib3.setBackgroundResource(R.drawable.left_selector);
+                    */
                     if (LoadDevice.getDeviceType() >= (short) 97) {
                         imgview.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.panel_group_pic));
                     } else {
                         imgview.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.panel_pic));
                     }
-                    imgview.setOnClickListener(new AnonymousClass12(arg0, mDevice_pic_tick));
+                    //imgview.setOnClickListener(new AnonymousClass12(arg0, mDevice_pic_tick));
                     deviceName_tv = (TextView) arg1.findViewById(R.id.devicename_tv);
                     r = new Rect();
                     ChooseDeviceActivity.this.paint = new Paint();
@@ -2695,15 +2740,18 @@ public class ChooseDeviceActivity extends Activity {
                     }
                     deviceName_tv.setText(((Device) ChooseDeviceActivity.this.devicelist.get(arg0)).getDeviceName());
                     ChooseDeviceActivity.this.paint = null;
-                    image_switch.setOnClickListener(new AnonymousClass13(LoadDevice, image_switch, seekBar, ib5, ib4, ib3));
-                    seekBar.setOnSeekBarChangeListener(new AnonymousClass14(LoadDevice, image_switch, ib5, ib4, ib3, arg0));
+                    image_switch.setOnClickListener(new AnonymousClass13(LoadDevice, image_switch, seekBar /*, ib5, ib4, ib3*/));
+                    seekBar.setOnSeekBarChangeListener(new AnonymousClass14(LoadDevice, image_switch,/* ib5, ib4, ib3, */arg0));
+                    /*
                     ib3.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(ChooseDeviceActivity.this.image_ib4[0]));
                     ib3.setOnClickListener(new AnonymousClass15(ib3, LoadDevice, seekBar, image_switch, ib5));
                     ib4.setImageResource(ChooseDeviceActivity.this.image[0]);
                     ib4.setOnClickListener(new AnonymousClass16(ib4, LoadDevice, image_switch, seekBar, ib5));
                     ib5.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.initiate));
                     ib5.setOnClickListener(new AnonymousClass17(LoadDevice, image_switch, seekBar, ib5));
+                    */
                     LoadDevice.setIsstart(true);
+                    /*
                     if ((ChooseDeviceActivity.this.index == null || !ChooseDeviceActivity.this.index.equals("AddAreaToChooseDevice")) && ChooseDeviceActivity.this.mArea == null) {
                         if (ChooseDeviceActivity.this.mScene != null) {
                             if (LoadDevice.getSceneParams()[0] == -63) {
@@ -2734,14 +2782,16 @@ public class ChooseDeviceActivity extends Activity {
                                 }
                             }
                         }
-                    } else if (LoadDevice.getCurrentParams()[0] == -63) {
-                        ib3.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(ChooseDeviceActivity.this.image_ib4[LoadDevice.getCurrentParams()[1] - 1]));
-                        ib4.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(ChooseDeviceActivity.this.image[LoadDevice.getCurrentParams()[2] - 1]));
+                    } else
+                    */
+                    if (LoadDevice.getCurrentParams()[0] == -63) {
+                        //ib3.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(ChooseDeviceActivity.this.image_ib4[LoadDevice.getCurrentParams()[1] - 1]));
+                        //ib4.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(ChooseDeviceActivity.this.image[LoadDevice.getCurrentParams()[2] - 1]));
                         if (LoadDevice.getCurrentParams()[3] == 1) {
-                            ib5.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.hue_stop));
+                            //ib5.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.hue_stop));
                             LoadDevice.setIsstart(false);
                         } else {
-                            ib5.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.initiate));
+                            //ib5.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.initiate));
                             LoadDevice.setIsstart(true);
                         }
                         LoadDevice.setClick(true);
@@ -2762,6 +2812,7 @@ public class ChooseDeviceActivity extends Activity {
                         }
                     }
                     mDevice_pic_tick.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.device_pic_tick));
+                    /*
                     if (ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene != null && ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.size() > 0) {
                         for (j = 0; j < ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.size(); j++) {
                             if (((Device) ChooseDeviceActivity.mDeviceListOfCurrAreaOrScene.get(j)).getDeviceName().equals(LoadDevice.getDeviceName())) {
@@ -2776,6 +2827,7 @@ public class ChooseDeviceActivity extends Activity {
                         }
                         break;
                     }
+                    */
                     break;
                 case 3 /*3*/:
                     LoadDevice = (Device) ChooseDeviceActivity.this.devicelist.get(arg0);
@@ -3656,4 +3708,6 @@ public class ChooseDeviceActivity extends Activity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
+
 }

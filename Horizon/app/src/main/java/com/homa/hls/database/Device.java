@@ -37,6 +37,7 @@ public class Device implements Serializable, Comparable {
     boolean ischoose;
     boolean isopen;
     boolean isstart;
+    boolean ischecked;
 
     public Device() {
         byte[] bArr = new byte[5];
@@ -69,7 +70,18 @@ public class Device implements Serializable, Comparable {
         this.isopen = false;
         this.isClick = false;
         this.isstart = false;
+        this.ischecked = false;
     }
+
+    public boolean getChecked()
+    {
+        return ischecked;
+    }
+    public void setChecked(boolean ischecked)
+    {
+        this.ischecked = ischecked;
+    }
+
 
     public static byte[] decodeDevice(Device device) throws UnsupportedEncodingException {
         byte[] data = new byte[99];

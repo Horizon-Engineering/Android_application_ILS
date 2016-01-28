@@ -4,9 +4,25 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.support.v4.view.MotionEventCompat;
+import android.util.Log;
+import android.widget.Toast;
+
+import com.google.common.collect.BiMap;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class DatabaseManager {
     static final /* synthetic */ boolean $assertionsDisabled;
@@ -98,47 +114,58 @@ public class DatabaseManager {
 
     public boolean addDevice(Device device, Area area) {
         Object[] objArr = null;
-        if (area == null) {
-            try {
-                if (this.mDataBase != null) {
-                    objArr = new Object[12];
-                    objArr[1] = device.getDeviceName();
-                    objArr[2] = Short.valueOf(device.getDeviceType());
-                    objArr[3] = Short.valueOf(device.getPanId());
-                    objArr[4] = Short.valueOf(device.getDeviceAddress());
-                    objArr[5] = Short.valueOf(device.getFatherAddress());
-                    objArr[6] = Short.valueOf(device.getChannelInfo());
-                    objArr[7] = device.getCurrentParams();
-                    objArr[8] = device.getPictureName();
-                    objArr[9] = Short.valueOf(device.getSubDeviceType());
-                    objArr[10] = Short.valueOf(device.getChannelMark());
-                    objArr[11] = IntarrayToBytearray(device.getMacAddress());
-                    this.mDataBase.execSQL("INSERT INTO DeviceInfoTable VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", objArr);
+
+        ArrayList<Device> arrayList = LoadDeviceList("devicelist");
+        if (!(device==null)) {
+            arrayList.add(device);
+        }
+        System.out.println("Array size is " + arrayList.size()+ "+++++++++++++++++++++++++++++++++++");
+        WriteDeviceList(arrayList, "devicelist");
+        this.mDataBase.execSQL("DELETE FROM DeviceInfoTable");
+        for (int i = 0; i<arrayList.size();i++) {
+            if (area == null) {
+                try {
+                    device = arrayList.get(i);
+                    if (this.mDataBase != null) {
+                        objArr = new Object[12];
+                        objArr[1] = device.getDeviceName();
+                        objArr[2] = Short.valueOf(device.getDeviceType());
+                        objArr[3] = Short.valueOf(device.getPanId());
+                        objArr[4] = Short.valueOf(device.getDeviceAddress());
+                        objArr[5] = Short.valueOf(device.getFatherAddress());
+                        objArr[6] = Short.valueOf(device.getChannelInfo());
+                        objArr[7] = device.getCurrentParams();
+                        objArr[8] = device.getPictureName();
+                        objArr[9] = Short.valueOf(device.getSubDeviceType());
+                        objArr[10] = Short.valueOf(device.getChannelMark());
+                        objArr[11] = IntarrayToBytearray(device.getMacAddress());
+                        this.mDataBase.execSQL("INSERT INTO DeviceInfoTable VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", objArr);
+                        return true;
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (!(area == null || this.mDataBase == null)) {
+                objArr = new Object[12];
+                objArr[1] = device.getDeviceName();
+                objArr[2] = Short.valueOf(device.getDeviceType());
+                objArr[3] = Short.valueOf(device.getPanId());
+                objArr[4] = Short.valueOf(device.getDeviceAddress());
+                objArr[5] = Short.valueOf(device.getFatherAddress());
+                objArr[6] = Short.valueOf(device.getChannelInfo());
+                objArr[7] = device.getCurrentParams();
+                objArr[8] = device.getPictureName();
+                objArr[9] = Short.valueOf(device.getSubDeviceType());
+                objArr[10] = Short.valueOf(device.getChannelMark());
+                objArr[11] = IntarrayToBytearray(device.getMacAddress());
+                this.mDataBase.execSQL("INSERT INTO DeviceInfoTable VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", objArr);
+                if (device.getDeviceType() == (short) 6 || device.getDeviceType() == (short) 7 || device.getDeviceType() == (short) 8 || device.getDeviceType() == (short) 9 || device.getDeviceType() == (short) 13 || device.getDeviceType() == (short) 43 || device.getDeviceType() == (short) 44 || area.getAreaIndex() == (short) 1 || area.getAreaName().equals("\u6240\u6709\u8bbe\u5907") || area.getAreaName().equals("All devices") || area.getAreaName().equals("Alle Ger\u00e4te")) {
                     return true;
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        if (!(area == null || this.mDataBase == null)) {
-            objArr = new Object[12];
-            objArr[1] = device.getDeviceName();
-            objArr[2] = Short.valueOf(device.getDeviceType());
-            objArr[3] = Short.valueOf(device.getPanId());
-            objArr[4] = Short.valueOf(device.getDeviceAddress());
-            objArr[5] = Short.valueOf(device.getFatherAddress());
-            objArr[6] = Short.valueOf(device.getChannelInfo());
-            objArr[7] = device.getCurrentParams();
-            objArr[8] = device.getPictureName();
-            objArr[9] = Short.valueOf(device.getSubDeviceType());
-            objArr[10] = Short.valueOf(device.getChannelMark());
-            objArr[11] = IntarrayToBytearray(device.getMacAddress());
-            this.mDataBase.execSQL("INSERT INTO DeviceInfoTable VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", objArr);
-            if (device.getDeviceType() == (short) 6 || device.getDeviceType() == (short) 7 || device.getDeviceType() == (short) 8 || device.getDeviceType() == (short) 9 || device.getDeviceType() == (short) 13 || device.getDeviceType() == (short) 43 || device.getDeviceType() == (short) 44 || area.getAreaIndex() == (short) 1 || area.getAreaName().equals("\u6240\u6709\u8bbe\u5907") || area.getAreaName().equals("All devices") || area.getAreaName().equals("Alle Ger\u00e4te")) {
+                addAreaDeviceTable(device, area);
                 return true;
             }
-            addAreaDeviceTable(device, area);
-            return true;
         }
         return $assertionsDisabled;
     }
@@ -626,7 +653,7 @@ public class DatabaseManager {
         objArr[3] = device.getSceneParams();
         objArr[4] = IntarrayToBytearray(device.getSceneDeviceMac());
         this.mDataBase.execSQL("INSERT INTO SceneDeviceTable VALUES(?,?,?,?,?)", objArr);
-    }
+}
 
     public void updateSceneDevice(Scene mScene, Device device) {
         deleteSceneDevice();
@@ -636,7 +663,9 @@ public class DatabaseManager {
         if (mDeviceList.getmDeviceList().size() > 0) {
             mDeviceList.clearAllDevice();
         }
+
         if (!(mDeviceList == null || this.mDataBase == null)) {
+            addDevice(null, null);
             Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceType IN ('1','2','3','4','5','15','97','98','99','100','111')", null);
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -651,7 +680,7 @@ public class DatabaseManager {
                 }
                 cursor.close();
             }
-        }
+        }else{}
         return mDeviceList;
     }
 
@@ -1356,4 +1385,60 @@ public class DatabaseManager {
         }
         return intarray;
     }
+
+
+    public static void WriteDeviceList(ArrayList<Device> list, String filename) {
+        String state;
+        state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+
+            File root = Environment.getExternalStorageDirectory();
+            File dir = new File(root.getAbsolutePath() + "/Horizon");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            File file = new File(dir, filename);
+
+            try {
+
+                FileOutputStream fos = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(list);
+
+                oos.flush();
+            } catch (FileNotFoundException e) {
+
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public static ArrayList LoadDeviceList(String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon");
+        File file = new File(dir, filename);
+        ArrayList<Device> newArraylist = new ArrayList<>();
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                ArrayList<Device> arrayList = (ArrayList) ois.readObject();
+                for (int i = 0; i< arrayList.size(); i++){
+                    newArraylist.add(arrayList.get(i));
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return newArraylist;
+    }
+
 }

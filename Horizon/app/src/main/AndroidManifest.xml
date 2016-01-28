@@ -113,13 +113,21 @@
             android:label="@string/title_activity_choose_device" />
         <activity
             android:name=".ZoneList"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SectorList"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="landscape" />
-
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".GroupActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AssignGroup"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppTheme.NoActionBar" ></activity>
     </application>
 
 </manifest>

@@ -46,6 +46,7 @@ public class Message {
         if (macaddr == null || password == null || ssid == null) {
             macaddr = null;
         }
+        System.out.println(macaddr + "ccccccccccccccccccccccccccccccc1++++++++++++++++++++++++++++++++++++++++++++++");
         message.MacAddress = macaddr;
         message.Password = password;
         message.SSID = ssid;
@@ -62,6 +63,7 @@ public class Message {
         message.MAX_SEND = 3;
         message.id = packettype.getCommandsequence();
         message.packet = packettype;
+
         return message;
     }
 

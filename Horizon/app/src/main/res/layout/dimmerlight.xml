@@ -16,6 +16,7 @@
         <ImageView android:id="@id/imageView3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/bright" android:layout_toLeftOf="@id/blank2" android:layout_centerVertical="true" />
         <SeekBar android:id="@id/seekBar1" android:paddingLeft="10.0dip" android:paddingRight="10.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxHeight="6.0dip" android:progressDrawable="@drawable/seek_drawable" android:minHeight="6.0dip" android:thumb="@drawable/seek_thumb" android:layout_toLeftOf="@id/imageView3" android:layout_toRightOf="@id/imageView2" android:layout_centerVertical="true" />
     </RelativeLayout>
+    <!--
     <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/timerordelay" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="15.0dip" android:layout_marginRight="15.0dip" android:layout_below="@id/relativeLayout1" android:layout_centerHorizontal="true">
         <ImageButton android:textColor="@color/white" android:id="@id/imageView9" android:background="@drawable/left_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/interval" android:layout_weight="1.0" />
         <ImageButton android:textColor="@color/white" android:id="@id/imageView11" android:background="@drawable/midd_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/retardation" android:layout_weight="1.0" />
@@ -23,5 +24,7 @@
         <ImageButton android:textColor="@color/white" android:id="@id/imageView15" android:background="@drawable/midd_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/interval" android:layout_weight="1.0" />
         <ImageButton android:textColor="@color/white" android:id="@id/imageView16" android:background="@drawable/right_selector" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/hue_stop" android:layout_weight="1.0" />
     </LinearLayout>
+
     <ImageView android:id="@id/imageView7612" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/blank3" android:layout_below="@id/timerordelay" />
+    -->
 </RelativeLayout>

@@ -72,8 +72,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set Zone/Sectors"
-        android:id="@+id/Setzone"
+        android:text="Grouping"
+        android:id="@+id/Grouping"
         android:layout_alignBottom="@+id/SetDevice"
         android:layout_toLeftOf="@+id/SetDevice"
         android:layout_toStartOf="@+id/SetDevice" />

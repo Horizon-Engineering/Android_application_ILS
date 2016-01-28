@@ -1,4 +1,4 @@
-package com.example.hesolutions.mylibrary;
+package com.mylibrary;
 
 /**
  * Created by hesolutions on 2016-01-05.

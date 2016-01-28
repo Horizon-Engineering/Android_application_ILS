@@ -1,4 +1,4 @@
-package com.example.hesolutions.mylibrary;
+package com.mylibrary;
 
 /**
  * Created by hesolutions on 2016-01-05.
@@ -33,6 +33,8 @@ import android.view.ScaleGestureDetector;
 import android.view.SoundEffectConstants;
 import android.view.View;
 import android.widget.OverScroller;
+
+import com.example.hesolutions.horizon.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -908,7 +910,7 @@ public class WeekView extends View {
             Calendar endTime = (Calendar) event.getStartTime().clone();
             endTime.set(Calendar.HOUR_OF_DAY, 23);
             endTime.set(Calendar.MINUTE, 59);
-            WeekViewEvent event1 = new WeekViewEvent(event.getId(), event.getName(), event.getLocation(), event.getStartTime(), endTime, event.getColor());
+            WeekViewEvent event1 = new WeekViewEvent(event.getId(), event.getName(), event.getLocation(), event.getStartTime(), endTime, event.getColor(), event.getdeviceList());
             mEventRects.add(new EventRect(event1, event, null));
 
             // Add other days.
@@ -921,7 +923,7 @@ public class WeekView extends View {
                 Calendar endOfOverDay = (Calendar) overDay.clone();
                 endOfOverDay.set(Calendar.HOUR_OF_DAY, 23);
                 endOfOverDay.set(Calendar.MINUTE, 59);
-                WeekViewEvent eventMore = new WeekViewEvent(event.getId(), event.getName(), overDay, endOfOverDay,event.getColor());
+                WeekViewEvent eventMore = new WeekViewEvent(event.getId(), event.getName(), overDay, endOfOverDay,event.getColor(),event.getdeviceList());
                 mEventRects.add(new EventRect(eventMore, event, null));
 
                 // Add next day.
@@ -932,7 +934,7 @@ public class WeekView extends View {
             Calendar startTime = (Calendar) event.getEndTime().clone();
             startTime.set(Calendar.HOUR_OF_DAY, 0);
             startTime.set(Calendar.MINUTE, 0);
-            WeekViewEvent event2 = new WeekViewEvent(event.getId(), event.getName(), event.getLocation(), startTime, event.getEndTime(),event.getColor());
+            WeekViewEvent event2 = new WeekViewEvent(event.getId(), event.getName(), event.getLocation(), startTime, event.getEndTime(),event.getColor(),event.getdeviceList());
             mEventRects.add(new EventRect(event2, event, null));
         }
         else {

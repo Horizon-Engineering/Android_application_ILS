@@ -19,8 +19,9 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.hesolutions.mylibrary.WeekView;
-import com.example.hesolutions.mylibrary.WeekViewEvent;
+import com.homa.hls.database.Device;
+import com.mylibrary.WeekView;
+import com.mylibrary.WeekViewEvent;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -62,6 +63,7 @@ public class EditEvent extends Activity {
         final String end1 = getIntent().getStringExtra("finishdate");
         final String end2 = getIntent().getStringExtra("finishtime");
         final String Id = getIntent().getStringExtra("eventID");
+        final ArrayList<Device> devicelist = (ArrayList<Device>)getIntent().getSerializableExtra("devicelist");
         final long ID = Long.parseLong(Id);
 
 
@@ -297,7 +299,7 @@ public class EditEvent extends Activity {
                                 }
 
                                 listevent.remove(getEvent(ID));
-                                WeekViewEvent event = new WeekViewEvent(ID, cname, startTime, finishTime, colorName);
+                                WeekViewEvent event = new WeekViewEvent(ID, cname, startTime, finishTime, colorName,devicelist);
                                 listevent.add(event);
                                 DataManager.getInstance().setevents(listevent);
                                 Intent intent1 = new Intent(v.getContext(), GlobalCalendar.class);
@@ -325,7 +327,7 @@ public class EditEvent extends Activity {
                                             finish.set(Calendar.DAY_OF_MONTH, event.getEndTime().get(Calendar.DAY_OF_MONTH));
                                             finish.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
                                             finish.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                            WeekViewEvent newevent = new WeekViewEvent(id, cname, start, finish, colorName);
+                                            WeekViewEvent newevent = new WeekViewEvent(id, cname, start, finish, colorName,devicelist);
                                             listevent.add(newevent);
                                         }
                                     }

@@ -1,15 +1,19 @@
-package com.example.hesolutions.mylibrary;
+package com.mylibrary;
 
 /**
  * Created by hesolutions on 2016-01-05.
  */
 
+import android.bluetooth.BluetoothClass;
 import android.graphics.Color;
+
+import com.homa.hls.database.Device;
 
 import java.io.IOError;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -23,6 +27,7 @@ public class WeekViewEvent implements Serializable{
     private String mName;
     private String mLocation;
     private int mColor;
+    private ArrayList<Device> mdevicelist;
 
     public WeekViewEvent(){
 
@@ -43,8 +48,10 @@ public class WeekViewEvent implements Serializable{
      * @param endHour Hour (in 24-hour format) when the event ends.
      * @param endMinute Minute when the event ends.
      * @param color color of the event.
+     * @param devicelist devicelist contains the devices
      */
-    public WeekViewEvent(long id, String name, int startYear, int startMonth, int startDay, int startHour, int startMinute, int endYear, int endMonth, int endDay, int endHour, int endMinute, int color) {
+    public WeekViewEvent(long id, String name, int startYear, int startMonth, int startDay, int startHour, int startMinute, int endYear,
+                         int endMonth, int endDay, int endHour, int endMinute, int color, ArrayList devicelist) {
         this.mId = id;
 
         this.mStartTime = Calendar.getInstance();
@@ -64,6 +71,7 @@ public class WeekViewEvent implements Serializable{
         this.mColor = color;
 
         this.mName = name;
+        this.mdevicelist = devicelist;
     }
 
     /**
@@ -74,13 +82,14 @@ public class WeekViewEvent implements Serializable{
      * @param startTime The time when the event starts.
      * @param endTime The time when the event ends.
      */
-    public WeekViewEvent(long id, String name, String location, Calendar startTime, Calendar endTime, int color) {
+    public WeekViewEvent(long id, String name, String location, Calendar startTime, Calendar endTime, int color, ArrayList devicelist) {
         this.mId = id;
         this.mName = name;
         this.mLocation = location;
         this.mStartTime = startTime;
         this.mEndTime = endTime;
         this.mColor = color;
+        this.mdevicelist = devicelist;
     }
 
     /**
@@ -90,8 +99,8 @@ public class WeekViewEvent implements Serializable{
      * @param startTime The time when the event starts.
      * @param endTime The time when the event ends.
      */
-    public WeekViewEvent(long id, String name, Calendar startTime, Calendar endTime, int color) {
-        this(id, name, null, startTime, endTime, color);
+    public WeekViewEvent(long id, String name, Calendar startTime, Calendar endTime, int color, ArrayList devicelist) {
+        this(id, name, null, startTime, endTime, color, devicelist);
     }
 
 
@@ -142,6 +151,10 @@ public class WeekViewEvent implements Serializable{
     public void setId(long id) {
         this.mId = id;
     }
+
+    public ArrayList getdeviceList(){return mdevicelist;}
+
+    public void setdeviceList(ArrayList devicelist) {this.mdevicelist = devicelist;}
 
     @Override
     public boolean equals(Object o) {

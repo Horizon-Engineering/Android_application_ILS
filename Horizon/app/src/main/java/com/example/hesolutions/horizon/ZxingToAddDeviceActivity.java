@@ -361,6 +361,7 @@ public class ZxingToAddDeviceActivity extends Activity {
                     mdevicetype.setOnItemClickListener(new C00391());
                 case R.id.adddevice_savebtn:
                     String devicename = ZxingToAddDeviceActivity.this.editText.getText().toString();
+
                     if (devicename.equals("") || ZxingToAddDeviceActivity.this._findDeviceName(devicename)) {
                         if (devicename.equals("")) {
                             ZxingToAddDeviceActivity.this.DialogTip(ZxingToAddDeviceActivity.this.getResources().getString(R.string.add_fail_name));
@@ -381,16 +382,25 @@ public class ZxingToAddDeviceActivity extends Activity {
                     ZxingToAddDeviceActivity.this.mDevice.setDeviceName(devicename);
                     ZxingToAddDeviceActivity.this.mDevice.setChannelMark((short) 1);
                     Gateway gateways = SysApplication.getInstance().getCurrGateway(ZxingToAddDeviceActivity.this);
-                    if (gateways == null || !DatabaseManager.getInstance().addDevice(ZxingToAddDeviceActivity.this.mDevice, ZxingToAddDeviceActivity.this.mCurArea)) {
-                        ZxingToAddDeviceActivity.this.DialogTip(ZxingToAddDeviceActivity.this.getResources().getString(R.string.add_fail));
+                    if (ZxingToAddDeviceActivity.this._findDeviceAddress(ZxingToAddDeviceActivity.this.mDevice.getDeviceAddress()))
+                    {
+                        ZxingToAddDeviceActivity.this.DialogTip("Device alreay there");
                         return;
+                    }else{
+                        if (gateways == null || !DatabaseManager.getInstance().addDevice(ZxingToAddDeviceActivity.this.mDevice, ZxingToAddDeviceActivity.this.mCurArea)) {
+
+                            ZxingToAddDeviceActivity.this.DialogTip(ZxingToAddDeviceActivity.this.getResources().getString(R.string.add_fail));
+                            return;
+                        }
                     }
+
                     byte[] bArr;
                     ZxingToAddDeviceActivity.this.mDevice.setGatewayMacAddr(gateways.getMacAddress());
                     ZxingToAddDeviceActivity.this.mDevice.setGatewayPassword(gateways.getPassWord());
                     ZxingToAddDeviceActivity.this.mDevice.setGatewaySSID(gateways.getSSID());
                     DatabaseManager.getInstance().AddGateWayDevice(DatabaseManager.getInstance().SelectLimitDeviceIndex(), gateways.getGateWayInfoIndex());
                     DeviceSocket.getInstance().send(com.homa.hls.datadeal.Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4, ZxingToAddDeviceActivity.this.mDevice.getDeviceAddress(), (short) 0, new byte[]{(byte) -96, (byte) ZxingToAddDeviceActivity.this.mDevice.getDeviceType(), (byte) 0, (byte) 0, (byte) 0}), ZxingToAddDeviceActivity.this.mDevice.getGatewayMacAddr(), ZxingToAddDeviceActivity.this.mDevice.getGatewayPassword(), ZxingToAddDeviceActivity.this.mDevice.getGatewaySSID(), ZxingToAddDeviceActivity.this));
+                    /*
                     i = 0;
                     while (i < ZxingToAddDeviceActivity.this.areaList.size()) {
                         if (((Area) ZxingToAddDeviceActivity.this.areaList.get(i)).getAreaName().equals("\u6240\u6709\u8bbe\u5907") || ((Area) ZxingToAddDeviceActivity.this.areaList.get(i)).getAreaName().equals("All devices") || ((Area) ZxingToAddDeviceActivity.this.areaList.get(i)).getAreaName().equals("Alle Ger\u00e4te")) {
@@ -608,6 +618,7 @@ public class ZxingToAddDeviceActivity extends Activity {
                             i++;
                         }
                     }
+                    */
                     view = ZxingToAddDeviceActivity.this.inflater.inflate(R.layout.msg_dialog, null);
                     Button btn_ok = (Button) view.findViewById(R.id.btn_ok);
                     Button btn_no = (Button) view.findViewById(R.id.btn_cancel);
