@@ -334,17 +334,14 @@ public class ChooseDeviceActivity extends Activity {
                         WeekViewEvent event = events.get(i);
                         Calendar starttime = event.getStartTime();
                         Calendar finishtime = event.getEndTime();
-                        System.out.println("*********" + calendar.getTime().toString() +
-                                "/n ********" + starttime.getTime().toString()
-                                + "/n ********" + finishtime.getTime().toString());
-                        if (calendar.after(starttime)&&calendar.before(finishtime))
+                       if (calendar.after(starttime)&&calendar.before(finishtime))
                         {
-                            this.val$image_switch.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.open));
-                            this.val$seekBar.setProgress(100);
-                            DataManager.getInstance().setevents(events);
+                            System.out.println("???**************");
                         }
                     }
                 }
+
+
                 /*
                 this.val$ib5 = imageButton;
                 this.val$ib4 = imageButton2;
@@ -407,6 +404,7 @@ public class ChooseDeviceActivity extends Activity {
                 this.val$ib3 = imageButton3;
                 */
                 this.val$arg0 = i;
+
             }
 
             public void onStopTrackingTouch(SeekBar arg0) {

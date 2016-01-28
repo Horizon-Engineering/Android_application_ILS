@@ -70,7 +70,7 @@ public class HomePage extends AppCompatActivity {
                 try {
                     while(true) {
                         MakeAlert();
-                        Thread.sleep(30 * 1000);
+                        Thread.sleep(60 * 1000);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -139,6 +139,7 @@ public class HomePage extends AppCompatActivity {
     {
         List<WeekViewEvent> events;
         Date current = Calendar.getInstance().getTime();
+        Calendar calendar = Calendar.getInstance();
         String currenttime = time.format(current);
         events = DataManager.getInstance().getevents();
 
@@ -148,11 +149,13 @@ public class HomePage extends AppCompatActivity {
             {
                 WeekViewEvent event = events.get(i);
                 ArrayList<Device> devicelist = event.getdeviceList();
-                String starttime = time.format(event.getStartTime().getTime());
                 String endtime = time.format(event.getEndTime().getTime());
+                String startedtime = time.format(event.getStartTime().getTime());
+                Calendar starttime = event.getStartTime();
+                Calendar finishtime = event.getEndTime();
 
-                System.out.println("***************" + currenttime + "/n" + "**************" + starttime);
-                if (currenttime.equals(starttime))
+                System.out.println("***************" + currenttime + "**************" + startedtime +  "**************" + endtime);
+                if (calendar.before(finishtime)&&calendar.after(starttime))
                 {
 
                     for (int j = 0; j <devicelist.size(); j++)
@@ -163,6 +166,7 @@ public class HomePage extends AppCompatActivity {
                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                         device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                 device.getGatewaySSID(), HomePage.this));
+                        DatabaseManager.getInstance().updateDevice(device);
 
                     }
                 }else if (currenttime.equals(endtime))
@@ -175,6 +179,7 @@ public class HomePage extends AppCompatActivity {
                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                         device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                 device.getGatewaySSID(), HomePage.this));
+                        DatabaseManager.getInstance().updateDevice(device);
 
                     }
                 }
