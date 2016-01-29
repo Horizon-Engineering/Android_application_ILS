@@ -474,7 +474,7 @@ public class ChooseDeviceActivity extends Activity {
                         this.val$LoadDevice.setSceneParams(SetParams);
                     }
                     DatabaseManager.getInstance().updateDevice(this.val$LoadDevice);
-                    
+
                 }
             }
         }

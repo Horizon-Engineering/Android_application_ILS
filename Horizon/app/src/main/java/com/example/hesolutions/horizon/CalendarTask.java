@@ -54,7 +54,6 @@ public class CalendarTask extends Activity {
     TextView starttime;
     TextView finishdate;
     TextView finishtime;
-    TextView textView6;
     Button Apply;
     Button cancelTOcalendar;
     Button delete;
@@ -92,7 +91,6 @@ public class CalendarTask extends Activity {
         Thursday = (CheckBox)findViewById(R.id.Thursday);
         Friday = (CheckBox)findViewById(R.id.Friday);
         Saturday = (CheckBox)findViewById(R.id.Saturday);
-        textView6 = (TextView)findViewById(R.id.textView6);
         sectorlistView = (ListView)findViewById(R.id.sectorlistView);
 
         final SimpleDateFormat ddf = new SimpleDateFormat("MMM dd, yyyy");
@@ -108,9 +106,19 @@ public class CalendarTask extends Activity {
         final Calendar finishTime = Calendar.getInstance();
 
         day =startTime.get(Calendar.DAY_OF_WEEK)-1;
-
-
-
+//========================================Loading the sector info
+        BiMap<String, BiMap> sector = DataManager.getInstance().getsector();
+        String username = DataManager.getInstance().getUsername();
+        ArrayList<Group> arrayList = new ArrayList<Group>();
+        BiMap<String,ArrayList> sectordetails = sector.get(username);
+        for (Map.Entry<String, ArrayList> entry : sectordetails.entrySet()) {
+            String key = entry.getKey();
+            ArrayList value = entry.getValue();
+            Group group = new Group(key,value,false);
+            arrayList.add(group);
+        }
+        deviceAdapter = new MyCustomAdapter(this, R.layout.devicelist, arrayList);
+        sectorlistView.setAdapter(deviceAdapter);
 //=======================================start date and time===============================================
         startdate.setOnClickListener(new View.OnClickListener() {
 
@@ -230,8 +238,6 @@ public class CalendarTask extends Activity {
 
             @Override
             public void onClick(final View v) {
-                textView6.setVisibility(View.VISIBLE);
-
 
                 final ArrayList<Device> choosedevice = new ArrayList<Device>();
                 ArrayList<Group> choosegrouplist = deviceAdapter.arrayList;
@@ -245,9 +251,6 @@ public class CalendarTask extends Activity {
                         }
                     }
                 }
-
-                Toast.makeText(CalendarTask.this, choosedevice.toString(), Toast.LENGTH_SHORT).show();
-
 
                 if (choosedevice.isEmpty()) {
                     Toast.makeText(CalendarTask.this, "At least one group should be selected", Toast.LENGTH_SHORT).show();
@@ -497,7 +500,6 @@ public class CalendarTask extends Activity {
                                                     Toast.makeText(CalendarTask.this, "Unvaild time", Toast.LENGTH_LONG).show();
                                                 }
                                             });
-                                            textView6.setVisibility(View.GONE);
                                         }
                                     } else {
                                         runOnUiThread(new Runnable() {
@@ -506,7 +508,6 @@ public class CalendarTask extends Activity {
                                                 Toast.makeText(CalendarTask.this, "Enter a valid week number (at least 1)", Toast.LENGTH_LONG).show();
                                             }
                                         });
-                                        textView6.setVisibility(View.GONE);
                                     }
 
                                 } else {
@@ -516,13 +517,11 @@ public class CalendarTask extends Activity {
                                             Toast.makeText(CalendarTask.this, "Please enter a number", Toast.LENGTH_LONG).show();
                                         }
                                     });
-                                    textView6.setVisibility(View.GONE);
                                 }
                             }
 
                             // not repetition
                             if (switch1.isChecked() == false) {
-                                textView6.setVisibility(View.VISIBLE);
                                 if ((finishTime.after(startTime))) {
                                     if (!IDlist.isEmpty()) {
                                         id = IDlist.get((IDlist.size() - 1)) + 1;
@@ -540,7 +539,6 @@ public class CalendarTask extends Activity {
                                             Toast.makeText(CalendarTask.this, "Unvalid Time", Toast.LENGTH_LONG).show();
                                         }
                                     });
-                                    textView6.setVisibility(View.GONE);
                                 }
 
                             }
@@ -616,40 +614,8 @@ public class CalendarTask extends Activity {
             }
         });
 
-
-        BiMap<String, BiMap> sector = DataManager.getInstance().getsector();
-        String username = DataManager.getInstance().getUsername();
-        if (sector.get(username)==null) {
-            //sectorlistView.setVisibility(View.GONE);
-        }
-        else
-        {
-           displayListView();
-
-        }
-
-
     }
 
-
-    private  void displayListView()
-    {
-        BiMap<String, BiMap> sector = DataManager.getInstance().getsector();
-        String username = DataManager.getInstance().getUsername();
-        ArrayList<Group> arrayList = new ArrayList<Group>();
-        BiMap<String,ArrayList> sectordetails = sector.get(username);
-        for (Map.Entry<String, ArrayList> entry : sectordetails.entrySet()) {
-            String key = entry.getKey();
-            ArrayList value = entry.getValue();
-            Group group = new Group(key,value,false);
-            arrayList.add(group);
-        }
-
-        deviceAdapter = new MyCustomAdapter(this, R.layout.devicelist, arrayList);
-        sectorlistView.setAdapter(deviceAdapter);
-
-
-    }
 
     private class MyCustomAdapter extends ArrayAdapter<Group> {
         ArrayList<Group> arrayList;

@@ -167,7 +167,7 @@ public class HomePage extends AppCompatActivity {
                         device.setCurrentParams(data);
                         DatabaseManager.getInstance().updateDevice(device);
                     }
-                }else if (currenttime.equals(endtime))
+                }else
                 {
                     for (int k = 0; k <devicelist.size(); k++)
                     {
