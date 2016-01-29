@@ -110,15 +110,21 @@ public class CalendarTask extends Activity {
         BiMap<String, BiMap> sector = DataManager.getInstance().getsector();
         String username = DataManager.getInstance().getUsername();
         ArrayList<Group> arrayList = new ArrayList<Group>();
-        BiMap<String,ArrayList> sectordetails = sector.get(username);
-        for (Map.Entry<String, ArrayList> entry : sectordetails.entrySet()) {
-            String key = entry.getKey();
-            ArrayList value = entry.getValue();
-            Group group = new Group(key,value,false);
-            arrayList.add(group);
+        if (sector.get(username)==null) {}
+        else {
+            BiMap<String, ArrayList> sectordetails = sector.get(username);
+            for (Map.Entry<String, ArrayList> entry : sectordetails.entrySet()) {
+                String key = entry.getKey();
+                ArrayList value = entry.getValue();
+                Group group = new Group(key, value, false);
+                arrayList.add(group);
+            }
+
+
+            deviceAdapter = new MyCustomAdapter(this, R.layout.devicelist, arrayList);
+            sectorlistView.setAdapter(deviceAdapter);
         }
-        deviceAdapter = new MyCustomAdapter(this, R.layout.devicelist, arrayList);
-        sectorlistView.setAdapter(deviceAdapter);
+
 //=======================================start date and time===============================================
         startdate.setOnClickListener(new View.OnClickListener() {
 
@@ -636,6 +642,7 @@ public class CalendarTask extends Activity {
                 convertView = vi.inflate(R.layout.devicelist, null);
 
             }
+
             Group group = arrayList.get(position);
             TextView name = (TextView) convertView.findViewById(R.id.name);
             final CheckBox checked = (CheckBox) convertView.findViewById(R.id.checked);
@@ -653,7 +660,6 @@ public class CalendarTask extends Activity {
                     } else group.setChecked(false);
                 }
             });
-
 
             return convertView;
 
