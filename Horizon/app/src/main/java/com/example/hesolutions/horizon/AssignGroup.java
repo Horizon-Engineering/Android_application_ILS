@@ -22,6 +22,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
+import com.homa.hls.database.DeviceList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +89,7 @@ public class AssignGroup extends Activity {
                         String key = entrys.getKey();
                         if (key.equals(groupname))
                         {
-                            Toast.makeText(AssignGroup.this, "Group Name alreay exsited", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AssignGroup.this, "Group Name alreay exsited" + key, Toast.LENGTH_SHORT).show();
                             Groupname.setText("");
                             uniquename = false;
                         }
@@ -149,7 +150,9 @@ public class AssignGroup extends Activity {
 
     }
     private void displayListView(){
-        ArrayList<Device> arrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
+        ArrayList<Device> arrayList;
+        DeviceList deviceList = DatabaseManager.getInstance().getDeviceListExceptKnobandsenor();
+        arrayList = deviceList.getmDeviceList();
         //create an ArrayAdaptar from the String Array
         dataAdapter = new MyCustomAdapter(this, R.layout.devicelist, arrayList);
         devicelistview = (ListView)findViewById(R.id.devicelistview);
@@ -166,7 +169,7 @@ public class AssignGroup extends Activity {
         public MyCustomAdapter(Context context, int textViewResourceId,
                                ArrayList<Device> arrayList) {
             super(context, textViewResourceId, arrayList);
-            this.arrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
+            this.arrayList = arrayList;
         }
 
         @Override

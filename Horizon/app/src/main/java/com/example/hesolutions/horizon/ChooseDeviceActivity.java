@@ -322,25 +322,17 @@ public class ChooseDeviceActivity extends Activity {
                 this.val$image_switch = imageView;
                 this.val$seekBar = seekBar;
 
-                Calendar calendar = Calendar.getInstance();
 
-                List<WeekViewEvent> events = DataManager.getInstance().getevents();
+                byte nn = DatabaseManager.getInstance().getlightingofDevice((Device) this.val$LoadDevice)[1];
 
-                if (events.size()!=0)
+                if (DatabaseManager.getInstance().getlightingofDevice((Device) this.val$LoadDevice)[1] == 0)
                 {
-
-                    for (int i = 0; i< events.size(); i++)
-                    {
-                        WeekViewEvent event = events.get(i);
-                        Calendar starttime = event.getStartTime();
-                        Calendar finishtime = event.getEndTime();
-                       if (calendar.after(starttime)&&calendar.before(finishtime))
-                        {
-                            System.out.println("???**************");
-                        }
-                    }
+                    this.val$image_switch.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.close));
+                }else
+                {
+                    this.val$image_switch.setImageDrawable(ChooseDeviceActivity.this.getResources().getDrawable(R.drawable.open));
+                    this.val$seekBar.setProgress(nn);
                 }
-
 
                 /*
                 this.val$ib5 = imageButton;
@@ -350,6 +342,32 @@ public class ChooseDeviceActivity extends Activity {
             }
 
             public void onClick(View v) {
+
+                Calendar calendar = Calendar.getInstance();
+                List<WeekViewEvent> events = DataManager.getInstance().getevents();
+                if (events.size()!=0)
+                {
+                    for (int i = 0; i< events.size(); i++)
+                    {
+                        WeekViewEvent event = events.get(i);
+                        Calendar starttime = event.getStartTime();
+                        Calendar finishtime = event.getEndTime();
+                        if (calendar.after(starttime)&&calendar.before(finishtime))
+                        {
+                            ArrayList<Device> devicelist = event.getdeviceList();
+                            for (int j =0 ; j < devicelist.size(); j++)
+                            {
+                                if (devicelist.get(j).getDeviceIndex()== this.val$LoadDevice.getDeviceIndex())
+                                {
+                                    devicelist.remove(j);
+                                }
+                            }
+                            if (devicelist.isEmpty())events.remove(i);
+                        }
+                    }
+                }
+                DataManager.getInstance().setevents(events);
+
                 byte[] data;
                 if (this.val$LoadDevice.isClick()) {
                     /*
@@ -377,10 +395,10 @@ public class ChooseDeviceActivity extends Activity {
                         this.val$LoadDevice.setSceneParams(data);
                     }
                     this.val$seekBar.setProgress(100);
-
                     //Toast.makeText(getApplicationContext(), "11111111111" + val$LoadDevice.getGatewayMacAddr().toString(), Toast.LENGTH_SHORT).show();
                 }
                 DatabaseManager.getInstance().updateDevice(this.val$LoadDevice);
+
             }
         }
 
@@ -447,6 +465,7 @@ public class ChooseDeviceActivity extends Activity {
                             SetParams[4] = (byte) 0;
                         }
                     }
+
                     ChooseDeviceActivity.this.mDevice = (Device) ChooseDeviceActivity.this.devicelist.get(this.val$arg0);
                     ChooseDeviceActivity.this.mDevice.setCurrentParams(SetParams);
                     this.val$LoadDevice.setCurrentParams(SetParams);
@@ -455,6 +474,7 @@ public class ChooseDeviceActivity extends Activity {
                         this.val$LoadDevice.setSceneParams(SetParams);
                     }
                     DatabaseManager.getInstance().updateDevice(this.val$LoadDevice);
+                    
                 }
             }
         }

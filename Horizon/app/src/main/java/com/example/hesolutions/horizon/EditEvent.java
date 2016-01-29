@@ -215,16 +215,19 @@ public class EditEvent extends Activity {
             @Override
             public void onClick(final View v) {
                 textView6.setVisibility(View.VISIBLE);
+
+                Calendar calendar = Calendar.getInstance();
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
 
-
+                        // delete a single event
                         if (group.isChecked()==false)
                         {
                             int ite = getGroup(ID);
                             if (ite!=(-1) &&ite!=(-2)) {
                                 List<Long> groupid = grouplist.get(ite);
+                                // if this event belongs to any group
                                 if (!groupid.equals(null)) {
                                     groupid.remove(ID);
                                 }

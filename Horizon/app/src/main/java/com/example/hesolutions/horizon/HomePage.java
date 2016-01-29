@@ -70,7 +70,7 @@ public class HomePage extends AppCompatActivity {
                 try {
                     while(true) {
                         MakeAlert();
-                        Thread.sleep(60 * 1000);
+                        Thread.sleep(5 * 1000);
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -142,7 +142,7 @@ public class HomePage extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         String currenttime = time.format(current);
         events = DataManager.getInstance().getevents();
-
+        DatabaseManager.getInstance().addDevice(null,null);
         if (events.size()!=0)
         {
             for (int i = 0; i< events.size(); i++)
@@ -153,8 +153,6 @@ public class HomePage extends AppCompatActivity {
                 String startedtime = time.format(event.getStartTime().getTime());
                 Calendar starttime = event.getStartTime();
                 Calendar finishtime = event.getEndTime();
-
-                System.out.println("***************" + currenttime + "**************" + startedtime +  "**************" + endtime);
                 if (calendar.before(finishtime)&&calendar.after(starttime))
                 {
 
@@ -166,8 +164,8 @@ public class HomePage extends AppCompatActivity {
                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                         device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                 device.getGatewaySSID(), HomePage.this));
+                        device.setCurrentParams(data);
                         DatabaseManager.getInstance().updateDevice(device);
-
                     }
                 }else if (currenttime.equals(endtime))
                 {
@@ -179,8 +177,8 @@ public class HomePage extends AppCompatActivity {
                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                         device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                 device.getGatewaySSID(), HomePage.this));
+                        device.setCurrentParams(data);
                         DatabaseManager.getInstance().updateDevice(device);
-
                     }
                 }
             }

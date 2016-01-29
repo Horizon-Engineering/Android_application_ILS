@@ -46,7 +46,6 @@ public class Message {
         if (macaddr == null || password == null || ssid == null) {
             macaddr = null;
         }
-        System.out.println(macaddr + "ccccccccccccccccccccccccccccccc1++++++++++++++++++++++++++++++++++++++++++++++");
         message.MacAddress = macaddr;
         message.Password = password;
         message.SSID = ssid;

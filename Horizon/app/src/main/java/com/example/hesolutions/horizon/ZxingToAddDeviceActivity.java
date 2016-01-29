@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.MotionEventCompat;
@@ -45,6 +46,14 @@ import com.homa.hls.datadeal.Event;
 import com.homa.hls.socketconn.DeviceSocket;
 import com.homa.hls.widgetcustom.CustomProgressDialog;
 import com.zxing.activity.CaptureActivity;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -117,6 +126,7 @@ public class ZxingToAddDeviceActivity extends Activity {
                         ZxingToAddDeviceActivity.this.mDevice.setChannelInfo((short) 1);
                         ZxingToAddDeviceActivity.this.mDevice.setMacAddress(new int[3]);
                         Gateway curGateway = SysApplication.getInstance().getCurrGateway(ZxingToAddDeviceActivity.this);
+                        /*
                         if (curGateway != null && DatabaseManager.getInstance().addDevice(ZxingToAddDeviceActivity.this.mDevice, ZxingToAddDeviceActivity.this.mCurArea)) {
                             if (ZxingToAddDeviceActivity.this.mdialog != null && ZxingToAddDeviceActivity.this.mdialog.isShowing()) {
                                 ZxingToAddDeviceActivity.this.mdialog.cancel();
@@ -129,6 +139,7 @@ public class ZxingToAddDeviceActivity extends Activity {
                             ZxingToAddDeviceActivity.this.addsuccess();
                         }
                         ZxingToAddDeviceActivity.this.mDeviceList = null;
+                        */
                     } else if (msg.arg1 == 0) {
                         ZxingToAddDeviceActivity.this.DialogTip(ZxingToAddDeviceActivity.this.getResources().getString(R.string.add_fail_langdown));
                     }
@@ -387,19 +398,29 @@ public class ZxingToAddDeviceActivity extends Activity {
                         ZxingToAddDeviceActivity.this.DialogTip("Device alreay there");
                         return;
                     }else{
-                        if (gateways == null || !DatabaseManager.getInstance().addDevice(ZxingToAddDeviceActivity.this.mDevice, ZxingToAddDeviceActivity.this.mCurArea)) {
-
+                        if (gateways==null)
+                        {
                             ZxingToAddDeviceActivity.this.DialogTip(ZxingToAddDeviceActivity.this.getResources().getString(R.string.add_fail));
                             return;
+                        }else
+                        {
+                            ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
+                            deviceArrayList.add(ZxingToAddDeviceActivity.this.mDevice);
+                            DatabaseManager.getInstance().WriteDeviceList(deviceArrayList,"devicelist");
                         }
+
+
                     }
 
                     byte[] bArr;
                     ZxingToAddDeviceActivity.this.mDevice.setGatewayMacAddr(gateways.getMacAddress());
                     ZxingToAddDeviceActivity.this.mDevice.setGatewayPassword(gateways.getPassWord());
                     ZxingToAddDeviceActivity.this.mDevice.setGatewaySSID(gateways.getSSID());
-                    DatabaseManager.getInstance().AddGateWayDevice(DatabaseManager.getInstance().SelectLimitDeviceIndex(), gateways.getGateWayInfoIndex());
-                    DeviceSocket.getInstance().send(com.homa.hls.datadeal.Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4, ZxingToAddDeviceActivity.this.mDevice.getDeviceAddress(), (short) 0, new byte[]{(byte) -96, (byte) ZxingToAddDeviceActivity.this.mDevice.getDeviceType(), (byte) 0, (byte) 0, (byte) 0}), ZxingToAddDeviceActivity.this.mDevice.getGatewayMacAddr(), ZxingToAddDeviceActivity.this.mDevice.getGatewayPassword(), ZxingToAddDeviceActivity.this.mDevice.getGatewaySSID(), ZxingToAddDeviceActivity.this));
+                    //.getInstance().AddGateWayDevice(DatabaseManager.getInstance().SelectLimitDeviceIndex(), gateways.getGateWayInfoIndex());
+                    //DeviceSocket.getInstance().send(com.homa.hls.datadeal.Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4, ZxingToAddDeviceActivity.this.mDevice.getDeviceAddress(), (short) 0, new byte[]{(byte) -96, (byte) ZxingToAddDeviceActivity.this.mDevice.getDeviceType(), (byte) 0, (byte) 0, (byte) 0}), ZxingToAddDeviceActivity.this.mDevice.getGatewayMacAddr(), ZxingToAddDeviceActivity.this.mDevice.getGatewayPassword(), ZxingToAddDeviceActivity.this.mDevice.getGatewaySSID(), ZxingToAddDeviceActivity.this));
+                    //DatabaseManager.getInstance().addDevice(ZxingToAddDeviceActivity.this.mDevice, null);
+                    //DeviceSocket.getInstance().send(com.homa.hls.datadeal.Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4, ZxingToAddDeviceActivity.this.mDevice.getDeviceAddress(), (short) 0, new byte[]{(byte) -96, (byte) ZxingToAddDeviceActivity.this.mDevice.getDeviceType(), (byte) 0, (byte) 0, (byte) 0}), ZxingToAddDeviceActivity.this.mDevice.getGatewayMacAddr(), ZxingToAddDeviceActivity.this.mDevice.getGatewayPassword(), ZxingToAddDeviceActivity.this.mDevice.getGatewaySSID(), ZxingToAddDeviceActivity.this));
+
                     /*
                     i = 0;
                     while (i < ZxingToAddDeviceActivity.this.areaList.size()) {
@@ -980,6 +1001,7 @@ public class ZxingToAddDeviceActivity extends Activity {
             }
         }
     }
+
 
     private void _showLighting(Device mDevice) {
         this.ret = false;
