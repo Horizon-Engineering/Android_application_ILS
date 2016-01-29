@@ -246,19 +246,21 @@ public class CalendarTask extends Activity {
             public void onClick(final View v) {
 
                 final ArrayList<Device> choosedevice = new ArrayList<Device>();
-                ArrayList<Group> choosegrouplist = deviceAdapter.arrayList;
-                for (int i = 0; i < choosegrouplist.size(); i++) {
-                    Group group = choosegrouplist.get(i);
-                    if (group.getChecked() == true) {
-                        ArrayList<Device> devicelist = group.getList();
-                        for (int j = 0; j < devicelist.size(); j++) {
-                            Device device = devicelist.get(j);
-                            choosedevice.add(device);
+                if (!choosedevice.isEmpty()) {
+                    ArrayList<Group> choosegrouplist = deviceAdapter.arrayList;
+                    for (int i = 0; i < choosegrouplist.size(); i++) {
+                        Group group = choosegrouplist.get(i);
+                        if (group.getChecked() == true) {
+                            ArrayList<Device> devicelist = group.getList();
+                            for (int j = 0; j < devicelist.size(); j++) {
+                                Device device = devicelist.get(j);
+                                choosedevice.add(device);
+                            }
                         }
                     }
                 }
 
-                if (choosedevice.isEmpty()) {
+                if (choosedevice.isEmpty()||choosedevice==null) {
                     Toast.makeText(CalendarTask.this, "At least one group should be selected", Toast.LENGTH_SHORT).show();
                 } else {
                     new Thread(new Runnable() {
