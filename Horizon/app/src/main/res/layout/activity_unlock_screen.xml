@@ -5,105 +5,108 @@
     android:layout_height="match_parent"
     tools:context="com.example.hesolutions.horizon.UnlockScreen">
 
-
-
     <TextView
+        android:id="@+id/CODE1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=""
-        android:id="@+id/CODE1"
-        android:textColor="@color/white"
-        android:visibility="gone"
-        android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
     <GridView
+        android:id="@+id/gridView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/CODE1"
-        android:id="@+id/gridView"
-        android:verticalSpacing="50dp"
-        android:stretchMode="columnWidth"
+        android:layout_marginTop="50dp"
         android:numColumns="3"
-        android:layout_marginTop="50dp"></GridView>
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="35dp"
+        android:horizontalSpacing="35dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=""
         android:id="@+id/CODE2"
-        android:visibility="gone"
-        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/gridView"
+        android:layout_toEndOf="@+id/CODE1"
         android:layout_toRightOf="@+id/CODE1"
-        android:layout_toEndOf="@+id/CODE1" />
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:visibility="gone" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=""
         android:id="@+id/CODE3"
-        android:textColor="@color/white"
-        android:visibility="gone"
-        android:layout_above="@+id/gridView"
-        android:layout_toRightOf="@+id/CODE2"
-        android:layout_toEndOf="@+id/CODE2" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text=""
-        android:id="@+id/CODE4"
-        android:textColor="@color/white"
-        android:visibility="gone"
         android:layout_above="@+id/gridView"
+        android:layout_toEndOf="@+id/CODE2"
+        android:layout_toRightOf="@+id/CODE2"
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/CODE4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/gridView"
+        android:layout_toEndOf="@+id/CODE3"
         android:layout_toRightOf="@+id/CODE3"
-        android:layout_toEndOf="@+id/CODE3" />
+        android:text=""
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/white"
+        android:visibility="gone" />
 
     <ImageButton
+        android:id="@+id/cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@null"
-        android:src="@drawable/button_cancel"
-        android:id="@+id/cancel"
-        android:paddingRight="20dp"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:background="@null"
+        android:paddingRight="20dp"
+        android:src="@drawable/button_cancel" />
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignLeft="@id/gridView"
-        android:paddingLeft="35dp"
-        android:layout_height="match_parent">
-        <RadioButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:enabled="false"
-            android:id="@+id/radioButton1" />
-        <RadioButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:enabled="false"
-            android:id="@+id/radioButton2" />
-        <RadioButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:enabled="false"
-            android:id="@+id/radioButton3" />
-        <RadioButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:enabled="false"
-            android:id="@+id/radioButton4" />
+        android:paddingLeft="35dp">
 
+        <RadioButton
+            android:id="@+id/radioButton1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:enabled="false" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:enabled="false" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:enabled="false" />
+
+        <RadioButton
+            android:id="@+id/radioButton4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:enabled="false" />
     </LinearLayout>
 </RelativeLayout>

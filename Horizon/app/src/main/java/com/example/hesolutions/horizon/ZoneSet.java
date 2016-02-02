@@ -1,26 +1,24 @@
 package com.example.hesolutions.horizon;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.Map;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+
+import java.util.Map;
 
 
 public class ZoneSet extends Activity {
@@ -35,8 +33,6 @@ public class ZoneSet extends Activity {
             sectorlist = sector;
             sectorID = sectorlist.keySet().toArray(new String[sector.size()]);
         }
-
-
 
         public String getKey(int position) {       //key
             return sectorID[position] ;

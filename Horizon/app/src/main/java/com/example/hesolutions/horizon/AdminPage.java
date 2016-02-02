@@ -1,24 +1,9 @@
 package com.example.hesolutions.horizon;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.GridView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.homa.hls.database.Device;
-import com.zxing.activity.CaptureActivity;
-
-import java.util.ArrayList;
 
 public class AdminPage extends AppCompatActivity {
 
@@ -28,12 +13,17 @@ public class AdminPage extends AppCompatActivity {
     Button Logout;
     Button SetDevice;
     Button Grouping;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin_page);
+        //code to make the full screen.
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        scannerButton = (Button) findViewById(R.id.scannerButton);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_admin);
+
+     /*   scannerButton = (Button) findViewById(R.id.scannerButton);
         AccessPermit = (Button) findViewById(R.id.AccessPermit);
         Logout = (Button) findViewById(R.id.Logout);
         SetDevice = (Button) findViewById(R.id.SetDevice);
@@ -156,5 +146,7 @@ public class AdminPage extends AppCompatActivity {
         gridView.setAdapter(adapter);
 */
     }
+
+}
 
 

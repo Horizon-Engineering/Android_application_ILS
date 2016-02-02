@@ -3,7 +3,6 @@ package com.example.hesolutions.horizon;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -70,7 +69,6 @@ public class ZoneList extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Log.i("clicks", "You Clicked B1");
         Intent i = new Intent(ZoneList.this, UserPage.class);
         startActivity(i);
     }

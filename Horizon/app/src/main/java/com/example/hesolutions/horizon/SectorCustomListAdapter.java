@@ -5,23 +5,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 public class SectorCustomListAdapter extends ArrayAdapter<String> {
 
     private final Activity context;
     private final String[] sectorList;
-    private ListView mListView;
-
 
     public SectorCustomListAdapter(Activity context, String[] web) {
         super(context, R.layout.sectorlist_row, web);
         this.context = context;
         this.sectorList = web;
-        ;
     }
-
 
     @Override
     public View getView(int position, View view, final ViewGroup parent) {

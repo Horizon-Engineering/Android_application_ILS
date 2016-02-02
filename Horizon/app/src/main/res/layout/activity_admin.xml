@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingTop="20dp"
+        >
+    <EditText
+        android:id="@+id/MSG"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Enter the account   "
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:ems="10"
+        android:layout_marginStart="332dp" />
+
+    <EditText
+        android:id="@+id/CODE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Enter the password"
+        android:inputType="numberPassword"
+        android:maxLength="4"
+        android:layout_marginStart="166dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/addNewUser"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:text="Add NewUser"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="127dp"
+        android:background="@color/grgray"/>
+
+</RelativeLayout>
