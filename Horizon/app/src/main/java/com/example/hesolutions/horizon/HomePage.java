@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -50,16 +49,6 @@ public class HomePage extends AppCompatActivity {
             //homescreenBgImage.setAlpha(0.5f);
         }
 
-        LOGIN = (ImageButton) findViewById(R.id.LOGIN);
-
-        LOGIN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent startNewActivityIntent = new Intent(HomePage.this, UnlockScreen.class);
-                startActivity(startNewActivityIntent);
-            }
-        });
-
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -78,6 +67,9 @@ public class HomePage extends AppCompatActivity {
                 }
             }
         }).start();
+
+        Intent startNewActivityIntent = new Intent(HomePage.this, UnlockScreen.class);
+        startActivity(startNewActivityIntent);
     }
 
 

@@ -54,15 +54,16 @@ public class UnlockScreen extends Activity {
         String[] numbers = new String[]{"1", "2", "3",
                 "4", "5", "6",
                 "7", "8", "9",
-                "0"};
+                "", "0", ""};
 
-        ArrayAdapter adapter = new ArrayAdapter(this, R.layout.arrayadapter, numbers);
+        ArrayAdapter adapter = new CustomPinCodeAdapter(this, R.layout.arrayadapter, numbers);
+
         gridView.setAdapter(adapter);
 
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+               clearPinCode();
             }
         });
     }
@@ -117,17 +118,24 @@ public class UnlockScreen extends Activity {
                 startActivity(startNewActivityIntent);
             } else {
                 Toast.makeText(getApplicationContext(), "No Accounts exist", Toast.LENGTH_LONG).show();
-                CODE1.setText("");
-                CODE2.setText("");
-                CODE3.setText("");
-                CODE4.setText("");
-                radioButton1.setChecked(false);
-                radioButton2.setChecked(false);
-                radioButton3.setChecked(false);
-                radioButton4.setChecked(false);
+                clearPinCode();
+
+
             }
         }
 
+    }
+
+    public void clearPinCode(){
+
+        CODE1.setText("");
+        CODE2.setText("");
+        CODE3.setText("");
+        CODE4.setText("");
+        radioButton1.setChecked(false);
+        radioButton2.setChecked(false);
+        radioButton3.setChecked(false);
+        radioButton4.setChecked(false);
     }
 
 }
