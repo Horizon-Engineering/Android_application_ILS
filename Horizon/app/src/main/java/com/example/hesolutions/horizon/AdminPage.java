@@ -2,8 +2,10 @@ package com.example.hesolutions.horizon;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ListView;
 
 public class AdminPage extends AppCompatActivity {
 
@@ -13,6 +15,7 @@ public class AdminPage extends AppCompatActivity {
     Button Logout;
     Button SetDevice;
     Button Grouping;
+    String[] status = {"User Does not exists"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,17 @@ public class AdminPage extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
+
+        ListView userList = (ListView) findViewById(R.id.userList);
+        String[] users = DataManager.getInstance().getAllUsers();
+
+        if (users != null) {
+            UserCustomListAdapter userCustomListAdapter = new UserCustomListAdapter(this, users);
+            userList.setAdapter(userCustomListAdapter);
+            userList.setVisibility(View.VISIBLE);
+        } else {
+            userList.setVisibility(View.VISIBLE);
+        }
 
      /*   scannerButton = (Button) findViewById(R.id.scannerButton);
         AccessPermit = (Button) findViewById(R.id.AccessPermit);

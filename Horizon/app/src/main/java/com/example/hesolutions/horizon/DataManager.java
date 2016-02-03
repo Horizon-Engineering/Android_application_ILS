@@ -1,11 +1,10 @@
 package com.example.hesolutions.horizon;
 
-import android.content.Context;
 import android.os.Environment;
-import android.provider.Settings;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.mylibrary.WeekViewEvent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,25 +13,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import com.homa.hls.database.Device;
-import com.mylibrary.WeekView;
-import com.mylibrary.WeekViewEvent;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.BiMap;
-/**
- * Created by hesolutions on 2015-12-10.
- */
 public class DataManager {
 
     SimpleDateFormat date = new SimpleDateFormat("MMM dd, yyyy");
@@ -50,6 +36,22 @@ public class DataManager {
         this.account = accountinfo;
         writedata(account, "account");
         return account;
+    }
+
+
+    //TODO refactor user detail storage
+    //Get list of all users
+    public String[] getAllUsers(){
+        if(this.account != null){
+            Set<ArrayList> values = this.account.values();
+            String[] users = new String[values.size()];
+            int i = 0;
+            for(ArrayList<String> user: values) {
+                users[i++] = user.get(0);
+            }
+            return users;
+        }
+        return  null;
     }
 
     //====================================Showing the user name ==============================

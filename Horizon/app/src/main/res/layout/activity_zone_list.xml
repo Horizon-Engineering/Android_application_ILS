@@ -152,12 +152,10 @@
             android:id="@+id/textView9"
             android:layout_toRightOf="@+id/activeDevicesId"
             android:layout_alignRight="@+id/sectorImage"
-            android:layout_alignEnd="@+id/sectorDescription"
             android:textStyle="bold"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="false"
             android:textSize="25sp"
-            android:layout_alignTop="@+id/imageView6"
             android:layout_alignParentTop="true"
             android:paddingTop="10sp" />
 

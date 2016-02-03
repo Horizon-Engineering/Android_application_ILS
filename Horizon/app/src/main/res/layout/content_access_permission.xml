@@ -14,7 +14,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/MSG"
+        android:id="@+id/userName"
         android:hint="Enter the account"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -37,9 +37,9 @@
         android:text="SAVE"
         android:id="@+id/SAVE"
         android:layout_marginTop="61dp"
-        android:layout_below="@+id/CODE"
-        android:layout_alignLeft="@+id/CODE"
-        android:layout_alignStart="@+id/CODE" />
+        android:layout_below="@+id/pinCode"
+        android:layout_alignLeft="@+id/pinCode"
+        android:layout_alignStart="@+id/pinCode" />
 
 
     <EditText
@@ -48,11 +48,11 @@
         android:inputType="numberPassword"
         android:ems="10"
         android:maxLength="4"
-        android:id="@+id/CODE"
+        android:id="@+id/pinCode"
         android:hint="Enter the password"
-        android:layout_below="@+id/MSG"
-        android:layout_alignLeft="@+id/MSG"
-        android:layout_alignStart="@+id/MSG"
+        android:layout_below="@+id/userName"
+        android:layout_alignLeft="@+id/userName"
+        android:layout_alignStart="@+id/userName"
         />
 
     <TextView
@@ -60,12 +60,12 @@
         android:layout_height="wrap_content"
         android:text=""
         android:id="@+id/textView"
-        android:layout_below="@+id/CODE"
-        android:layout_alignLeft="@+id/CODE"
-        android:layout_alignStart="@+id/CODE"
+        android:layout_below="@+id/pinCode"
+        android:layout_alignLeft="@+id/pinCode"
+        android:layout_alignStart="@+id/pinCode"
         android:layout_above="@+id/LOAD"
-        android:layout_alignRight="@+id/CODE"
-        android:layout_alignEnd="@+id/CODE" />
+        android:layout_alignRight="@+id/pinCode"
+        android:layout_alignEnd="@+id/pinCode" />
 
     <Button
         android:layout_width="wrap_content"

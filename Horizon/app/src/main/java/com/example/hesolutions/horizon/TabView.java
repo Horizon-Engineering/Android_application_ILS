@@ -23,8 +23,8 @@ public class TabView extends TabActivity {
 
         // Create an Intent to launch an Activity for the tab (to be reused)
         intent = new Intent().setClass(this, AdminPage.class);
-        spec = tabHost.newTabSpec("Zones")
-                .setIndicator("Zones", getResources().getDrawable(R.drawable.ic_launcher))
+        spec = tabHost.newTabSpec("Access")
+                .setIndicator("Access", getResources().getDrawable(R.drawable.ic_launcher))
                         .setContent(intent);
         tabHost.addTab(spec);
 

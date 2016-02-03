@@ -1,18 +1,13 @@
 package com.example.hesolutions.horizon;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,8 +15,6 @@ import android.widget.Toast;
 import com.google.common.collect.BiMap;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class AccessPermission extends AppCompatActivity {
@@ -44,8 +37,8 @@ public class AccessPermission extends AppCompatActivity {
         setContentView(R.layout.activity_access_permission);
         SAVE = (Button)findViewById(R.id.SAVE);
         LOAD = (Button)findViewById(R.id.LOAD);
-        MSG = (EditText)findViewById(R.id.MSG);
-        CODE = (EditText)findViewById(R.id.CODE);
+        MSG = (EditText)findViewById(R.id.userName);
+        CODE = (EditText)findViewById(R.id.pinCode);
         DELETE = (Button)findViewById(R.id.DELETE);
         textView = (TextView)findViewById(R.id.textView);
         textView.setVisibility(View.GONE);
