@@ -159,6 +159,18 @@ public class DataManager {
 
 */
 
+
+    public WeekViewEvent event;
+    public WeekViewEvent getthisevent()
+    {
+        return event;
+    }
+    public WeekViewEvent setthisevent(WeekViewEvent event)
+    {
+        this.event = event;
+        return event;
+    }
+
     //==================================Arraylist for calendar events====================
 
     public List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();

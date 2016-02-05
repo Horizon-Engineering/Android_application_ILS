@@ -28,14 +28,6 @@
         app:headerColumnBackground="#ffffffff"
         android:layout_marginTop="50dp" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back"
-        android:id="@+id/backtouser"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -43,8 +35,8 @@
         android:text="Add Events"
         android:id="@+id/addevent"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/backtouser"
-        android:layout_toStartOf="@+id/backtouser" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -82,7 +74,7 @@
         android:layout_height="wrap_content"
         android:text="Seven Days"
         android:id="@+id/sevendays"
-        android:layout_alignBottom="@+id/backtouser"
+        android:layout_alignBottom="@+id/addevent"
         android:layout_toRightOf="@+id/threedays"
         android:layout_toEndOf="@+id/threedays" />
 

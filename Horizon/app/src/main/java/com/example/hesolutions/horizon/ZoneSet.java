@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-
+/*
 public class ZoneSet extends Activity {
     static class ViewHolder {
         TextView text;
@@ -237,3 +237,4 @@ public class ZoneSet extends Activity {
     }
 
 }
+*/

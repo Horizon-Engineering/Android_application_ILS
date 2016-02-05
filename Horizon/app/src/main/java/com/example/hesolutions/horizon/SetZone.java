@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-
+/*
 public class SetZone extends AppCompatActivity {
 
 
@@ -239,3 +239,4 @@ public class SetZone extends AppCompatActivity {
     }
 
 }
+*/

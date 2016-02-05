@@ -99,18 +99,6 @@ public class DatabaseManager {
         System.out.println("***** getWritableDatabase called");
     }
 
-    public boolean IFExit(Device mDevice, Device device) {
-        boolean boolIshave = $assertionsDisabled;
-        Cursor cursor = this.mDataBase.rawQuery("SELECT GroupDeviceIndex FROM GroupDeviceTable WHERE GroupInfoIndex = ? AND DeviceIndex = ?", new String[]{String.valueOf(mDevice.getDeviceIndex()), String.valueOf(device.getDeviceIndex())});
-        if (cursor != null) {
-            cursor.moveToFirst();
-            if (!cursor.isAfterLast()) {
-                boolIshave = true;
-            }
-            cursor.close();
-        }
-        return boolIshave;
-    }
 
     public boolean addDevice(Device device, Area area) {
         Object[] objArr = null;
@@ -119,8 +107,7 @@ public class DatabaseManager {
         if (!(device==null)) {
             arrayList.add(device);
         }
-        WriteDeviceList(arrayList, "devicelist");
-        //this.mDataBase.execSQL("DELETE FROM DeviceInfoTable");
+
         ArrayList<String> stringname = SelectDeviceName();
 
         for (int i = 0; i<arrayList.size();i++) {
@@ -694,9 +681,11 @@ public class DatabaseManager {
     }
 
     public DeviceList getDeviceListExceptKnobandsenor() {
+
         if (mDeviceList.getmDeviceList().size() > 0) {
             mDeviceList.clearAllDevice();
         }
+
         if (!(mDeviceList == null || this.mDataBase == null)) {
             Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceType IN ('1','2','3','4','5','15','97','98','99','100','111')", null);
             if (cursor != null) {
@@ -708,6 +697,24 @@ public class DatabaseManager {
                     } else if (getLightToningListYesorno(device)) {
                         mDeviceList.pushDevice(device);
                     }
+                    cursor.moveToNext();
+                }
+                cursor.close();
+            }
+        }else{}
+        return mDeviceList;
+    }
+    public DeviceList getSectorDeviceInfor(String devicename) {
+        if (mDeviceList.getmDeviceList().size() > 0) {
+            mDeviceList.clearAllDevice();
+        }
+        if (!(mDeviceList == null || this.mDataBase == null)) {
+            Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceName = ?", new String[]{(devicename)});
+            if (cursor != null) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    Device device = getDeviceinfo(cursor);
+                    mDeviceList.pushDevice(device);
                     cursor.moveToNext();
                 }
                 cursor.close();
@@ -862,6 +869,445 @@ public class DatabaseManager {
         }
         return mKnobOfPairlist;
     }
+
+
+    public byte[] getlightingofDevice(Device device) {
+        if (device == null || this.mDataBase == null) {
+            return null;
+        }
+        Cursor cursor = this.mDataBase.rawQuery("SELECT CurrentParams FROM DeviceInfoTable WHERE DeviceIndex = ?", new String[]{String.valueOf(device.getDeviceIndex())});
+        if (cursor == null) {
+            return null;
+        }
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            mCurrParamart = cursor.getBlob(0);
+            cursor.moveToNext();
+        }
+        cursor.close();
+        return mCurrParamart;
+    }
+
+    public int[] getScenePosofDevice(Device device, Scene scene) {
+        int[] mSceneDeviceMac = new int[5];
+        if (!(scene == null || this.mDataBase == null)) {
+            Cursor cursor = this.mDataBase.rawQuery("SELECT SceneDeviceMac FROM SceneDeviceTable WHERE DeviceIndex = ? AND SceneInfoIndex = ?", new String[]{String.valueOf(device.getDeviceIndex()), String.valueOf(scene.getSceneInfoIndex())});
+            if (cursor != null) {
+                cursor.moveToFirst();
+                if (!cursor.isAfterLast()) {
+                    mSceneDeviceMac = BytearrayToIntarray(cursor.getBlob(0));
+                }
+                cursor.close();
+            }
+        }
+        return mSceneDeviceMac;
+    }
+
+    public byte[] getScenelightingofDevice(Device device, Scene scene) {
+        byte[] mSceneParams = new byte[5];
+        if (!(scene == null || this.mDataBase == null)) {
+            Cursor cursor = this.mDataBase.rawQuery("SELECT SceneParams FROM SceneDeviceTable WHERE DeviceIndex = ? AND SceneInfoIndex = ?", new String[]{String.valueOf(device.getDeviceIndex()), String.valueOf(scene.getSceneInfoIndex())});
+            if (cursor != null) {
+                cursor.moveToFirst();
+                if (!cursor.isAfterLast()) {
+                    mSceneParams = cursor.getBlob(0);
+                }
+                cursor.close();
+            }
+        }
+        return mSceneParams;
+    }
+
+    public void UpdateGateWayInfo(Gateway mGateway) {
+        if (this.mDataBase != null) {
+            this.mDataBase.execSQL("Update GateWayInfoTable SET MacAddress = ?,GateWayId = ?,SSID = ?,IP = ?,IDN = ?,Port = ?,PassWord = ? WHERE GateWayInfoIndex = ?", new Object[]{mGateway.getMacAddress(), Integer.valueOf(mGateway.getGateWayId()), mGateway.getSSID(), mGateway.getIP(), mGateway.getDNS(), Integer.valueOf(mGateway.getPort()), mGateway.getPassWord(), Short.valueOf(mGateway.getGateWayInfoIndex())});
+        }
+        SelectGatewayInfo();
+    }
+
+    public boolean AddGatewayInfo(Gateway gateway) {
+        Object[] objArr = new Object[8];
+        objArr[1] = gateway.getMacAddress();
+        objArr[2] = Integer.valueOf(gateway.getGateWayId());
+        objArr[3] = gateway.getSSID();
+        objArr[4] = gateway.getIP();
+        objArr[5] = gateway.getDNS();
+        objArr[6] = Integer.valueOf(gateway.getPort());
+        objArr[7] = gateway.getPassWord();
+        this.mDataBase.execSQL("INSERT INTO GateWayInfoTable VALUES(?,?,?,?,?,?,?,?)", objArr);
+        SelectGatewayInfo();
+        return true;
+    }
+
+    public ArrayList<Gateway> SelectGatewayInfo1() {
+        return mGatewayList;
+    }
+
+    public ArrayList<Gateway> SelectGatewayInfo() {
+        System.out.println("*** mDataBase is " + mDataBase);
+        System.out.println("*** mGatewayList is " + mGatewayList);
+        if (!(mGatewayList == null || this.mDataBase == null)) {
+            mGatewayList.clear();
+            System.out.println("***  mGatewayList.clear() is called");
+        }
+        Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM GateWayInfoTable ", null);
+        System.out.println("***  mDataBase.rawQuery is called");
+        if (cursor != null) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Gateway mGateway = new Gateway();
+                mGateway.setGateWayInfoIndex(cursor.getShort(0));
+                mGateway.setMacAddress(cursor.getBlob(1));
+                mGateway.setGateWayId(cursor.getInt(2));
+                mGateway.setSSID(cursor.getBlob(3));
+                mGateway.setIP(cursor.getBlob(4));
+                mGateway.setDNS(cursor.getBlob(5));
+                mGateway.setPort(cursor.getInt(6));
+                mGateway.setPassWord(cursor.getBlob(7));
+                mGatewayList.add(mGateway);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+
+        System.out.println("***  mGatewayList " + mGatewayList);
+        return mGatewayList;
+    }
+
+
+
+    public static void WriteDeviceList(ArrayList<Device> list, String filename) {
+        String state;
+        state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+
+            File root = Environment.getExternalStorageDirectory();
+            File dir = new File(root.getAbsolutePath() + "/Horizon");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            File file = new File(dir, filename);
+
+            try {
+
+                FileOutputStream fos = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(list);
+
+                oos.flush();
+            } catch (FileNotFoundException e) {
+
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public static ArrayList LoadDeviceList(String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon");
+        File file = new File(dir, filename);
+        ArrayList<Device> newArraylist = new ArrayList<>();
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                ArrayList<Device> arrayList = (ArrayList) ois.readObject();
+                for (int i = 0; i< arrayList.size(); i++){
+                    newArraylist.add(arrayList.get(i));
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return newArraylist;
+    }
+
+
+
+    public boolean IFExit(Device mDevice, Device device) {
+        boolean boolIshave = $assertionsDisabled;
+        Cursor cursor = this.mDataBase.rawQuery("SELECT GroupDeviceIndex FROM GroupDeviceTable WHERE GroupInfoIndex = ? AND DeviceIndex = ?", new String[]{String.valueOf(mDevice.getDeviceIndex()), String.valueOf(device.getDeviceIndex())});
+        if (cursor != null) {
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                boolIshave = true;
+            }
+            cursor.close();
+        }
+        return boolIshave;
+    }
+
+    private byte[] IntarrayToBytearray(int[] intarray) {
+        byte[] bytearray = new byte[(intarray.length * 4)];
+        for (int i = 0; i < intarray.length; i++) {
+            bytearray[i * 4] = (byte) (intarray[i] >> 24);
+            bytearray[(i * 4) + 1] = (byte) ((intarray[i] >> 16) & MotionEventCompat.ACTION_MASK);
+            bytearray[(i * 4) + 2] = (byte) ((intarray[i] >> 8) & MotionEventCompat.ACTION_MASK);
+            bytearray[(i * 4) + 3] = (byte) (intarray[i] & MotionEventCompat.ACTION_MASK);
+        }
+        return bytearray;
+    }
+
+    private int[] BytearrayToIntarray(byte[] bytearray) {
+        int[] intarray = new int[(bytearray.length / 4)];
+        for (int i = 0; i < intarray.length; i++) {
+            byte[] a = new byte[4];
+            System.arraycopy(bytearray, i * 4, a, 0, 4);
+            intarray[i] = ((((a[0] & MotionEventCompat.ACTION_MASK) << 24) | ((a[1] & MotionEventCompat.ACTION_MASK) << 16)) | ((a[2] & MotionEventCompat.ACTION_MASK) << 8)) | (a[3] & MotionEventCompat.ACTION_MASK);
+        }
+        return intarray;
+    }
+
+
+    public boolean AddGateWayDevice(short DeviceIndex, short gateWayInfoIndex) {
+        Object[] objArr = new Object[3];
+        objArr[1] = Short.valueOf(DeviceIndex);
+        objArr[2] = Short.valueOf(gateWayInfoIndex);
+        this.mDataBase.execSQL("INSERT INTO GateWayDeviceTable VALUES(?,?,?)", objArr);
+        return true;
+    }
+
+    public void deleteDeviceOfCurrGateway(int deviceIndex) {
+        if (this.mDataBase != null) {
+            this.mDataBase.execSQL("DELETE FROM GateWayDeviceTable WHERE DeviceIndex = ?", new Object[]{Integer.valueOf(deviceIndex)});
+        }
+    }
+
+    public void UpdateGateWayInfoToNewGatewayinfo(short moldindex, short mnewindex) {
+        if (this.mDataBase != null) {
+            this.mDataBase.execSQL("Update GateWayDeviceTable SET GateWayInfoIndex = ? WHERE GateWayInfoIndex = ?", new Object[]{Short.valueOf(mnewindex), Short.valueOf(moldindex)});
+        }
+    }
+
+    public DeviceList SelectDeviceToGateWayIndex(short gateWayInfoIndex) {
+        if (this.mDataBase != null) {
+            if (mGatewayDeviceList != null) {
+                mGatewayDeviceList.clearAllDevice();
+            }
+            Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceIndex IN (SELECT DeviceIndex FROM GateWayDeviceTable WHERE GateWayInfoIndex = ?)", new String[]{new StringBuilder(String.valueOf(gateWayInfoIndex)).toString()});
+            if (cursor != null) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    mGatewayDeviceList.pushDevice(getDeviceinfo(cursor));
+                    cursor.moveToNext();
+                }
+                cursor.close();
+            }
+        }
+        return mGatewayDeviceList;
+    }
+
+    public byte[] SelectGateWayPassword(short deviceindex) {
+        Cursor cursor = this.mDataBase.rawQuery("SELECT PassWord FROM GateWayInfoTable WHERE GateWayInfoIndex IN (SELECT GateWayInfoIndex FROM GateWayDeviceTable WHERE DeviceIndex = ?)", new String[]{new StringBuilder(String.valueOf(deviceindex)).toString()});
+        cursor.moveToFirst();
+        if (cursor.getCount() != 0) {
+            return cursor.getBlob(0);
+        }
+        return null;
+    }
+
+    public void deleteGatewayOfCurrGateway(short gatewayIndex) {
+        if (this.mDataBase != null) {
+            this.mDataBase.execSQL("DELETE FROM GateWayInfoTable WHERE GateWayInfoIndex = ?", new Object[]{Short.valueOf(gatewayIndex)});
+        }
+        SelectGatewayInfo();
+    }
+
+    public void updateDeviceInfo(Device device) {
+        if (this.mDataBase != null) {
+            try {
+                this.mDataBase.execSQL("Update DeviceInfoTable SET CurrentParams = ? WHERE DeviceAddress = ? AND ChannelMark = ?", new Object[]{device.getCurrentParams(), Short.valueOf(device.getDeviceAddress()), Short.valueOf(device.getChannelMark())});
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    public short SelectDeviceInfo(short address) {
+        Cursor cursor = this.mDataBase.rawQuery("SELECT DeviceIndex FROM DeviceInfoTable WHERE DeviceAddress = ?", new String[]{String.valueOf(address)});
+        if (cursor != null) {
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                return cursor.getShort(0);
+            }
+            cursor.close();
+        }
+        return (short) -1;
+    }
+
+    public int GetPostIndex(int postindex) {
+        return 16777215 & postindex;
+    }
+
+    public int GetPostInchannel(int postindex) {
+        return postindex >> 24;
+    }
+
+    public int SetPostIndex(int postindex, byte channinfo) {
+        return ((channinfo & MotionEventCompat.ACTION_MASK) << 24) | (16777215 & postindex);
+    }
+
+    public boolean DelKnobDevchann(Device mknob, short deviceindex, int channum) {
+        for (int i = 1; i <= channum; i++) {
+            int mknobindex = SetPostIndex(mknob.getDeviceIndex(), (byte) i);
+            this.mDataBase.execSQL("DELETE FROM KnobDeviceTable WHERE KnobIndex = ? AND DeviceIndex = ?", new Object[]{Integer.valueOf(mknobindex), Short.valueOf(deviceindex)});
+        }
+        return true;
+    }
+
+    public boolean AddKnobDeviceTable(Device mknob, byte channinfo, short deviceindex) {
+        if (this.mDataBase == null) {
+            return $assertionsDisabled;
+        }
+        int mknobindex;
+        if (mknob.getDeviceType() == (short) 6) {
+            mknobindex = SetPostIndex(mknob.getDeviceIndex(), channinfo);
+            DelKnobDevchann(mknob, deviceindex, 6);
+        } else if (mknob.getDeviceType() == (short) 43) {
+            mknobindex = SetPostIndex(mknob.getDeviceIndex(), channinfo);
+            DelKnobDevchann(mknob, deviceindex, 3);
+        } else if (mknob.getDeviceType() == (short) 44) {
+            mknobindex = SetPostIndex(mknob.getDeviceIndex(), channinfo);
+            DelKnobDevchann(mknob, deviceindex, 4);
+        } else if (mknob.getDeviceType() == (short) 7 && mknob.getSubDeviceType() == (short) 3) {
+            mknobindex = SetPostIndex(mknob.getDeviceIndex(), channinfo);
+            DelKnobDevchann(mknob, deviceindex, 3);
+        } else {
+            mknobindex = mknob.getDeviceIndex();
+        }
+        Object[] objArr = new Object[3];
+        objArr[1] = Integer.valueOf(mknobindex);
+        objArr[2] = Short.valueOf(deviceindex);
+        this.mDataBase.execSQL("INSERT INTO KnobDeviceTable VALUES(?,?,?)", objArr);
+        return true;
+    }
+
+    public boolean DelKnobDeviceTable(Device mknob, short deviceindex) {
+        if ((mknob.getDeviceType() == (short) 7 && mknob.getSubDeviceType() == (short) 3) || mknob.getDeviceType() == (short) 6 || mknob.getDeviceType() == (short) 43 || mknob.getDeviceType() == (short) 44) {
+            if (this.mDataBase == null) {
+                return $assertionsDisabled;
+            }
+            Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM KnobDeviceTable WHERE DeviceIndex = ?", new String[]{new StringBuilder(String.valueOf(deviceindex)).toString()});
+            if (cursor == null) {
+                return true;
+            }
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                if (GetPostIndex(cursor.getInt(1)) == mknob.getDeviceIndex()) {
+                    this.mDataBase.execSQL("DELETE FROM KnobDeviceTable WHERE KnobIndex = ? AND DeviceIndex = ?", new Object[]{Integer.valueOf(cursor.getInt(1)), Short.valueOf(deviceindex)});
+                }
+                cursor.moveToNext();
+            }
+            cursor.close();
+            return true;
+        } else if (this.mDataBase == null) {
+            return $assertionsDisabled;
+        } else {
+            this.mDataBase.execSQL("DELETE FROM KnobDeviceTable WHERE KnobIndex = ? AND DeviceIndex = ?", new Object[]{Short.valueOf(mknob.getDeviceIndex()), Short.valueOf(deviceindex)});
+            return true;
+        }
+    }
+
+    public boolean SeleteKnobDeviceTable(Device mknob, byte channinfo, short deviceindex) {
+        int mknobindex;
+        boolean boolIshave = $assertionsDisabled;
+        if ((mknob.getDeviceType() == (short) 7 && mknob.getSubDeviceType() == (short) 3) || mknob.getDeviceType() == (short) 6 || mknob.getDeviceType() == (short) 43 || mknob.getDeviceType() == (short) 44) {
+            mknobindex = SetPostIndex(mknob.getDeviceIndex(), channinfo);
+        } else {
+            mknobindex = mknob.getDeviceIndex();
+        }
+        Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM KnobDeviceTable WHERE KnobIndex = ? AND DeviceIndex = ?", new String[]{String.valueOf(mknobindex), String.valueOf(deviceindex)});
+        if (cursor != null) {
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                boolIshave = true;
+            }
+            cursor.close();
+        }
+        return boolIshave;
+    }
+
+    public boolean deleteDeviceOfCurrKnob(Device mknob) {
+        if (this.mDataBase == null) {
+            return $assertionsDisabled;
+        }
+        if ((mknob.getDeviceType() != (short) 7 || mknob.getSubDeviceType() != (short) 3) && mknob.getDeviceType() != (short) 6 && mknob.getDeviceType() != (short) 43 && mknob.getDeviceType() != (short) 44) {
+            this.mDataBase.execSQL("DELETE FROM KnobDeviceTable WHERE KnobIndex = ? OR DeviceIndex = ?", new Object[]{Short.valueOf(mknob.getDeviceIndex()), Short.valueOf(mknob.getDeviceIndex())});
+            return true;
+        } else if (this.mDataBase == null) {
+            return $assertionsDisabled;
+        } else {
+            Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM KnobDeviceTable", null);
+            if (cursor == null) {
+                return true;
+            }
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                if (GetPostIndex(cursor.getInt(1)) == mknob.getDeviceIndex()) {
+                    this.mDataBase.execSQL("DELETE FROM KnobDeviceTable WHERE KnobIndex = ?", new Object[]{Integer.valueOf(cursor.getInt(1))});
+                }
+                cursor.moveToNext();
+            }
+            cursor.close();
+            return true;
+        }
+    }
+
+    public DeviceList getDeviceOfKnob(Device mKnob) {
+        if (!(list == null || this.mDataBase == null)) {
+            list.getmDeviceList().clear();
+            Cursor cursor;
+            Device device;
+            if ((mKnob.getDeviceType() == (short) 7 && mKnob.getSubDeviceType() == (short) 3) || mKnob.getDeviceType() == (short) 6 || mKnob.getDeviceType() == (short) 43 || mKnob.getDeviceType() == (short) 44) {
+                cursor = this.mDataBase.rawQuery("SELECT * FROM KnobDeviceTable", null);
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        short knobin = new Integer(GetPostIndex(cursor.getInt(1))).shortValue();
+                        int devindex = cursor.getShort(2);
+                        if (knobin == mKnob.getDeviceIndex()) {
+                            Cursor cursor1 = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceIndex = ?", new String[]{new StringBuilder(String.valueOf(devindex)).toString()});
+                            if (cursor1 != null) {
+                                cursor1.moveToFirst();
+                                if (!cursor1.isAfterLast()) {
+                                    device = getDeviceinfo(cursor1);
+                                    device.setChannelInfo((short) GetPostInchannel(cursor.getInt(1)));
+                                    if (Arrays.equals(mKnob.getGatewayMacAddr(), device.getGatewayMacAddr())) {
+                                        list.pushDevice(device);
+                                    }
+                                    cursor1.close();
+                                }
+                            }
+                        }
+                        cursor.moveToNext();
+                    }
+                    cursor.close();
+                }
+            } else {
+                cursor = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceIndex IN (SELECT DeviceIndex FROM KnobDeviceTable WHERE KnobIndex = ?);", new String[]{String.valueOf(mKnob.getDeviceIndex())});
+                if (cursor != null) {
+                    cursor.moveToFirst();
+                    while (!cursor.isAfterLast()) {
+                        device = getDeviceinfo(cursor);
+                        if (Arrays.equals(mKnob.getGatewayMacAddr(), device.getGatewayMacAddr())) {
+                            list.pushDevice(device);
+                        }
+                        cursor.moveToNext();
+                    }
+                    cursor.close();
+                }
+            }
+        }
+        return list;
+    }
+
 
     public DeviceList getDeviceOfGroup(Device GroupDevice) {
         try {
@@ -1053,424 +1499,5 @@ public class DatabaseManager {
         return list;
     }
 
-    public byte[] getlightingofDevice(Device device) {
-        if (device == null || this.mDataBase == null) {
-            return null;
-        }
-        Cursor cursor = this.mDataBase.rawQuery("SELECT CurrentParams FROM DeviceInfoTable WHERE DeviceIndex = ?", new String[]{String.valueOf(device.getDeviceIndex())});
-        if (cursor == null) {
-            return null;
-        }
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            mCurrParamart = cursor.getBlob(0);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        return mCurrParamart;
-    }
-
-    public int[] getScenePosofDevice(Device device, Scene scene) {
-        int[] mSceneDeviceMac = new int[5];
-        if (!(scene == null || this.mDataBase == null)) {
-            Cursor cursor = this.mDataBase.rawQuery("SELECT SceneDeviceMac FROM SceneDeviceTable WHERE DeviceIndex = ? AND SceneInfoIndex = ?", new String[]{String.valueOf(device.getDeviceIndex()), String.valueOf(scene.getSceneInfoIndex())});
-            if (cursor != null) {
-                cursor.moveToFirst();
-                if (!cursor.isAfterLast()) {
-                    mSceneDeviceMac = BytearrayToIntarray(cursor.getBlob(0));
-                }
-                cursor.close();
-            }
-        }
-        return mSceneDeviceMac;
-    }
-
-    public byte[] getScenelightingofDevice(Device device, Scene scene) {
-        byte[] mSceneParams = new byte[5];
-        if (!(scene == null || this.mDataBase == null)) {
-            Cursor cursor = this.mDataBase.rawQuery("SELECT SceneParams FROM SceneDeviceTable WHERE DeviceIndex = ? AND SceneInfoIndex = ?", new String[]{String.valueOf(device.getDeviceIndex()), String.valueOf(scene.getSceneInfoIndex())});
-            if (cursor != null) {
-                cursor.moveToFirst();
-                if (!cursor.isAfterLast()) {
-                    mSceneParams = cursor.getBlob(0);
-                }
-                cursor.close();
-            }
-        }
-        return mSceneParams;
-    }
-
-    public void updateDeviceInfo(Device device) {
-        if (this.mDataBase != null) {
-            try {
-                this.mDataBase.execSQL("Update DeviceInfoTable SET CurrentParams = ? WHERE DeviceAddress = ? AND ChannelMark = ?", new Object[]{device.getCurrentParams(), Short.valueOf(device.getDeviceAddress()), Short.valueOf(device.getChannelMark())});
-            } catch (Exception e) {
-            }
-        }
-    }
-
-    public short SelectDeviceInfo(short address) {
-        Cursor cursor = this.mDataBase.rawQuery("SELECT DeviceIndex FROM DeviceInfoTable WHERE DeviceAddress = ?", new String[]{String.valueOf(address)});
-        if (cursor != null) {
-            cursor.moveToFirst();
-            if (!cursor.isAfterLast()) {
-                return cursor.getShort(0);
-            }
-            cursor.close();
-        }
-        return (short) -1;
-    }
-
-    public int GetPostIndex(int postindex) {
-        return 16777215 & postindex;
-    }
-
-    public int GetPostInchannel(int postindex) {
-        return postindex >> 24;
-    }
-
-    public int SetPostIndex(int postindex, byte channinfo) {
-        return ((channinfo & MotionEventCompat.ACTION_MASK) << 24) | (16777215 & postindex);
-    }
-
-    public boolean DelKnobDevchann(Device mknob, short deviceindex, int channum) {
-        for (int i = 1; i <= channum; i++) {
-            int mknobindex = SetPostIndex(mknob.getDeviceIndex(), (byte) i);
-            this.mDataBase.execSQL("DELETE FROM KnobDeviceTable WHERE KnobIndex = ? AND DeviceIndex = ?", new Object[]{Integer.valueOf(mknobindex), Short.valueOf(deviceindex)});
-        }
-        return true;
-    }
-
-    public boolean AddKnobDeviceTable(Device mknob, byte channinfo, short deviceindex) {
-        if (this.mDataBase == null) {
-            return $assertionsDisabled;
-        }
-        int mknobindex;
-        if (mknob.getDeviceType() == (short) 6) {
-            mknobindex = SetPostIndex(mknob.getDeviceIndex(), channinfo);
-            DelKnobDevchann(mknob, deviceindex, 6);
-        } else if (mknob.getDeviceType() == (short) 43) {
-            mknobindex = SetPostIndex(mknob.getDeviceIndex(), channinfo);
-            DelKnobDevchann(mknob, deviceindex, 3);
-        } else if (mknob.getDeviceType() == (short) 44) {
-            mknobindex = SetPostIndex(mknob.getDeviceIndex(), channinfo);
-            DelKnobDevchann(mknob, deviceindex, 4);
-        } else if (mknob.getDeviceType() == (short) 7 && mknob.getSubDeviceType() == (short) 3) {
-            mknobindex = SetPostIndex(mknob.getDeviceIndex(), channinfo);
-            DelKnobDevchann(mknob, deviceindex, 3);
-        } else {
-            mknobindex = mknob.getDeviceIndex();
-        }
-        Object[] objArr = new Object[3];
-        objArr[1] = Integer.valueOf(mknobindex);
-        objArr[2] = Short.valueOf(deviceindex);
-        this.mDataBase.execSQL("INSERT INTO KnobDeviceTable VALUES(?,?,?)", objArr);
-        return true;
-    }
-
-    public boolean DelKnobDeviceTable(Device mknob, short deviceindex) {
-        if ((mknob.getDeviceType() == (short) 7 && mknob.getSubDeviceType() == (short) 3) || mknob.getDeviceType() == (short) 6 || mknob.getDeviceType() == (short) 43 || mknob.getDeviceType() == (short) 44) {
-            if (this.mDataBase == null) {
-                return $assertionsDisabled;
-            }
-            Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM KnobDeviceTable WHERE DeviceIndex = ?", new String[]{new StringBuilder(String.valueOf(deviceindex)).toString()});
-            if (cursor == null) {
-                return true;
-            }
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                if (GetPostIndex(cursor.getInt(1)) == mknob.getDeviceIndex()) {
-                    this.mDataBase.execSQL("DELETE FROM KnobDeviceTable WHERE KnobIndex = ? AND DeviceIndex = ?", new Object[]{Integer.valueOf(cursor.getInt(1)), Short.valueOf(deviceindex)});
-                }
-                cursor.moveToNext();
-            }
-            cursor.close();
-            return true;
-        } else if (this.mDataBase == null) {
-            return $assertionsDisabled;
-        } else {
-            this.mDataBase.execSQL("DELETE FROM KnobDeviceTable WHERE KnobIndex = ? AND DeviceIndex = ?", new Object[]{Short.valueOf(mknob.getDeviceIndex()), Short.valueOf(deviceindex)});
-            return true;
-        }
-    }
-
-    public boolean SeleteKnobDeviceTable(Device mknob, byte channinfo, short deviceindex) {
-        int mknobindex;
-        boolean boolIshave = $assertionsDisabled;
-        if ((mknob.getDeviceType() == (short) 7 && mknob.getSubDeviceType() == (short) 3) || mknob.getDeviceType() == (short) 6 || mknob.getDeviceType() == (short) 43 || mknob.getDeviceType() == (short) 44) {
-            mknobindex = SetPostIndex(mknob.getDeviceIndex(), channinfo);
-        } else {
-            mknobindex = mknob.getDeviceIndex();
-        }
-        Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM KnobDeviceTable WHERE KnobIndex = ? AND DeviceIndex = ?", new String[]{String.valueOf(mknobindex), String.valueOf(deviceindex)});
-        if (cursor != null) {
-            cursor.moveToFirst();
-            if (!cursor.isAfterLast()) {
-                boolIshave = true;
-            }
-            cursor.close();
-        }
-        return boolIshave;
-    }
-
-    public boolean deleteDeviceOfCurrKnob(Device mknob) {
-        if (this.mDataBase == null) {
-            return $assertionsDisabled;
-        }
-        if ((mknob.getDeviceType() != (short) 7 || mknob.getSubDeviceType() != (short) 3) && mknob.getDeviceType() != (short) 6 && mknob.getDeviceType() != (short) 43 && mknob.getDeviceType() != (short) 44) {
-            this.mDataBase.execSQL("DELETE FROM KnobDeviceTable WHERE KnobIndex = ? OR DeviceIndex = ?", new Object[]{Short.valueOf(mknob.getDeviceIndex()), Short.valueOf(mknob.getDeviceIndex())});
-            return true;
-        } else if (this.mDataBase == null) {
-            return $assertionsDisabled;
-        } else {
-            Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM KnobDeviceTable", null);
-            if (cursor == null) {
-                return true;
-            }
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                if (GetPostIndex(cursor.getInt(1)) == mknob.getDeviceIndex()) {
-                    this.mDataBase.execSQL("DELETE FROM KnobDeviceTable WHERE KnobIndex = ?", new Object[]{Integer.valueOf(cursor.getInt(1))});
-                }
-                cursor.moveToNext();
-            }
-            cursor.close();
-            return true;
-        }
-    }
-
-    public DeviceList getDeviceOfKnob(Device mKnob) {
-        if (!(list == null || this.mDataBase == null)) {
-            list.getmDeviceList().clear();
-            Cursor cursor;
-            Device device;
-            if ((mKnob.getDeviceType() == (short) 7 && mKnob.getSubDeviceType() == (short) 3) || mKnob.getDeviceType() == (short) 6 || mKnob.getDeviceType() == (short) 43 || mKnob.getDeviceType() == (short) 44) {
-                cursor = this.mDataBase.rawQuery("SELECT * FROM KnobDeviceTable", null);
-                if (cursor != null) {
-                    cursor.moveToFirst();
-                    while (!cursor.isAfterLast()) {
-                        short knobin = new Integer(GetPostIndex(cursor.getInt(1))).shortValue();
-                        int devindex = cursor.getShort(2);
-                        if (knobin == mKnob.getDeviceIndex()) {
-                            Cursor cursor1 = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceIndex = ?", new String[]{new StringBuilder(String.valueOf(devindex)).toString()});
-                            if (cursor1 != null) {
-                                cursor1.moveToFirst();
-                                if (!cursor1.isAfterLast()) {
-                                    device = getDeviceinfo(cursor1);
-                                    device.setChannelInfo((short) GetPostInchannel(cursor.getInt(1)));
-                                    if (Arrays.equals(mKnob.getGatewayMacAddr(), device.getGatewayMacAddr())) {
-                                        list.pushDevice(device);
-                                    }
-                                    cursor1.close();
-                                }
-                            }
-                        }
-                        cursor.moveToNext();
-                    }
-                    cursor.close();
-                }
-            } else {
-                cursor = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceIndex IN (SELECT DeviceIndex FROM KnobDeviceTable WHERE KnobIndex = ?);", new String[]{String.valueOf(mKnob.getDeviceIndex())});
-                if (cursor != null) {
-                    cursor.moveToFirst();
-                    while (!cursor.isAfterLast()) {
-                        device = getDeviceinfo(cursor);
-                        if (Arrays.equals(mKnob.getGatewayMacAddr(), device.getGatewayMacAddr())) {
-                            list.pushDevice(device);
-                        }
-                        cursor.moveToNext();
-                    }
-                    cursor.close();
-                }
-            }
-        }
-        return list;
-    }
-
-    public void UpdateGateWayInfo(Gateway mGateway) {
-        if (this.mDataBase != null) {
-            this.mDataBase.execSQL("Update GateWayInfoTable SET MacAddress = ?,GateWayId = ?,SSID = ?,IP = ?,IDN = ?,Port = ?,PassWord = ? WHERE GateWayInfoIndex = ?", new Object[]{mGateway.getMacAddress(), Integer.valueOf(mGateway.getGateWayId()), mGateway.getSSID(), mGateway.getIP(), mGateway.getDNS(), Integer.valueOf(mGateway.getPort()), mGateway.getPassWord(), Short.valueOf(mGateway.getGateWayInfoIndex())});
-        }
-        SelectGatewayInfo();
-    }
-
-    public boolean AddGatewayInfo(Gateway gateway) {
-        Object[] objArr = new Object[8];
-        objArr[1] = gateway.getMacAddress();
-        objArr[2] = Integer.valueOf(gateway.getGateWayId());
-        objArr[3] = gateway.getSSID();
-        objArr[4] = gateway.getIP();
-        objArr[5] = gateway.getDNS();
-        objArr[6] = Integer.valueOf(gateway.getPort());
-        objArr[7] = gateway.getPassWord();
-        this.mDataBase.execSQL("INSERT INTO GateWayInfoTable VALUES(?,?,?,?,?,?,?,?)", objArr);
-        SelectGatewayInfo();
-        return true;
-    }
-
-    public void deleteGatewayOfCurrGateway(short gatewayIndex) {
-        if (this.mDataBase != null) {
-            this.mDataBase.execSQL("DELETE FROM GateWayInfoTable WHERE GateWayInfoIndex = ?", new Object[]{Short.valueOf(gatewayIndex)});
-        }
-        SelectGatewayInfo();
-    }
-
-    public ArrayList<Gateway> SelectGatewayInfo1() {
-        return mGatewayList;
-    }
-
-    public ArrayList<Gateway> SelectGatewayInfo() {
-        System.out.println("*** mDataBase is " + mDataBase);
-        System.out.println("*** mGatewayList is " + mGatewayList);
-        if (!(mGatewayList == null || this.mDataBase == null)) {
-            mGatewayList.clear();
-            System.out.println("***  mGatewayList.clear() is called");
-        }
-        Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM GateWayInfoTable ", null);
-        System.out.println("***  mDataBase.rawQuery is called");
-        if (cursor != null) {
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                Gateway mGateway = new Gateway();
-                mGateway.setGateWayInfoIndex(cursor.getShort(0));
-                mGateway.setMacAddress(cursor.getBlob(1));
-                mGateway.setGateWayId(cursor.getInt(2));
-                mGateway.setSSID(cursor.getBlob(3));
-                mGateway.setIP(cursor.getBlob(4));
-                mGateway.setDNS(cursor.getBlob(5));
-                mGateway.setPort(cursor.getInt(6));
-                mGateway.setPassWord(cursor.getBlob(7));
-                mGatewayList.add(mGateway);
-                cursor.moveToNext();
-            }
-            cursor.close();
-        }
-
-        System.out.println("***  mGatewayList " + mGatewayList);
-        return mGatewayList;
-    }
-
-    public boolean AddGateWayDevice(short DeviceIndex, short gateWayInfoIndex) {
-        Object[] objArr = new Object[3];
-        objArr[1] = Short.valueOf(DeviceIndex);
-        objArr[2] = Short.valueOf(gateWayInfoIndex);
-        this.mDataBase.execSQL("INSERT INTO GateWayDeviceTable VALUES(?,?,?)", objArr);
-        return true;
-    }
-
-    public void deleteDeviceOfCurrGateway(int deviceIndex) {
-        if (this.mDataBase != null) {
-            this.mDataBase.execSQL("DELETE FROM GateWayDeviceTable WHERE DeviceIndex = ?", new Object[]{Integer.valueOf(deviceIndex)});
-        }
-    }
-
-    public void UpdateGateWayInfoToNewGatewayinfo(short moldindex, short mnewindex) {
-        if (this.mDataBase != null) {
-            this.mDataBase.execSQL("Update GateWayDeviceTable SET GateWayInfoIndex = ? WHERE GateWayInfoIndex = ?", new Object[]{Short.valueOf(mnewindex), Short.valueOf(moldindex)});
-        }
-    }
-
-    public DeviceList SelectDeviceToGateWayIndex(short gateWayInfoIndex) {
-        if (this.mDataBase != null) {
-            if (mGatewayDeviceList != null) {
-                mGatewayDeviceList.clearAllDevice();
-            }
-            Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceIndex IN (SELECT DeviceIndex FROM GateWayDeviceTable WHERE GateWayInfoIndex = ?)", new String[]{new StringBuilder(String.valueOf(gateWayInfoIndex)).toString()});
-            if (cursor != null) {
-                cursor.moveToFirst();
-                while (!cursor.isAfterLast()) {
-                    mGatewayDeviceList.pushDevice(getDeviceinfo(cursor));
-                    cursor.moveToNext();
-                }
-                cursor.close();
-            }
-        }
-        return mGatewayDeviceList;
-    }
-
-    public byte[] SelectGateWayPassword(short deviceindex) {
-        Cursor cursor = this.mDataBase.rawQuery("SELECT PassWord FROM GateWayInfoTable WHERE GateWayInfoIndex IN (SELECT GateWayInfoIndex FROM GateWayDeviceTable WHERE DeviceIndex = ?)", new String[]{new StringBuilder(String.valueOf(deviceindex)).toString()});
-        cursor.moveToFirst();
-        if (cursor.getCount() != 0) {
-            return cursor.getBlob(0);
-        }
-        return null;
-    }
-
-    private byte[] IntarrayToBytearray(int[] intarray) {
-        byte[] bytearray = new byte[(intarray.length * 4)];
-        for (int i = 0; i < intarray.length; i++) {
-            bytearray[i * 4] = (byte) (intarray[i] >> 24);
-            bytearray[(i * 4) + 1] = (byte) ((intarray[i] >> 16) & MotionEventCompat.ACTION_MASK);
-            bytearray[(i * 4) + 2] = (byte) ((intarray[i] >> 8) & MotionEventCompat.ACTION_MASK);
-            bytearray[(i * 4) + 3] = (byte) (intarray[i] & MotionEventCompat.ACTION_MASK);
-        }
-        return bytearray;
-    }
-
-    private int[] BytearrayToIntarray(byte[] bytearray) {
-        int[] intarray = new int[(bytearray.length / 4)];
-        for (int i = 0; i < intarray.length; i++) {
-            byte[] a = new byte[4];
-            System.arraycopy(bytearray, i * 4, a, 0, 4);
-            intarray[i] = ((((a[0] & MotionEventCompat.ACTION_MASK) << 24) | ((a[1] & MotionEventCompat.ACTION_MASK) << 16)) | ((a[2] & MotionEventCompat.ACTION_MASK) << 8)) | (a[3] & MotionEventCompat.ACTION_MASK);
-        }
-        return intarray;
-    }
-
-
-    public static void WriteDeviceList(ArrayList<Device> list, String filename) {
-        String state;
-        state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-
-            File root = Environment.getExternalStorageDirectory();
-            File dir = new File(root.getAbsolutePath() + "/Horizon");
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            File file = new File(dir, filename);
-
-            try {
-
-                FileOutputStream fos = new FileOutputStream(file);
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(list);
-
-                oos.flush();
-            } catch (FileNotFoundException e) {
-
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    public static ArrayList LoadDeviceList(String filename) {
-        File root = Environment.getExternalStorageDirectory();
-        File dir = new File(root.getAbsolutePath() + "/Horizon");
-        File file = new File(dir, filename);
-        ArrayList<Device> newArraylist = new ArrayList<>();
-        if (file.exists()) {
-            try {
-                FileInputStream fis = new FileInputStream(file);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                ArrayList<Device> arrayList = (ArrayList) ois.readObject();
-                for (int i = 0; i< arrayList.size(); i++){
-                    newArraylist.add(arrayList.get(i));
-                }
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-        return newArraylist;
-    }
 
 }

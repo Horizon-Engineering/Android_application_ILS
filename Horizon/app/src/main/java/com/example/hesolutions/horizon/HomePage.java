@@ -3,6 +3,9 @@ package com.example.hesolutions.horizon;
 import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -40,24 +44,21 @@ import java.util.List;
 
 public class HomePage extends AppCompatActivity {
 
-    ImageButton LOGIN;
     SimpleDateFormat time = new SimpleDateFormat("yyyy-MMM-dd HH:mm ");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        LOGIN = (ImageButton) findViewById(R.id.LOGIN);
+        ImageView homescreenBgImage = (ImageView) findViewById(R.id.bgImage);
+        Bitmap cachedBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.background);
 
-        LOGIN.setOnClickListener(new View.OnClickListener() {
+        if (cachedBitmap != null) {
+            Bitmap blurredBitmap = BlurBuilder.blur(this, cachedBitmap);
+            homescreenBgImage.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+        }
 
-            @Override
-            public void onClick(View v) {
-                Intent startNewActivityIntent = new Intent(HomePage.this, UnlockScreen.class);
-                startActivity(startNewActivityIntent);
-
-            }
-        });
 
         try {
             Thread.sleep(1000);
@@ -78,7 +79,8 @@ public class HomePage extends AppCompatActivity {
             }
         }).start();
 
-
+        Intent startNewActivityIntent = new Intent(HomePage.this, UnlockScreen.class);
+        startActivity(startNewActivityIntent);
 
     }
 
@@ -138,24 +140,18 @@ public class HomePage extends AppCompatActivity {
     public void MakeAlert()
     {
         List<WeekViewEvent> events;
-        Date current = Calendar.getInstance().getTime();
         Calendar calendar = Calendar.getInstance();
-        String currenttime = time.format(current);
         events = DataManager.getInstance().getevents();
-        DatabaseManager.getInstance().addDevice(null,null);
         if (events.size()!=0)
         {
             for (int i = 0; i< events.size(); i++)
             {
                 WeekViewEvent event = events.get(i);
                 ArrayList<Device> devicelist = event.getdeviceList();
-                String endtime = time.format(event.getEndTime().getTime());
-                String startedtime = time.format(event.getStartTime().getTime());
                 Calendar starttime = event.getStartTime();
                 Calendar finishtime = event.getEndTime();
                 if (calendar.before(finishtime)&&calendar.after(starttime))
                 {
-
                     for (int j = 0; j <devicelist.size(); j++)
                     {
                         Device device = devicelist.get(j);
@@ -167,22 +163,13 @@ public class HomePage extends AppCompatActivity {
                         device.setCurrentParams(data);
                         DatabaseManager.getInstance().updateDevice(device);
                     }
-                }else
-                {
-                    for (int k = 0; k <devicelist.size(); k++)
-                    {
-                        Device device = devicelist.get(k);
-                        byte[]data;
-                        data = new byte[]{(byte) 17, (byte) 0, device.getCurrentParams()[2], (byte) 0, (byte) 0};
-                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                        device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
-                                device.getGatewaySSID(), HomePage.this));
-                        device.setCurrentParams(data);
-                        DatabaseManager.getInstance().updateDevice(device);
-                    }
+
                 }
+
             }
         }
+
+        ///==================================make sure all the lights are off
     }
 
 }

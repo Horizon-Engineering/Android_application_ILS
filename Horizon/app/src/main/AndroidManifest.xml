@@ -112,10 +112,6 @@
             android:name=".ChooseDeviceActivity"
             android:label="@string/title_activity_choose_device" />
         <activity
-            android:name=".ZoneList"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".SectorList"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -126,8 +122,32 @@
         <activity
             android:name=".AssignGroup"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@style/AppTheme.NoActionBar" ></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".TabiewForUser"
+            android:screenOrientation="landscape" />
+        <activity android:name=".ActivityStack">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ControlPanel"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".TabViewAdmin"
+            android:label="@string/title_activity_tab_view_admin" />
+        <activity android:name=".ActivityAdminStack">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".AssignAccess"
+            android:label="@string/title_activity_assign_access"></activity>
     </application>
 
 </manifest>

@@ -9,7 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
+/*
 public class ZoneList extends Activity implements View.OnClickListener {
     ListView list;
     View selectedZoneRow;
@@ -78,6 +78,6 @@ public class ZoneList extends Activity implements View.OnClickListener {
 
 
 
-
+*/
 
 

@@ -11,8 +11,10 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,29 +36,27 @@ import java.util.List;
 
 public class GlobalCalendar extends Activity{
     Button addevent;
-    Button backtouser;
     Button today;
     Button oneday;
     Button threedays;
     Button sevendays;
     private WeekView mWeekView;
-    TextView Name;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_global_calendar);
         addevent =(Button)findViewById(R.id.addevent);
-        backtouser = (Button)findViewById(R.id.backtouser);
         today = (Button)findViewById(R.id.today);
         oneday = (Button)findViewById(R.id.oneday);
         threedays = (Button)findViewById(R.id.threedays);
         sevendays = (Button)findViewById(R.id.sevendays);
         mWeekView = (WeekView) findViewById(R.id.weekView);
-        Name = (TextView)findViewById(R.id.Name);
 
-        Name.setText(DataManager.getInstance().getUsername());
+
         MonthLoader.MonthChangeListener mMonthChangeListener = new MonthLoader.MonthChangeListener() {
             @Override
             public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
@@ -93,8 +93,11 @@ public class GlobalCalendar extends Activity{
                     editevent.putExtra("starttime",time.format(starttime));
                     editevent.putExtra("finishdate",date.format(endtime));
                     editevent.putExtra("finishtime", time.format(endtime));
-                    editevent.putExtra("devicelist",devicelist);
-                    startActivity(editevent);
+                    editevent.putExtra("devicelist", devicelist);
+
+                    DataManager.getInstance().setthisevent(event);
+                    ActivityStack activityStack = (ActivityStack) getParent();
+                    activityStack.push("ThirdActivity", editevent);
                 }else
                 {
                     Toast.makeText(GlobalCalendar.this, "Don not have permission", Toast.LENGTH_SHORT).show();
@@ -122,7 +125,8 @@ public class GlobalCalendar extends Activity{
         mWeekView.setOnEventClickListener(mEventClickListener);
 
 
-
+        // not necessary
+        /*
         backtouser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,12 +134,13 @@ public class GlobalCalendar extends Activity{
                 startActivity(startNewActivityIntent);
             }
         });
-
+*/
         addevent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent startNewActivityIntent = new Intent(GlobalCalendar.this, CalendarTask.class);
-                startActivity(startNewActivityIntent);
+                ActivityStack activityStack = (ActivityStack) getParent();
+                activityStack.push("SecondActivity", startNewActivityIntent);
             }
         });
 

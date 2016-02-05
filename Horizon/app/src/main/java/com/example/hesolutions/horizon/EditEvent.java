@@ -19,7 +19,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
+import com.homa.hls.datadeal.DevicePacket;
+import com.homa.hls.datadeal.Message;
+import com.homa.hls.socketconn.DeviceSocket;
 import com.mylibrary.WeekView;
 import com.mylibrary.WeekViewEvent;
 
@@ -215,13 +219,9 @@ public class EditEvent extends Activity {
             @Override
             public void onClick(final View v) {
                 textView6.setVisibility(View.VISIBLE);
-
-                Calendar calendar = Calendar.getInstance();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
                         // delete a single event
+
+
                         if (group.isChecked()==false)
                         {
                             int ite = getGroup(ID);
@@ -234,17 +234,16 @@ public class EditEvent extends Activity {
                                 grouplist.set(ite, groupid);
                                 DataManager.getInstance().setGroupID(grouplist);
                             }
-                            Intent intent1 = new Intent(v.getContext(), GlobalCalendar.class);
+                            CheckCurrent();
                             listevent.remove(getEvent(ID));
                             DataManager.getInstance().setevents(listevent);
-                            startActivity(intent1);
+                            finish();
 
                         }else
                         {
                             int ite = getGroup(ID);
                             if (ite!= (-1) && ite!=(-2)) {
                                 List<Long> groupid = grouplist.get(ite);
-                                Intent intent1 = new Intent(v.getContext(), GlobalCalendar.class);
                                 if (!groupid.equals(null)) {
                                     for (int i = 0; i < groupid.size(); i++) {
                                         Long id = groupid.get(i);
@@ -252,9 +251,10 @@ public class EditEvent extends Activity {
                                     }
                                     grouplist.remove(groupid);
                                 }
+                                CheckCurrent();
                                 DataManager.getInstance().setevents(listevent);
                                 DataManager.getInstance().setGroupID(grouplist);
-                                startActivity(intent1);
+                                finish();
                             }else if (ite == (-2)){
                                 runOnUiThread(new Runnable() {
                                     public void run() {
@@ -272,9 +272,6 @@ public class EditEvent extends Activity {
                             }
                         }
 
-
-                    }
-                }).start();
             }
         });
 
@@ -283,9 +280,7 @@ public class EditEvent extends Activity {
             @Override
             public void onClick(final View v) {
                 textView6.setVisibility(View.VISIBLE);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
+
 
                         if (finishTime.after(startTime)) {
                             if (group.isChecked()==false) {
@@ -361,8 +356,6 @@ public class EditEvent extends Activity {
                             });
                         }
 
-                    }
-                }).start();
             }
 
         });
@@ -414,5 +407,26 @@ public class EditEvent extends Activity {
         }
 
         return -1;
+    }
+
+    public void CheckCurrent()
+    {
+        WeekViewEvent event = DataManager.getInstance().getthisevent();
+        Calendar cur = Calendar.getInstance();
+        ArrayList<Device> devices = event.getdeviceList();
+        if (cur.before(event.getEndTime())&&cur.after(event.getStartTime()))
+        {
+            for (int p=0; p <devices.size(); p++)
+            {
+                Device devicep = devices.get(p);
+                byte[]data;
+                data = new byte[]{(byte) 17, (byte) 0, devicep.getCurrentParams()[2], (byte) 0, (byte) 0};
+                DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                devicep.getDeviceAddress(), (short) 0, data), devicep.getGatewayMacAddr(), devicep.getGatewayPassword(),
+                        devicep.getGatewaySSID(), EditEvent.this));
+                devicep.setCurrentParams(data);
+                DatabaseManager.getInstance().updateDevice(devicep);
+            }
+        }
     }
 }

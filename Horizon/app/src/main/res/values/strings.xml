@@ -258,5 +258,7 @@
     <string name="title_activity_add_scene">AddSceneActivity</string>
     <string name="title_activity_group">GroupActivity</string>
     <string name="title_activity_assign_group">AssignGroup</string>
+    <string name="title_activity_tab_view_admin">TabViewAdmin</string>
+    <string name="title_activity_assign_access">AssignAccess</string>
 
 </resources>

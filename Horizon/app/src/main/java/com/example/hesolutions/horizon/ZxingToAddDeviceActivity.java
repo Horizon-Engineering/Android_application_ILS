@@ -405,6 +405,7 @@ public class ZxingToAddDeviceActivity extends Activity {
                         }else
                         {
                             ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
+                            DatabaseManager.getInstance().addDevice(ZxingToAddDeviceActivity.this.mDevice,null);
                             deviceArrayList.add(ZxingToAddDeviceActivity.this.mDevice);
                             DatabaseManager.getInstance().WriteDeviceList(deviceArrayList,"devicelist");
                         }
