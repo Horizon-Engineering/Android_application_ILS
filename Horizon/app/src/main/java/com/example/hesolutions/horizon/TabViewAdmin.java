@@ -32,13 +32,6 @@ public class TabViewAdmin extends TabActivity {
                 .setContent(intent);
         tabHost.addTab(spec);
 
-        intent = new Intent().setClass(this, ChooseDeviceActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        spec = tabHost.newTabSpec("Scanner")
-                .setIndicator("Scanner", getResources().getDrawable(R.drawable.ic_launcher))
-                .setContent(intent);
-        tabHost.addTab(spec);
-
         intent = new Intent().setClass(this, HomePage.class);
         spec = tabHost.newTabSpec("Logout")
                 .setIndicator("Logout", getResources().getDrawable(R.drawable.ic_launcher))

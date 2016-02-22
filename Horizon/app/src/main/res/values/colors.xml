@@ -26,6 +26,10 @@
     <color name="event_color_02">#f57f68</color>
     <color name="event_color_03">#87d288</color>
     <color name="event_color_04">#f8b552</color>
+    <color name="backgroundcolor">#091929</color>
+    <color name="tabbarcolor">#112331</color>
+    <color name="wordscolor">#13BCB9</color>
+
 
     <color name="widgetBgColor">#20000000</color>
     <color name="widgetFontColor">#ff13aaf1</color>

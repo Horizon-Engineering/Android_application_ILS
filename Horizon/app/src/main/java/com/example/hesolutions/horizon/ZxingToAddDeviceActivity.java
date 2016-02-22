@@ -400,7 +400,7 @@ public class ZxingToAddDeviceActivity extends Activity {
                     }else{
                         if (gateways==null)
                         {
-                            ZxingToAddDeviceActivity.this.DialogTip(ZxingToAddDeviceActivity.this.getResources().getString(R.string.add_fail));
+                            ZxingToAddDeviceActivity.this.DialogTip("Gateway is not right");
                             return;
                         }else
                         {

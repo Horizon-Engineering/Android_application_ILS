@@ -3,120 +3,159 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.hesolutions.horizon.CalendarTask">
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Start Date"
-        android:id="@+id/startdate"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/textView3"
-        android:layout_toEndOf="@+id/textView3"
-        android:layout_marginLeft="80dp"
-        android:layout_marginStart="80dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Start Time"
-        android:id="@+id/starttime"
-        android:layout_alignBaseline="@+id/startdate"
-        android:layout_alignBottom="@+id/startdate"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="128dp"
-        android:layout_marginEnd="128dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Start Time"
-        android:id="@+id/textView2"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Finish Time"
-        android:id="@+id/textView3"
-        android:layout_below="@+id/textView2"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Finish Date"
-        android:id="@+id/finishdate"
-        android:layout_alignTop="@+id/textView3"
-        android:layout_alignLeft="@+id/startdate"
-        android:layout_alignStart="@+id/startdate" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Finish Time"
-        android:id="@+id/finishtime"
-        android:layout_alignTop="@+id/finishdate"
-        android:layout_alignLeft="@+id/starttime"
-        android:layout_alignStart="@+id/starttime" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:id="@+id/cancelTOcalendar"
-        android:layout_alignTop="@+id/Apply"
-        android:layout_toLeftOf="@+id/Apply"
-        android:layout_toStartOf="@+id/Apply" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Apply"
-        android:id="@+id/Apply"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Repetition"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_marginTop="20dp"
-        android:id="@+id/switch1"
-        android:checked="false"
-        android:layout_below="@+id/finishdate" />
-
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/switch1"
-        android:id="@+id/layout1"
-        android:enabled="false"
+        android:id="@+id/relativeblur"
+        android:layout_width="800dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView"
+            android:layout_alignParentStart="true" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@+id/relativeblur"
+        android:layout_marginLeft="20dp"
+        >
 
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="START TIME    "
+            android:id="@+id/textView2"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Start Date"
+            android:id="@+id/startdate"
+            android:gravity="center"
+            android:background="@drawable/backrec"
+            android:textColor="@color/wordscolor"
+            android:layout_below="@+id/textView2"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignRight="@+id/textView2"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Start Time"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:layout_alignRight="@+id/textView2"
+            android:background="@drawable/backrec"
+            android:id="@+id/starttime"
+            android:textColor="@color/wordscolor"
+            android:layout_below="@+id/startdate"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="FINISH TIME    "
+            android:id="@+id/textView3"
+            android:layout_marginTop="25dp"
+            android:layout_below="@+id/starttime"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Finish Date"
+            android:id="@+id/finishdate"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/wordscolor"
+            android:background="@drawable/backrec"
+            android:layout_below="@+id/textView3"
+            android:layout_alignParentLeft="true"
+            android:gravity="center"
+            android:layout_alignRight="@+id/textView3"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Finish Time"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/backrec"
+            android:id="@+id/finishtime"
+            android:textColor="@color/wordscolor"
+            android:layout_below="@+id/finishdate"
+            android:layout_alignParentLeft="true"
+            android:gravity="center"
+            android:layout_alignRight="@+id/textView3"
+            android:layout_alignParentStart="true"  />
+
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:background="@drawable/saveforevent"
+            android:id="@+id/Apply"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="30dp" />
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:background="@drawable/cancelforevent"
+            android:id="@+id/cancelTOcalendar"
+            android:layout_toRightOf="@+id/Apply"
+            android:layout_marginLeft="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_alignParentBottom="true"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="REPEAT"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_marginTop="20dp"
+            android:thumb="@drawable/repswitch"
+            android:track="@drawable/repbg"
+            android:id="@+id/switch1"
+            android:checked="false"
+            android:switchMinWidth="30dp"
+            android:textOn=""
+            android:textOff=""
+            android:layout_below="@+id/finishtime" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/switch1"
+            android:id="@+id/layout1"
+            android:enabled="false"
+
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Every"
+                android:text="FOR"
                 android:id="@+id/textView4"
                 android:enabled="false"
                 android:layout_alignParentLeft="true"
@@ -140,7 +179,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Weeks"
+                android:text="WEEKS"
                 android:enabled="false"
                 android:id="@+id/textView5"
                 android:layout_alignTop="@+id/textView4"
@@ -150,98 +189,118 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sun"
+                android:text="   SUN"
                 android:id="@+id/Sunday"
                 android:checked="false"
                 android:enabled="false"
+                android:button="@drawable/checkbox"
                 android:layout_below="@+id/textView4"
+                android:layout_marginTop="10dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mon"
+                android:text="   MON"
+                android:layout_marginTop="10dp"
                 android:id="@+id/Monday"
                 android:enabled="false"
                 android:checked="false"
-                android:layout_alignTop="@+id/Sunday"
-                android:layout_toRightOf="@+id/textView4"
-                android:layout_toEndOf="@+id/textView4" />
+                android:button="@drawable/checkbox"
+                android:layout_below="@+id/Sunday"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tue"
+                android:text="   TUE"
+                android:layout_marginTop="10dp"
                 android:id="@+id/Tuesday"
                 android:checked="false"
+                android:button="@drawable/checkbox"
                 android:enabled="false"
-                android:layout_alignTop="@+id/Monday"
-                android:layout_toRightOf="@+id/Monday"
-                android:layout_toEndOf="@+id/Monday" />
+                android:layout_below="@+id/Monday"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"  />
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wed"
+                android:text="   WED"
+                android:layout_marginTop="10dp"
                 android:id="@+id/Wednesday"
+                android:button="@drawable/checkbox"
                 android:enabled="false"
                 android:checked="false"
-                android:layout_alignTop="@+id/Tuesday"
-                android:layout_toRightOf="@+id/textView5"
-                android:layout_toEndOf="@+id/textView5" />
+                android:layout_below="@+id/Tuesday"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Thu"
+                android:text="   THU"
+                android:layout_marginTop="10dp"
                 android:id="@+id/Thursday"
+                android:button="@drawable/checkbox"
                 android:checked="false"
                 android:enabled="false"
-                android:layout_alignTop="@+id/Wednesday"
-                android:layout_toRightOf="@+id/Wednesday"
-                android:layout_toEndOf="@+id/Wednesday" />
+                android:layout_below="@+id/Wednesday"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"  />
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fri"
+                android:text="   FRI"
+                android:layout_marginTop="10dp"
                 android:id="@+id/Friday"
+                android:button="@drawable/checkbox"
                 android:enabled="false"
                 android:checked="false"
-                android:layout_alignTop="@+id/Thursday"
-                android:layout_toRightOf="@+id/Thursday"
-                android:layout_toEndOf="@+id/Thursday" />
+                android:layout_below="@+id/Thursday"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
 
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sat"
+                android:text="   SAT"
+                android:layout_marginTop="10dp"
                 android:id="@+id/Saturday"
+                android:button="@drawable/checkbox"
                 android:checked="false"
                 android:enabled="false"
-                android:layout_alignTop="@+id/Friday"
-                android:layout_toRightOf="@+id/Friday"
-                android:layout_toEndOf="@+id/Friday" />
+                android:layout_below="@+id/Friday"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"  />
 
 
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/sectorlistname"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="SECTOR"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_toEndOf="@+id/textView2" />
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/sectorlistView"
+            android:layout_below="@+id/sectorlistname"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="30dp"
+            android:layout_above="@+id/Apply"
+            android:layout_toEndOf="@+id/textView2" />
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sectorlistname"
-        android:layout_below="@+id/layout1"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Selected From: "
-        />
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sectorlistView"
-        android:layout_below="@+id/sectorlistname"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>

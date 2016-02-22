@@ -22,19 +22,6 @@ public class TabiewForUser extends TabActivity {
 
 
         final TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
-        /*
-        TabWidget widget = tabHost.getTabWidget();
-        for(int i = 0; i < widget.getChildCount(); i++) {
-            View v = widget.getChildAt(i);
-
-            // Look for the title view to ensure this is an indicator and not a divider.
-            TextView tv = (TextView)v.findViewById(android.R.id.title);
-            if(tv == null) {
-                continue;
-            }
-            v.setBackgroundResource(R.drawable.tab_selector);
-        }
-        */
         TextView textview14 = (TextView)findViewById(R.id.textView14);
         tabHost.setup();
         TabHost.TabSpec spec;
@@ -42,23 +29,26 @@ public class TabiewForUser extends TabActivity {
 
         textview14.setText(DataManager.getInstance().getUsername());
         // Create an Intent to launch an Activity for the tab (to be reused)
+
+
+
         intent = new Intent().setClass(this, ActivityStack.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         spec = tabHost.newTabSpec("Calendar")
-                .setIndicator("Calendar", getResources().getDrawable(R.drawable.ic_launcher))
+                .setIndicator("", getResources().getDrawable(R.drawable.scheduleicon))
                 .setContent(intent);
         tabHost.addTab(spec);
 
         intent = new Intent().setClass(this, ControlPanel.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         spec = tabHost.newTabSpec("Control")
-                .setIndicator("Control", getResources().getDrawable(R.drawable.ic_launcher))
+                .setIndicator("", getResources().getDrawable(R.drawable.zoneicon))
                 .setContent(intent);
         tabHost.addTab(spec);
 
         intent = new Intent().setClass(this, HomePage.class);
         spec = tabHost.newTabSpec("Logout")
-                .setIndicator("Logout", getResources().getDrawable(R.drawable.ic_launcher))
+                .setIndicator("", getResources().getDrawable(R.drawable.logouticon))
                 .setContent(intent);
         tabHost.addTab(spec);
 
@@ -70,6 +60,7 @@ public class TabiewForUser extends TabActivity {
             }
         });
 
+        //tabHost.getTabWidget().getChildAt(0).getLayoutParams().height=100;
     }
 
 

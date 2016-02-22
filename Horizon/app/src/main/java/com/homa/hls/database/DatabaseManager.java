@@ -43,6 +43,7 @@ public class DatabaseManager {
     Context context;
     public DataBaseHelper mDBHelper;
     public SQLiteDatabase mDataBase;
+    int count;
 
     static {
         $assertionsDisabled = !DatabaseManager.class.desiredAssertionStatus() ? true : false;
@@ -102,90 +103,53 @@ public class DatabaseManager {
 
     public boolean addDevice(Device device, Area area) {
         Object[] objArr = null;
-
-        ArrayList<Device> arrayList = LoadDeviceList("devicelist");
-        if (!(device==null)) {
-            arrayList.add(device);
-        }
-
-        ArrayList<String> stringname = SelectDeviceName();
-
-        for (int i = 0; i<arrayList.size();i++) {
-            if (area == null) {
-                try {
-                    device = arrayList.get(i);
-                    if (!stringname.isEmpty())
-                    {
-                        for (int j = 0; j<stringname.size();j++)
-                        {
-                            if (device.getDeviceName().equals(stringname.get(j))){ }else
-                            {
-                                if (this.mDataBase != null) {
-                                    objArr = new Object[12];
-                                    objArr[1] = device.getDeviceName();
-                                    objArr[2] = Short.valueOf(device.getDeviceType());
-                                    objArr[3] = Short.valueOf(device.getPanId());
-                                    objArr[4] = Short.valueOf(device.getDeviceAddress());
-                                    objArr[5] = Short.valueOf(device.getFatherAddress());
-                                    objArr[6] = Short.valueOf(device.getChannelInfo());
-                                    objArr[7] = device.getCurrentParams();
-                                    objArr[8] = device.getPictureName();
-                                    objArr[9] = Short.valueOf(device.getSubDeviceType());
-                                    objArr[10] = Short.valueOf(device.getChannelMark());
-                                    objArr[11] = IntarrayToBytearray(device.getMacAddress());
-                                    this.mDataBase.execSQL("INSERT INTO DeviceInfoTable VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", objArr);
-                                    return true;
-                                }
+        if (count==0){
+            count++;
+            ArrayList<Device> arrayList = LoadDeviceList("devicelist");
+            for (int i = 0; i<arrayList.size();i++) {
+                if (area == null) {
+                    try {
+                        device = arrayList.get(i);
+                        if (device != null) {
+                            if (this.mDataBase != null) {
+                                objArr = new Object[12];
+                                objArr[1] = device.getDeviceName();
+                                objArr[2] = Short.valueOf(device.getDeviceType());
+                                objArr[3] = Short.valueOf(device.getPanId());
+                                objArr[4] = Short.valueOf(device.getDeviceAddress());
+                                objArr[5] = Short.valueOf(device.getFatherAddress());
+                                objArr[6] = Short.valueOf(device.getChannelInfo());
+                                objArr[7] = device.getCurrentParams();
+                                objArr[8] = device.getPictureName();
+                                objArr[9] = Short.valueOf(device.getSubDeviceType());
+                                objArr[10] = Short.valueOf(device.getChannelMark());
+                                objArr[11] = IntarrayToBytearray(device.getMacAddress());
+                                this.mDataBase.execSQL("INSERT INTO DeviceInfoTable VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", objArr);
                             }
                         }
-                    }else {
-////==================================LOAD the chart
-                        if (this.mDataBase != null) {
-                            objArr = new Object[12];
-                            objArr[1] = device.getDeviceName();
-                            objArr[2] = Short.valueOf(device.getDeviceType());
-                            objArr[3] = Short.valueOf(device.getPanId());
-                            objArr[4] = Short.valueOf(device.getDeviceAddress());
-                            objArr[5] = Short.valueOf(device.getFatherAddress());
-                            objArr[6] = Short.valueOf(device.getChannelInfo());
-                            objArr[7] = device.getCurrentParams();
-                            objArr[8] = device.getPictureName();
-                            objArr[9] = Short.valueOf(device.getSubDeviceType());
-                            objArr[10] = Short.valueOf(device.getChannelMark());
-                            objArr[11] = IntarrayToBytearray(device.getMacAddress());
-                            this.mDataBase.execSQL("INSERT INTO DeviceInfoTable VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", objArr);
-                            return true;
-                        }
-//===================================================
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
-                    
-                } catch (SQLException e) {
-                    e.printStackTrace();
                 }
             }
-
-            /*
-            if (!(area == null || this.mDataBase == null)) {
-                objArr = new Object[12];
-                objArr[1] = device.getDeviceName();
-                objArr[2] = Short.valueOf(device.getDeviceType());
-                objArr[3] = Short.valueOf(device.getPanId());
-                objArr[4] = Short.valueOf(device.getDeviceAddress());
-                objArr[5] = Short.valueOf(device.getFatherAddress());
-                objArr[6] = Short.valueOf(device.getChannelInfo());
-                objArr[7] = device.getCurrentParams();
-                objArr[8] = device.getPictureName();
-                objArr[9] = Short.valueOf(device.getSubDeviceType());
-                objArr[10] = Short.valueOf(device.getChannelMark());
-                objArr[11] = IntarrayToBytearray(device.getMacAddress());
-                this.mDataBase.execSQL("INSERT INTO DeviceInfoTable VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", objArr);
-                if (device.getDeviceType() == (short) 6 || device.getDeviceType() == (short) 7 || device.getDeviceType() == (short) 8 || device.getDeviceType() == (short) 9 || device.getDeviceType() == (short) 13 || device.getDeviceType() == (short) 43 || device.getDeviceType() == (short) 44 || area.getAreaIndex() == (short) 1 || area.getAreaName().equals("\u6240\u6709\u8bbe\u5907") || area.getAreaName().equals("All devices") || area.getAreaName().equals("Alle Ger\u00e4te")) {
-                    return true;
+        }else {
+            if (device != null) {
+                if (this.mDataBase != null) {
+                    objArr = new Object[12];
+                    objArr[1] = device.getDeviceName();
+                    objArr[2] = Short.valueOf(device.getDeviceType());
+                    objArr[3] = Short.valueOf(device.getPanId());
+                    objArr[4] = Short.valueOf(device.getDeviceAddress());
+                    objArr[5] = Short.valueOf(device.getFatherAddress());
+                    objArr[6] = Short.valueOf(device.getChannelInfo());
+                    objArr[7] = device.getCurrentParams();
+                    objArr[8] = device.getPictureName();
+                    objArr[9] = Short.valueOf(device.getSubDeviceType());
+                    objArr[10] = Short.valueOf(device.getChannelMark());
+                    objArr[11] = IntarrayToBytearray(device.getMacAddress());
+                    this.mDataBase.execSQL("INSERT INTO DeviceInfoTable VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", objArr);
                 }
-                addAreaDeviceTable(device, area);
-                return true;
             }
-            */
         }
 
         return $assertionsDisabled;
@@ -266,7 +230,7 @@ public class DatabaseManager {
     public boolean updateDevice(Device device) {
         try {
             if (this.mDataBase != null) {
-                this.mDataBase.execSQL("Update DeviceInfoTable SET DeviceName = ?,CurrentParams = ?,ChannelMark = ?,DeviceType = ?,MacAddress = ?,SubDeviceType = ? WHERE DeviceIndex = ?", new Object[]{device.getDeviceName(), device.getCurrentParams(), Short.valueOf(device.getChannelMark()), Short.valueOf(device.getDeviceType()), IntarrayToBytearray(device.getMacAddress()), Short.valueOf(device.getSubDeviceType()), Short.valueOf(device.getDeviceIndex())});
+                this.mDataBase.execSQL("Update DeviceInfoTable SET CurrentParams = ?,ChannelMark = ?,DeviceType = ?,MacAddress = ?,SubDeviceType = ? WHERE DeviceAddress = ?", new Object[]{device.getCurrentParams(), Short.valueOf(device.getChannelMark()), Short.valueOf(device.getDeviceType()), IntarrayToBytearray(device.getMacAddress()), Short.valueOf(device.getSubDeviceType()), Short.valueOf(device.getDeviceAddress())});
                 return true;
             }
         } catch (Exception e) {
@@ -692,11 +656,7 @@ public class DatabaseManager {
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
                     Device device = getDeviceinfo(cursor);
-                    if (device.getDeviceType() != (short) 5 || device.getSubDeviceType() != (short) 3) {
-                        mDeviceList.pushDevice(device);
-                    } else if (getLightToningListYesorno(device)) {
-                        mDeviceList.pushDevice(device);
-                    }
+                    mDeviceList.pushDevice(device);
                     cursor.moveToNext();
                 }
                 cursor.close();
@@ -722,6 +682,25 @@ public class DatabaseManager {
         }else{}
         return mDeviceList;
     }
+    public DeviceList getSectorDeviceInforadd(short address) {
+        if (mDeviceList.getmDeviceList().size() > 0) {
+            mDeviceList.clearAllDevice();
+        }
+        if (!(mDeviceList == null || this.mDataBase == null)) {
+            Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceAddress = ?", new String[]{String.valueOf(address)});
+            if (cursor != null) {
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    Device device = getDeviceinfo(cursor);
+                    mDeviceList.pushDevice(device);
+                    cursor.moveToNext();
+                }
+                cursor.close();
+            }
+        }else{}
+        return mDeviceList;
+    }
+
 
     public Device getDeviceInforIndex(short devindex) {
         if (this.mDataBase == null) {
@@ -751,7 +730,7 @@ public class DatabaseManager {
         device.setSubDeviceType(cursor.getShort(9));
         device.setChannelMark(cursor.getShort(10));
         device.setMacAddress(BytearrayToIntarray(cursor.getBlob(11)));
-        Cursor cursor1 = this.mDataBase.rawQuery("SELECT * FROM GateWayDeviceTable WHERE DeviceIndex = ?", new String[]{String.valueOf(device.getDeviceIndex())});
+        Cursor cursor1 = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceIndex = ?", new String[]{String.valueOf(device.getDeviceIndex())});
         if (cursor1 != null) {
             cursor1.moveToFirst();
             if (!cursor1.isAfterLast()) {
@@ -875,7 +854,7 @@ public class DatabaseManager {
         if (device == null || this.mDataBase == null) {
             return null;
         }
-        Cursor cursor = this.mDataBase.rawQuery("SELECT CurrentParams FROM DeviceInfoTable WHERE DeviceIndex = ?", new String[]{String.valueOf(device.getDeviceIndex())});
+        Cursor cursor = this.mDataBase.rawQuery("SELECT CurrentParams FROM DeviceInfoTable WHERE DeviceName = ?", new String[]{String.valueOf(device.getDeviceName())});
         if (cursor == null) {
             return null;
         }

@@ -87,8 +87,6 @@ public class CaptureActivity extends Activity implements Callback {
 
             @Override
             public void onClick(View v) {
-                Intent intent1 = new Intent(v.getContext(), AdminPage.class);
-                startActivity(intent1);
                 CaptureActivity.this.finish();
             }
         });
@@ -123,15 +121,13 @@ public class CaptureActivity extends Activity implements Callback {
         if (resultString.equals("")) {
             Toast.makeText(CaptureActivity.this, "Scan failed!", Toast.LENGTH_SHORT).show();
         }else {
-			System.out.println("**************************************Result:"+resultString);
             Intent resultIntent = new Intent() ;
             Bundle bundle = new Bundle();
             bundle.putString("result", resultString);
             resultIntent.putExtras(bundle);
             this.setResult(RESULT_OK, resultIntent);
-
         }
-        CaptureActivity.this.finish();
+        finish();
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {

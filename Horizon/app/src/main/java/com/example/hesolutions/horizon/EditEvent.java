@@ -75,7 +75,7 @@ public class EditEvent extends Activity {
         final String colorname = DataManager.getInstance().getcolorname();
         final int colorName = Color.parseColor(colorname);
         final SimpleDateFormat ddf = new SimpleDateFormat("MMM dd, yyyy");
-        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         starttime.setText(start2);
         finishtime.setText(end2);
         startdate.setText(start1);
@@ -146,9 +146,11 @@ public class EditEvent extends Activity {
                 public void onTimeSet(TimePicker view, int Hour, int Minute) {
                     startTime.set(Calendar.HOUR_OF_DAY, Hour);
                     startTime.set(Calendar.MINUTE, Minute);
+                    startTime.set(Calendar.SECOND,0);
                     starttime.setText(sdf.format(startTime.getTime()));
                     finishTime.set(Calendar.HOUR_OF_DAY, Hour);
                     finishTime.set(Calendar.MINUTE, Minute);
+                    finishTime.set(Calendar.SECOND,0);
                     finishtime.setText(sdf.format(startTime.getTime()));
                 }
             };
@@ -195,6 +197,7 @@ public class EditEvent extends Activity {
                 {
                     finishTime.set(Calendar.HOUR_OF_DAY, Hour);
                     finishTime.set(Calendar.MINUTE, Minute);
+                    finishTime.set(Calendar.SECOND,0);
                     finishtime.setText(sdf.format(finishTime.getTime()));
                 }
             };

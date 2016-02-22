@@ -22,7 +22,7 @@ public class ActivityAdminStack extends ActivityGroup {
         if (stack == null)
             stack = new Stack<String>();
         // start default activity
-        push("FirstStackActivity", new Intent(this, AssignAccess.class));
+        push("FirstStackActivity", new Intent(this, AdminPage.class));
     }
 
     @Override

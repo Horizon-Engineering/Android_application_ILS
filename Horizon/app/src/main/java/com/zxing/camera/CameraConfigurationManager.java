@@ -50,6 +50,7 @@ final class CameraConfigurationManager {
      */
     void initFromCameraParameters(Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
+
         previewFormat = parameters.getPreviewFormat();
         previewFormatString = parameters.get("preview-format");
         Log.d(TAG, "Default preview format: " + previewFormat + '/' + previewFormatString);
@@ -75,7 +76,8 @@ final class CameraConfigurationManager {
         setZoom(parameters);
         //setSharpness(parameters);
         //modify here
-        camera.setDisplayOrientation(90);
+        camera.setDisplayOrientation(0);
+        //parameters.setRotation(90);
         camera.setParameters(parameters);
     }
 

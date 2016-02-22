@@ -568,14 +568,12 @@ public class LogoActivity extends Activity {
     protected void onCreate(android.os.Bundle r20) {
         super.onCreate(r20);
 
-        super.onCreate(r20);
         setContentView(R.layout.activity_logo);
         SysApplication.getInstance().addActivity(this);
         getWindow().setFlags(1024, 1024);
         this.inflater = ((LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE));
         DataStorage.getInstance(this).putInt("deviceid", -1);
         DataStorage.getInstance(this).putInt("scene_gridview_item", -1);
-
 
         try {
 
@@ -742,11 +740,11 @@ public class LogoActivity extends Activity {
             SysApplication.iaddbeginnum = i;
             mDevice.setDeviceName(mDevice.getDeviceName() + i);
         }
-        AddDeviceToDatabase(mDevice, sceneList, areaList, mGateway);
+        //AddDeviceToDatabase(mDevice, sceneList, areaList, mGateway);
         DatabaseManager.getInstance().addDevToAllDeviceList(mDevice);
         return true;
     }
-
+/*
     private boolean AddDeviceToDatabase(Device mDevice, ArrayList<Scene> sceneList, ArrayList<Area> areaList, Gateway mGateway) {
         if (DatabaseManager.getInstance().addDevice(mDevice, null)) {
             mDevice.setGatewayMacAddr(mGateway.getMacAddress());
@@ -990,6 +988,7 @@ public class LogoActivity extends Activity {
         }
         return true;
     }
+    */
 
     private void GetDataForGateway(boolean boolisset, int iismax) {
         boolean bolgetdata = false;

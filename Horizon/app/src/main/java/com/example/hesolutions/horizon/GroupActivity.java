@@ -1,6 +1,7 @@
 package com.example.hesolutions.horizon;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
 
 import java.util.ArrayList;
@@ -58,7 +60,11 @@ public class GroupActivity extends Activity {
                 textView12.setText("null" + groupname + devicename);
             }
             */
+
+
+
             textView12.setText(sector.toString());
+
         }
 
         backButton.setOnClickListener(new View.OnClickListener() {

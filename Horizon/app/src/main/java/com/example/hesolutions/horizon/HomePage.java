@@ -40,24 +40,25 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class HomePage extends AppCompatActivity {
-
-    SimpleDateFormat time = new SimpleDateFormat("yyyy-MMM-dd HH:mm ");
+    final SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy HH mm");
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
-
-        ImageView homescreenBgImage = (ImageView) findViewById(R.id.bgImage);
+        DatabaseManager.getInstance().addDevice(null, null);
+        /*
+        //ImageView homescreenBgImage = (ImageView) findViewById(R.id.bgImage);
         Bitmap cachedBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.background);
-
         if (cachedBitmap != null) {
             Bitmap blurredBitmap = BlurBuilder.blur(this, cachedBitmap);
-            homescreenBgImage.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+            //homescreenBgImage.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
         }
+        */
 
 
         try {
@@ -108,34 +109,6 @@ public class HomePage extends AppCompatActivity {
 
     }
 
-    public void Make()
-    {
-        List<WeekViewEvent> events;
-        events = DataManager.getInstance().getevents();
-        if (events.size()!=0)
-        {
-            for (int i=0;i<events.size();i++)
-            {
-                WeekViewEvent event = events.get(i);
-                ArrayList<Device> devicelist = event.getdeviceList();
-                ArrayList<Gateway> gatewaylist = DatabaseManager.mGatewayList;
-                for (int j=0;j<devicelist.size();j++)
-                {
-                    Device device = devicelist.get(j);
-                    byte[] data;
-
-                    data = new byte[]{(byte) 17, (byte) 100, device.getCurrentParams()[2], (byte) 0, (byte) 0};
-                    DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                    device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
-                            device.getGatewaySSID(), HomePage.this));
-
-                }
-            }
-
-        }
-    }
-
-
 
     public void MakeAlert()
     {
@@ -163,6 +136,55 @@ public class HomePage extends AppCompatActivity {
                         device.setCurrentParams(data);
                         DatabaseManager.getInstance().updateDevice(device);
                     }
+
+                }
+
+                String currenttime = sdf.format(calendar.getTime());
+                String thisendtime = sdf.format(finishtime.getTime());
+                if (currenttime.equals(thisendtime))
+                {
+
+                    for (int j =0 ; j<events.size(); j++)
+                    {
+                        WeekViewEvent compare = events.get(j);
+                        ArrayList<Device> devicelistcompare = new ArrayList<>();
+                        Calendar starttimecompare = compare.getStartTime();
+                        Calendar finishtimecompare = compare.getEndTime();
+                        if (calendar.before(finishtimecompare)&&calendar.after(starttimecompare)|| calendar.equals(starttime))
+                        {
+                            devicelistcompare = compare.getdeviceList();
+                        }
+
+                        ArrayList<Device> sourcelist = new ArrayList<>(devicelist);
+                        //sourcelist.removeAll(devicelistcompare);
+
+                        Iterator<Device> firstIt = devicelist.iterator();
+                        while (firstIt.hasNext()) {
+                            Short str1 = firstIt.next().getDeviceAddress();
+                            // recreate iterator for second list
+                            Iterator<Device> secondIt = devicelistcompare.iterator();
+                            while (secondIt.hasNext()) {
+                                Short str2 = secondIt.next().getDeviceAddress();
+                                if (str1.equals(str2)) {
+                                    sourcelist.remove((Device)firstIt.next());
+                                }
+                            }
+                        }
+
+                        for (int k = 0; k<sourcelist.size() ; k++)
+                        {
+                            Device device = devicelist.get(k);
+                            byte[]data;
+                            data = new byte[]{(byte) 17, (byte) 0, device.getCurrentParams()[2], (byte) 0, (byte) 0};
+                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                            device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
+                                    device.getGatewaySSID(), HomePage.this));
+                            device.setCurrentParams(data);
+                            DatabaseManager.getInstance().updateDevice(device);
+                        }
+                    }
+
+
 
                 }
 

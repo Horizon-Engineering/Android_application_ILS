@@ -6,10 +6,15 @@ import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
@@ -23,6 +28,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
@@ -43,12 +49,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 
-public class CalendarTask extends GlobalCalendar {
+public class CalendarTask extends Activity {
 
     TextView startdate;
     TextView starttime;
@@ -61,7 +69,7 @@ public class CalendarTask extends GlobalCalendar {
     EditText weeknumber;
     TextView textView4,textView5;
     Integer weeks;
-    RelativeLayout layout1;
+    RelativeLayout layout1, relativeblur;
     CheckBox Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday;
     Integer day;
     ListView sectorlistView;
@@ -72,6 +80,7 @@ public class CalendarTask extends GlobalCalendar {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_task);
+
         startdate = (TextView)findViewById(R.id.startdate);
         starttime = (TextView)findViewById(R.id.starttime);
         finishdate = (TextView)findViewById(R.id.finishdate);
@@ -94,7 +103,7 @@ public class CalendarTask extends GlobalCalendar {
         sectorlistView = (ListView)findViewById(R.id.sectorlistView);
 
         final SimpleDateFormat ddf = new SimpleDateFormat("MMM dd, yyyy");
-        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
         String currentdate = ddf.format(new java.util.Date());
         startdate.setText(currentdate);
@@ -106,19 +115,31 @@ public class CalendarTask extends GlobalCalendar {
         final Calendar finishTime = Calendar.getInstance();
 
         day =startTime.get(Calendar.DAY_OF_WEEK)-1;
+
+
+        ImageView homescreenBgImage = (ImageView) findViewById(R.id.imageView);
+        Bitmap cachedBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.screenshots);
+        if (cachedBitmap != null) {
+            Bitmap blurredBitmap = BlurBuilder.blur(this, cachedBitmap);
+            homescreenBgImage.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+        }
+
+
 //========================================Loading the sector info
-        BiMap<String, BiMap> sector = DataManager.getInstance().getsector();
+        BiMap<String, HashMap> sector = DataManager.getInstance().getsector();
         String username = DataManager.getInstance().getUsername();
         ArrayList<Group> arrayList = new ArrayList<Group>();
         if (sector.get(username)==null) {}
         else {
-            BiMap<String, ArrayList> sectordetails = sector.get(username);
+            HashMap<String, ArrayList> sectordetails = sector.get(username);
             for (Map.Entry<String, ArrayList> entry : sectordetails.entrySet()) {
                 String key = entry.getKey();
                 ArrayList value = entry.getValue();
                 Group group = new Group(key, value, false);
                 arrayList.add(group);
             }
+            Group selected = new Group("Selected all", null, false);
+            arrayList.add(selected);
 
 
             deviceAdapter = new MyCustomAdapter(this, R.layout.devicelist, arrayList);
@@ -165,10 +186,12 @@ public class CalendarTask extends GlobalCalendar {
                 public void onTimeSet(TimePicker view, int Hour, int Minute) {
                     startTime.set(Calendar.HOUR_OF_DAY, Hour);
                     startTime.set(Calendar.MINUTE, Minute);
+                    startTime.set(Calendar.SECOND,0);
                     starttime.setText(sdf.format(startTime.getTime()));
 
                     finishTime.set(Calendar.HOUR_OF_DAY, Hour);
                     finishTime.set(Calendar.MINUTE, Minute);
+                    finishTime.set(Calendar.SECOND,0);
                     finishtime.setText(sdf.format(startTime.getTime()));
                 }
             };
@@ -218,6 +241,7 @@ public class CalendarTask extends GlobalCalendar {
                 {
                     finishTime.set(Calendar.HOUR_OF_DAY, Hour);
                     finishTime.set(Calendar.MINUTE, Minute);
+                    finishTime.set(Calendar.SECOND,0);
                     finishtime.setText(sdf.format(finishTime.getTime()));
                 }
             };
@@ -252,7 +276,7 @@ public class CalendarTask extends GlobalCalendar {
                     ArrayList<Group> choosegrouplist = deviceAdapter.arrayList;
                     for (int i = 0; i < choosegrouplist.size(); i++) {
                         Group group = choosegrouplist.get(i);
-                        if (group.getChecked() == true) {
+                        if (group.getSelected() == true && group.getList()!=null) {
                             ArrayList<Device> devicelist = group.getList();
                             for (int j = 0; j < devicelist.size(); j++) {
                                 Device device = devicelist.get(j);
@@ -617,12 +641,11 @@ public class CalendarTask extends GlobalCalendar {
         public MyCustomAdapter(Context context, int textViewResourceId,
                                ArrayList<Group> arrayList) {
             super(context, textViewResourceId, arrayList);
-            this.arrayList = new ArrayList<Group>();
-            this.arrayList.addAll(arrayList);
+            this.arrayList = arrayList;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, final ViewGroup parent) {
 
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(
@@ -633,25 +656,52 @@ public class CalendarTask extends GlobalCalendar {
 
             Group group = arrayList.get(position);
             TextView name = (TextView) convertView.findViewById(R.id.name);
-            final CheckBox checked = (CheckBox) convertView.findViewById(R.id.checked);
+            final Switch checked = (Switch) convertView.findViewById(R.id.checked);
+
             checked.setTag(group);
             name.setText(group.getName());
-            checked.setText("");
+            checked.setChecked(group.getSelected());
 
 
-            checked.setOnClickListener(new View.OnClickListener() {
+
+            checked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
-                public void onClick(View v) {
-                    Group group = (Group) v.getTag();
-                    if (checked.isChecked()) {
-                        group.setChecked(true);
-                    } else group.setChecked(false);
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Group group = (Group) buttonView.getTag();
+                    if (checked.isChecked() == true) {
+                        if (group.getName() == "Selected all") {
+                            for (int k = 0; k < arrayList.size(); k++) {
+                                Group every = arrayList.get(k);
+                                every.setSelected(true);
+                                arrayList.set(k, every);
+                            }
+                            notifyDataSetChanged();
+                        } else {
+                            group.setSelected(true);
+                        }
+                    } else {
+                        if (group.getName() == "Selected all") {
+                            for (int k = 0; k < arrayList.size(); k++) {
+                                Group every = arrayList.get(k);
+                                every.setSelected(false);
+                                arrayList.set(k, every);
+                            }
+                            notifyDataSetChanged();
+                        } else {
+                            group.setSelected(false);
+                        }
+                    }
+
+                    for (int m = 0; m < arrayList.size(); m++) {
+                        Group every = arrayList.get(m);
+                    }
                 }
             });
 
             return convertView;
 
         }
+
     }
 
     public class Group
@@ -659,6 +709,7 @@ public class CalendarTask extends GlobalCalendar {
         String name;
         ArrayList<Device> devicelist;
         boolean ischecked;
+
         public Group(String name, ArrayList devicelist, boolean ischecked)
         {
             this.name = name;
@@ -666,11 +717,11 @@ public class CalendarTask extends GlobalCalendar {
             this.ischecked = ischecked;
         }
 
-        public boolean getChecked()
+        public boolean getSelected()
         {
             return ischecked;
         }
-        public void setChecked(boolean ischecked)
+        public void setSelected(boolean ischecked)
         {
             this.ischecked = ischecked;
         }
@@ -686,7 +737,7 @@ public class CalendarTask extends GlobalCalendar {
         public void setList(ArrayList devicelist) {
             this.devicelist = devicelist;
         }
-    }
 
+    }
 
 }

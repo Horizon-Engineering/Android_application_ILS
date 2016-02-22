@@ -86,7 +86,7 @@ public class GlobalCalendar extends Activity{
                     Date endtime = event.getEndTime().getTime();
                     ArrayList<Device> devicelist = event.getdeviceList();
                     SimpleDateFormat date = new SimpleDateFormat("MMM dd, yyyy");
-                    SimpleDateFormat time = new SimpleDateFormat("HH:mm:ss ");
+                    SimpleDateFormat time = new SimpleDateFormat("HH:mm");
                     System.out.println("--------------------------------------------------------------------");
                     editevent.putExtra("eventID", Long.toString(event.getId()));
                     editevent.putExtra("startdate", date.format(starttime));
@@ -138,9 +138,12 @@ public class GlobalCalendar extends Activity{
         addevent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent startNewActivityIntent = new Intent(GlobalCalendar.this, CalendarTask.class);
+
                 ActivityStack activityStack = (ActivityStack) getParent();
                 activityStack.push("SecondActivity", startNewActivityIntent);
+
             }
         });
 
@@ -155,8 +158,8 @@ public class GlobalCalendar extends Activity{
             public void onClick(View v) {
                 mWeekView.setNumberOfVisibleDays(1);
                 mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
-                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15, getResources().getDisplayMetrics()));
+                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15, getResources().getDisplayMetrics()));
             }
         });
         threedays.setOnClickListener(new View.OnClickListener() {
@@ -164,8 +167,8 @@ public class GlobalCalendar extends Activity{
             public void onClick(View v) {
                 mWeekView.setNumberOfVisibleDays(3);
                 mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
-                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15, getResources().getDisplayMetrics()));
+                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15, getResources().getDisplayMetrics()));
             }
         });
         sevendays.setOnClickListener(new View.OnClickListener() {
@@ -173,8 +176,8 @@ public class GlobalCalendar extends Activity{
             public void onClick(View v) {
                 mWeekView.setNumberOfVisibleDays(7);
                 mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
-                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
-                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+                mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15, getResources().getDisplayMetrics()));
+                mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15, getResources().getDisplayMetrics()));
 
             }
         });

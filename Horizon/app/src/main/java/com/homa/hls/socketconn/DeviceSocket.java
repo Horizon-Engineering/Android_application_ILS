@@ -1141,12 +1141,12 @@ public class DeviceSocket {
                                     while (i < areaList.size()) {
                                         if (((Area) areaList.get(i)).getAreaName().equals("\u6240\u6709\u8bbe\u5907") || ((Area) areaList.get(i)).getAreaName().equals("All devices") || ((Area) areaList.get(i)).getAreaName().equals("Alle Ger\u00e4te")) {
                                             if (mDevice != null) {
-                                                DatabaseManager.getInstance().addDevice(mDevice, null);
+                                                //DatabaseManager.getInstance().addDevice(mDevice, null);
                                                 DatabaseManager.getInstance().AddGateWayDevice(DatabaseManager.getInstance().SelectLimitDeviceIndex(), gateways.getGateWayInfoIndex());
                                                 DatabaseManager.getInstance().addAreaDeviceTable(mDevice, (Area) areaList.get(i));
                                             }
                                             if (mDevicew != null) {
-                                                DatabaseManager.getInstance().addDevice(mDevicew, null);
+                                                //DatabaseManager.getInstance().addDevice(mDevicew, null);
                                                 DatabaseManager.getInstance().AddGateWayDevice(DatabaseManager.getInstance().SelectLimitDeviceIndex(), gateways.getGateWayInfoIndex());
                                                 DatabaseManager.getInstance().addAreaDeviceTable(mDevicew, (Area) areaList.get(i));
                                             }

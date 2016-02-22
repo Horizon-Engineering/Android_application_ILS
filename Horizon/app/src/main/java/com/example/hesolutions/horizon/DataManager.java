@@ -95,7 +95,7 @@ public class DataManager {
     //==================Sector Setting: Key = SectorName, Value = Hashmap of contained devices
 
 
-    public BiMap<String, BiMap> sector = HashBiMap.create();
+    public BiMap<String, HashMap> sector = HashBiMap.create();
 
     public BiMap getsector() {
         dataupdateBi(sector, "sector");
@@ -110,20 +110,6 @@ public class DataManager {
 
 
 
-    //==================Zone Setting: Key = ZoneName, Value = Hashmap of contained sectors
-    public BiMap<String, BiMap> zone = HashBiMap.create();
-
-    public BiMap getzone() {
-
-        dataupdateBi(zone, "zone");
-        return zone;
-    }
-
-    public BiMap setzone(BiMap zoneinfo) {
-        this.zone = zoneinfo;
-        writedata(zone, "zone");
-        return zone;
-    }
 
     public static final DataManager manager = new DataManager();
 
@@ -393,10 +379,10 @@ public class DataManager {
             try {
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois = new ObjectInputStream(fis);
-                Map<String, BiMap> readmap = (BiMap) ois.readObject();
-                for (Map.Entry<String, BiMap> entry : readmap.entrySet()) {
+                Map<String, HashMap> readmap = (BiMap) ois.readObject();
+                for (Map.Entry<String, HashMap> entry : readmap.entrySet()) {
                     String key = entry.getKey();
-                    BiMap value = entry.getValue();
+                    HashMap value = entry.getValue();
                     bimap.put(key, value);
                 }
 

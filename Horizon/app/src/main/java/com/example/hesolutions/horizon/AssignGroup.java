@@ -73,13 +73,14 @@ public class AssignGroup extends Activity {
             public void onClick(View v) {
                 uniquename = true;
                 String groupname = Groupname.getText().toString();
-                ArrayList<String> selecteddevice = new ArrayList();
+                ArrayList<Device> selecteddevice = new ArrayList();
 
                 ArrayList<Device> deviceList = dataAdapter.arrayList;
                 for (int i = 0; i < deviceList.size(); i++) {
                     Device device = deviceList.get(i);
-                    if (device.getChecked()) selecteddevice.add(device.getDeviceName());
+                    if (device.getChecked()) selecteddevice.add(device);
                 }
+
                 //===================check the group name unique
                 BiMap<String, BiMap> sector = DataManager.getInstance().getsector();
                 BiMap<String, ArrayList>sectordetail = HashBiMap.create();
@@ -105,14 +106,14 @@ public class AssignGroup extends Activity {
                         } else {
                             if (namechoose == null) {
                                 //-----------------User name is null
-                                sectordetail.put(groupname, deviceList);
+                                sectordetail.put(groupname, selecteddevice);
                                 sector.put(null, sectordetail);
                                 DataManager.getInstance().setsector(sector);
                                 Intent intent1 = new Intent(v.getContext(), GroupActivity.class);
                                 startActivity(intent1);
                             } else {
                                 //-----------------User name
-                                sectordetail.put(groupname, deviceList);
+                                sectordetail.put(groupname, selecteddevice);
                                 sector.put(namechoose, sectordetail);
                                 DataManager.getInstance().setsector(sector);
                                 Intent intent1 = new Intent(v.getContext(), GroupActivity.class);
@@ -125,7 +126,7 @@ public class AssignGroup extends Activity {
                             Toast.makeText(AssignGroup.this, "At least one device should be selected", Toast.LENGTH_SHORT).show();
                         } else {
                             sectordetail = sector.get(namechoose);
-                            sectordetail.put(groupname, deviceList);
+                            sectordetail.put(groupname, selecteddevice);
                             sector.remove(namechoose); // delete the old data
                             sector.put(namechoose, sectordetail);   // put back the new data
                             DataManager.getInstance().setsector(sector);
@@ -158,8 +159,6 @@ public class AssignGroup extends Activity {
         devicelistview = (ListView)findViewById(R.id.devicelistview);
         // Assign adapter to ListView
         devicelistview.setAdapter(dataAdapter);
-
-
     }
 
     private class MyCustomAdapter extends ArrayAdapter<Device> {
@@ -196,7 +195,8 @@ public class AssignGroup extends Activity {
                     if (checked.isChecked())
                     {
                         device.setChecked(true);
-                    }else device.setChecked(false);
+                    }else
+                    {device.setChecked(false);}
                 }
             });
 

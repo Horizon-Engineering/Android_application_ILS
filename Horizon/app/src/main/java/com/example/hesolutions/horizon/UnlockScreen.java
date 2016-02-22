@@ -23,7 +23,6 @@ public class UnlockScreen extends Activity {
     TextView CODE1, CODE2, CODE3, CODE4;
     GridView gridView;
     RadioButton radioButton1, radioButton2, radioButton3, radioButton4;
-    int numberOfZones = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -4,24 +4,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.hesolutions.horizon.ControlPanel">
-    <ListView
+    <ExpandableListView
         android:id="@+id/sectorListViewId"
-        android:layout_width="200dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:layout_marginTop="2dp"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10.0sp"
+        android:layout_marginTop="10dp"
+        android:groupIndicator="@null"
         />
+    <!--
+<ListView
+    android:id="@+id/deviceListViewId"
+    android:layout_width="250dp"
+    android:layout_height="wrap_content"
+    android:divider="@android:color/transparent"
+    android:dividerHeight="10.0sp"
+    android:layout_alignTop="@+id/sectorListViewId"
+    android:layout_alignBottom="@+id/sectorListViewId"
+    android:layout_toEndOf="@+id/sectorListViewId" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:text="GO BACK"
-        android:id="@+id/gobacktosector"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
-
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:visibility="gone"
+    android:text="GO BACK"
+    android:id="@+id/gobacktosector"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentStart="true" />
+   -->
 
     <ImageView
         android:layout_width="wrap_content"
@@ -30,16 +42,6 @@
         android:src="@drawable/roomlayout"
         android:layout_toEndOf="@+id/sectorListViewId"
         />
-    <Switch
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Device Control"
-        android:id="@+id/Onoffswitch"
-        android:visibility="invisible"
-        android:layout_toEndOf="@+id/sectorListViewId"
-        android:layout_below="@id/imageViewroomlayout"
-         />
-
 
 
 </RelativeLayout>

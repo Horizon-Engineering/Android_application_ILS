@@ -90,7 +90,8 @@ public class AccessPermission extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Existant accout: " + accoutname, Toast.LENGTH_LONG).show();
                     MSG.setText("");
                     CODE.setText("");
-                }else if(Passwords.length()!=4)
+                }
+                else if(Passwords.length()!=4)
                 {
                     Toast.makeText(getApplicationContext(), "The Password must be 4 digits", Toast.LENGTH_LONG).show();
                     CODE.setText("");
