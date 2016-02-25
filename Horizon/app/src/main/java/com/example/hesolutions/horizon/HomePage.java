@@ -123,13 +123,17 @@ public class HomePage extends AppCompatActivity {
                 ArrayList<Device> devicelist = event.getdeviceList();
                 Calendar starttime = event.getStartTime();
                 Calendar finishtime = event.getEndTime();
+                if (calendar.after(finishtime))
+                {
+                    events.remove(i);
+                }
                 if (calendar.before(finishtime)&&calendar.after(starttime))
                 {
                     for (int j = 0; j <devicelist.size(); j++)
                     {
                         Device device = devicelist.get(j);
                         byte[]data;
-                        data = new byte[]{(byte) 17, (byte) 100, device.getCurrentParams()[2], (byte) 0, (byte) 0};
+                        data = new byte[]{(byte) 17, device.getCurrentParams()[1], (byte) 0, (byte) 0, (byte) 0};
                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                         device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                 device.getGatewaySSID(), HomePage.this));
@@ -150,7 +154,7 @@ public class HomePage extends AppCompatActivity {
                         ArrayList<Device> devicelistcompare = new ArrayList<>();
                         Calendar starttimecompare = compare.getStartTime();
                         Calendar finishtimecompare = compare.getEndTime();
-                        if (calendar.before(finishtimecompare)&&calendar.after(starttimecompare)|| calendar.equals(starttime))
+                        if (calendar.before(finishtimecompare)&&calendar.after(starttimecompare)|| calendar.equals(starttimecompare))
                         {
                             devicelistcompare = compare.getdeviceList();
                         }
@@ -160,13 +164,13 @@ public class HomePage extends AppCompatActivity {
 
                         Iterator<Device> firstIt = devicelist.iterator();
                         while (firstIt.hasNext()) {
-                            Short str1 = firstIt.next().getDeviceAddress();
+                            String str1 = firstIt.next().getDeviceName();
                             // recreate iterator for second list
                             Iterator<Device> secondIt = devicelistcompare.iterator();
                             while (secondIt.hasNext()) {
-                                Short str2 = secondIt.next().getDeviceAddress();
+                                String str2 = secondIt.next().getDeviceName();
                                 if (str1.equals(str2)) {
-                                    sourcelist.remove((Device)firstIt.next());
+                                    if (firstIt.hasNext()) sourcelist.remove((Device)firstIt.next());
                                 }
                             }
                         }
@@ -175,7 +179,7 @@ public class HomePage extends AppCompatActivity {
                         {
                             Device device = devicelist.get(k);
                             byte[]data;
-                            data = new byte[]{(byte) 17, (byte) 0, device.getCurrentParams()[2], (byte) 0, (byte) 0};
+                            data = new byte[]{(byte) 17, (byte) 0, (byte)0, (byte) 0, (byte) 0};
                             DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                             device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                     device.getGatewaySSID(), HomePage.this));
@@ -190,7 +194,7 @@ public class HomePage extends AppCompatActivity {
 
             }
         }
-
+        DataManager.getInstance().setevents(events);
         ///==================================make sure all the lights are off
     }
 

@@ -230,7 +230,7 @@ public class DatabaseManager {
     public boolean updateDevice(Device device) {
         try {
             if (this.mDataBase != null) {
-                this.mDataBase.execSQL("Update DeviceInfoTable SET CurrentParams = ?,ChannelMark = ?,DeviceType = ?,MacAddress = ?,SubDeviceType = ? WHERE DeviceAddress = ?", new Object[]{device.getCurrentParams(), Short.valueOf(device.getChannelMark()), Short.valueOf(device.getDeviceType()), IntarrayToBytearray(device.getMacAddress()), Short.valueOf(device.getSubDeviceType()), Short.valueOf(device.getDeviceAddress())});
+                this.mDataBase.execSQL("Update DeviceInfoTable SET CurrentParams = ?,ChannelMark = ?,DeviceType = ?,MacAddress = ?,SubDeviceType = ? WHERE DeviceName = ?", new Object[]{device.getCurrentParams(), Short.valueOf(device.getChannelMark()), Short.valueOf(device.getDeviceType()), IntarrayToBytearray(device.getMacAddress()), Short.valueOf(device.getSubDeviceType()),String.valueOf(device.getDeviceName())});
                 return true;
             }
         } catch (Exception e) {
@@ -682,7 +682,7 @@ public class DatabaseManager {
         }else{}
         return mDeviceList;
     }
-    public DeviceList getSectorDeviceInforadd(short address) {
+    public DeviceList getSameAddressDevice(short address) {
         if (mDeviceList.getmDeviceList().size() > 0) {
             mDeviceList.clearAllDevice();
         }
@@ -702,12 +702,12 @@ public class DatabaseManager {
     }
 
 
-    public Device getDeviceInforIndex(short devindex) {
+    public Device getDeviceInforName(String devicename) {
         if (this.mDataBase == null) {
             return null;
         }
         Device device = null;
-        Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceIndex = ?", new String[]{String.valueOf(devindex)});
+        Cursor cursor = this.mDataBase.rawQuery("SELECT * FROM DeviceInfoTable WHERE DeviceName = ?", new String[]{String.valueOf(devicename)});
         if (cursor != null) {
             cursor.moveToFirst();
             device = getDeviceinfo(cursor);

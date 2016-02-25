@@ -10,28 +10,77 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
 >
-    <ListView
-        android:id="@+id/userlist"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:layout_marginTop="2dp"
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:id="@+id/userlistlayout"
+        android:background="@drawable/backrec"
+        android:layout_height="wrap_content">
+        <ListView
+            android:id="@+id/userlist"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            android:layout_marginTop="2dp"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add User"
+            android:id="@+id/adduser"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_alignTop="@+id/userlistlayout"
+        android:layout_toEndOf="@+id/userlistlayout"
+        android:background="@drawable/backrec"
+        android:id="@+id/sectorlistlayout"
+        android:layout_height="wrap_content">
+        <ListView
+            android:id="@+id/sectorlist"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:minHeight="?android:attr/listPreferredItemHeight"
         />
-    <ListView
-        android:id="@+id/sectorlist"
-        android:layout_width="200dp"
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add sector"
+            android:id="@+id/addsector"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:layout_alignTop="@+id/userlist"
-        android:layout_toEndOf="@+id/userlist" />
-    <ListView
-        android:id="@+id/devicelist"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:layout_alignTop="@+id/userlist"
-        android:layout_toEndOf="@+id/sectorlist" />
+        android:background="@drawable/backrec"
+        android:layout_alignTop="@+id/sectorlistlayout"
+        android:layout_toEndOf="@+id/sectorlistlayout">
+        <ListView
+            android:id="@+id/devicelist"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add device"
+            android:id="@+id/adddevice"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -142,31 +191,5 @@
             android:layout_centerVertical="true"
             android:layout_toEndOf="@+id/devicename" />
     </RelativeLayout>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add User"
-        android:id="@+id/adduser"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add sector"
-        android:id="@+id/addsector"
-        android:layout_alignTop="@+id/adduser"
-        android:layout_alignStart="@+id/sectorlist" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add device"
-        android:id="@+id/adddevice"
-        android:layout_alignTop="@+id/addsector"
-        android:layout_toEndOf="@+id/sectorlist" />
-
-
 
 </RelativeLayout>

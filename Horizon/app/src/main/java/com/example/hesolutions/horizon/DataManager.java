@@ -1,6 +1,7 @@
 package com.example.hesolutions.horizon;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.provider.Settings;
 import android.view.View;
@@ -91,6 +92,18 @@ public class DataManager {
     }
 
 
+    //==================Device Setting: Key = Serial ID, Value = DeviceName
+    public Device thedevice = new Device();
+    public Device getthedevice(){
+        return thedevice;
+    }
+
+    public Device setthedevice(Device deviceinfo) {
+
+        this.thedevice = deviceinfo;
+        return thedevice;
+    }
+
 
     //==================Sector Setting: Key = SectorName, Value = Hashmap of contained devices
 
@@ -104,11 +117,14 @@ public class DataManager {
 
     public BiMap setsector(BiMap sectorinfo) {
         this.sector = sectorinfo;
-        writedata(sector,"sector");
+        writedata(sector, "sector");
         return sector;
     }
 
+    public Bitmap bitmap;
 
+    public Bitmap getBitmap(){return bitmap;}
+    public Bitmap setBitmap(Bitmap bitmap){this.bitmap = bitmap; return bitmap;}
 
 
     public static final DataManager manager = new DataManager();

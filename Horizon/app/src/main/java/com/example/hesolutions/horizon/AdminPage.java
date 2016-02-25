@@ -8,9 +8,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -42,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class AdminPage extends AppCompatActivity {
+public class AdminPage extends Activity {
 
     BiMap<String, HashMap> sector = DataManager.getInstance().getsector();
     HashMap<String, ArrayList<Device>>sectordetail;
@@ -61,6 +66,8 @@ public class AdminPage extends AppCompatActivity {
     Boolean goahead = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_page);
         SAVE = (Button)findViewById(R.id.SAVE);
@@ -189,7 +196,15 @@ public class AdminPage extends AppCompatActivity {
             }
             sectoradapter = new MyCustomListAdapter(this, sectorArray);
             ListView sectorlist = (ListView) findViewById(R.id.sectorlist);
+            sectorlist.setVisibility(View.VISIBLE);
             sectorlist.setAdapter(sectoradapter);
+            registerForContextMenu(sectorlist);
+            sectorlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    showDevice(view);
+                }
+            });
         }else{
             EmptySector();
         }
@@ -197,6 +212,29 @@ public class AdminPage extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        if (v.getId()==R.id.sectorlist) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+            menu.setHeaderTitle("****");
+            String[] menuItems = getResources().getStringArray(R.array.menu);
+            for (int i = 0; i<menuItems.length; i++) {
+                menu.add(Menu.NONE, i, i, menuItems[i]);
+            }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int menuItemIndex = item.getItemId();
+        String[] menuItems = getResources().getStringArray(R.array.menu);
+        String menuItemName = menuItems[menuItemIndex];
+
+        return true;
+
+    }
     public class MyCustomListAdapter extends ArrayAdapter<String> {
 
         private final Activity context;
@@ -225,6 +263,8 @@ public class AdminPage extends AppCompatActivity {
                     if (!userName.equals("")) {
                         uniquesectorname = true;
                         addnewsector.setVisibility(View.VISIBLE);
+                    }else {
+                        Toast.makeText(AdminPage.this, "Please select a user", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -248,21 +288,23 @@ public class AdminPage extends AppCompatActivity {
 
 
                         if (uniquesectorname == true) {
-                            if (sectordetail.isEmpty()) {
-                                sectordetail = new HashMap<String, ArrayList<Device>>();
-                                sectordetail.put(name, null);
-                                sector.put(userName, sectordetail);
-                                DataManager.getInstance().setsector(sector);
-                                sectolist.add(name);
-                                notifyDataSetChanged();
-                            }else {
-                                sectordetail1 = sector.get(userName);
-                                sectordetail1.put(name, null);
-                                sector.remove(userName);
-                                sector.put(userName, sectordetail1);
-                                DataManager.getInstance().setsector(sector);
-                                sectolist.add(name);
-                                notifyDataSetChanged();
+                            if (sectordetail!=null) {
+                                if (sectordetail.isEmpty()) {
+                                    HashMap<String, ArrayList<Device>> sectordetail2 = new HashMap<String, ArrayList<Device>>();
+                                    sectordetail2.put(name, null);
+                                    sector.put(userName, sectordetail2);
+                                    DataManager.getInstance().setsector(sector);
+                                    sectolist.add(name);
+                                    notifyDataSetChanged();
+                                } else {
+                                    sectordetail1 = sector.get(userName);
+                                    sectordetail1.put(name, null);
+                                    sector.remove(userName);
+                                    sector.put(userName, sectordetail1);
+                                    DataManager.getInstance().setsector(sector);
+                                    sectolist.add(name);
+                                    notifyDataSetChanged();
+                                }
                             }
                         }
                     } else {
@@ -293,6 +335,7 @@ public class AdminPage extends AppCompatActivity {
                 }
                 deviceadapter = new MyCustomListAdapterfordevice(this, devicename);
                 ListView deviceList = (ListView) findViewById(R.id.devicelist);
+                deviceList.setVisibility(View.VISIBLE);
                 deviceList.setAdapter(deviceadapter);
             }else {
                 EmptyDevice();
@@ -437,13 +480,15 @@ public class AdminPage extends AppCompatActivity {
                 alertDialog.setMessage("QR code error");
                 alertDialog.setPositiveButton("Scan Another", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        /*
                         AdminPage.this.startActivityForResult(new Intent(AdminPage.this, CaptureActivity.class), 0);
                         AdminPage.this.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                        /*
-                        Intent startNewActivityIntent = new Intent(GlobalCalendar.this, CalendarTask.class);
-                        ActivityStack activityStack = (ActivityStack) getParent();
-                        activityStack.push("SecondActivity", startNewActivityIntent);
                         */
+                        startActivityForResult(new Intent(AdminPage.this, CaptureActivity.class) ,0);
+                        Intent startNewActivityIntent = new Intent(AdminPage.this, CaptureActivity.class);
+                        ActivityStack activityStack = (ActivityStack) getParent();
+                        activityStack.startActivityForResult(startNewActivityIntent, 0);
+
                     }
                 });
 
@@ -460,16 +505,11 @@ public class AdminPage extends AppCompatActivity {
         }
     }
     private boolean findDeviceAddress(short deviceAddress) {
-        ArrayList<Device> check;
-        if (sectordetail!=null) {
-            check = sectordetail.get(sectorName);
-            if (check != null) {
-                Iterator it = check.iterator();
-                while (it.hasNext()) {
-                    if (((Device) it.next()).getDeviceAddress() == deviceAddress) {
-                        return true;
-                    }
-                }
+        ArrayList<Device> check = DatabaseManager.getInstance().LoadDeviceList("devicelist");
+        if (check!=null) {
+            for (int i=0; i<check.size(); i++)
+            {
+                if (check.get(i).getDeviceAddress()== deviceAddress) return true;
             }
         }
         return false;
@@ -494,8 +534,12 @@ public class AdminPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (!userName.equals("")) {
+                    addnewdevice.setVisibility(View.GONE);
+                    addNewUser.setVisibility(View.GONE);
                     uniquesectorname = true;
                     addnewsector.setVisibility(View.VISIBLE);
+                } else {
+                    Toast.makeText(AdminPage.this, "Please select a user", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -518,22 +562,24 @@ public class AdminPage extends AppCompatActivity {
                     }
                     if (uniquesectorname == true) {
                         if (sectordetail==null) {
-                            sectordetail = new HashMap<String, ArrayList<Device>>();
-                            sectordetail.put(name, null);
-                            sector.put(userName, sectordetail);
-                            DataManager.getInstance().setsector(sector);
-                            firstsector.add(name);
-                            goahead = true;
-                        }else
-                        {
-                            sectordetail = sector.get(userName);
-                            sectordetail.put(name, null);
-                            sector.remove(userName);
-                            sector.put(userName, sectordetail);
+                            HashMap<String,ArrayList<Device>> sectordetail2 = new HashMap<String, ArrayList<Device>>();
+                            sectordetail2.put(name, null);
+                            sector.put(userName, sectordetail2);
                             DataManager.getInstance().setsector(sector);
                             firstsector.add(name);
                             goahead = true;
                         }
+                        else
+                        {
+                            HashMap<String,ArrayList<Device>> sectordetail2 = sector.get(userName);
+                            sectordetail2.put(name, null);
+                            sector.remove(userName);
+                            sector.put(userName, sectordetail2);
+                            DataManager.getInstance().setsector(sector);
+                            firstsector.add(name);
+                            goahead = true;
+                        }
+
                     }
                 } else {
                     Toast.makeText(AdminPage.this, "Sector Name cannot be empty", Toast.LENGTH_SHORT).show();
@@ -569,6 +615,7 @@ public class AdminPage extends AppCompatActivity {
                 }
             }
         });
+
         savedevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -589,9 +636,9 @@ public class AdminPage extends AppCompatActivity {
                                 DatabaseManager.getInstance().WriteDeviceList(deviceArrayList, "devicelist");
                                 ArrayList<Device> oldlist = new ArrayList<Device>();
                                 oldlist.add(mDevice);
-                                sectordetail = new HashMap<String, ArrayList<Device>>();
-                                sectordetail.put(sectorName, oldlist);
-                                sector.put(userName, sectordetail);
+                                HashMap<String, ArrayList<Device>> sectordetail4 = sector.get(userName);
+                                sectordetail4.put(sectorName, oldlist);
+                                sector.put(userName, sectordetail4);
                                 firstdevice.add(name);
                                 DataManager.getInstance().setsector(sector);
                                 goahead = true;
@@ -603,8 +650,9 @@ public class AdminPage extends AppCompatActivity {
                                 DatabaseManager.getInstance().WriteDeviceList(deviceArrayList, "devicelist");
                                 ArrayList<Device> oldlist = new ArrayList<Device>();
                                 oldlist.add(mDevice);
-                                sectordetail.put(sectorName, oldlist);
-                                sector.put(userName, sectordetail);
+                                HashMap<String, ArrayList<Device>> sectordetail4 = sector.get(userName);
+                                sectordetail4.put(sectorName, oldlist);
+                                sector.put(userName, sectordetail4);
                                 firstdevice.add(name);
                                 DataManager.getInstance().setsector(sector);
                                 goahead = true;
@@ -629,7 +677,6 @@ public class AdminPage extends AppCompatActivity {
             deviceList.setAdapter(deviceadapter);
             deviceList.setVisibility(View.VISIBLE);
         }
-        goahead = false;
     }
 
     public void EmptyUser()

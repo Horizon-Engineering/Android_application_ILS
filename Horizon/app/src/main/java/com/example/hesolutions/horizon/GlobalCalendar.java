@@ -2,9 +2,11 @@ package com.example.hesolutions.horizon;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.util.TypedValue;
@@ -26,6 +28,8 @@ import com.mylibrary.WeekViewEvent;
 import com.mylibrary.WeekView;
 import com.mylibrary.MonthLoader;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -95,6 +99,11 @@ public class GlobalCalendar extends Activity{
                     editevent.putExtra("finishtime", time.format(endtime));
                     editevent.putExtra("devicelist", devicelist);
 
+
+                    View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                    Bitmap bitmap = getScreenShotEdit(rootView);
+                    DataManager.getInstance().setBitmap(bitmap);
+
                     DataManager.getInstance().setthisevent(event);
                     ActivityStack activityStack = (ActivityStack) getParent();
                     activityStack.push("ThirdActivity", editevent);
@@ -139,8 +148,10 @@ public class GlobalCalendar extends Activity{
             @Override
             public void onClick(View v) {
 
+                View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                Bitmap bitmap = getScreenShot(rootView);
+                DataManager.getInstance().setBitmap(bitmap);
                 Intent startNewActivityIntent = new Intent(GlobalCalendar.this, CalendarTask.class);
-
                 ActivityStack activityStack = (ActivityStack) getParent();
                 activityStack.push("SecondActivity", startNewActivityIntent);
 
@@ -183,6 +194,41 @@ public class GlobalCalendar extends Activity{
         });
 
     }
+    public static Bitmap getScreenShot(View view) {
+        View screenView = view.getRootView();
+        screenView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,60,800,
+                screenView.getDrawingCache().getHeight()-60);
+        screenView.setDrawingCacheEnabled(false);
 
+        return bitmap;
+    }
+
+
+    public static Bitmap getScreenShotEdit(View view) {
+        View screenView = view.getRootView();
+        screenView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,60,1000,
+                screenView.getDrawingCache().getHeight()-60);
+        screenView.setDrawingCacheEnabled(false);
+
+        return bitmap;
+    }
+
+    public static void store(Bitmap bm, String filename){
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon/Screenshots");
+        if(!dir.exists())
+            dir.mkdirs();
+        File file = new File(dir, filename);
+        try {
+            FileOutputStream fOut = new FileOutputStream(file);
+            bm.compress(Bitmap.CompressFormat.PNG, 85, fOut);
+            fOut.flush();
+            fOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

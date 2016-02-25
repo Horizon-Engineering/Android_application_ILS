@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
@@ -31,6 +32,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -44,6 +46,11 @@ import com.google.common.collect.BiMap;
 import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,8 +80,10 @@ public class CalendarTask extends Activity {
     CheckBox Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday;
     Integer day;
     ListView sectorlistView;
-
+    boolean doit = true;
+    byte[] SetParams;
     MyCustomAdapter deviceAdapter = null;
+    SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +110,7 @@ public class CalendarTask extends Activity {
         Friday = (CheckBox)findViewById(R.id.Friday);
         Saturday = (CheckBox)findViewById(R.id.Saturday);
         sectorlistView = (ListView)findViewById(R.id.sectorlistView);
+        seekBar = (SeekBar)findViewById(R.id.seekBar);
 
         final SimpleDateFormat ddf = new SimpleDateFormat("MMM dd, yyyy");
         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
@@ -115,10 +125,9 @@ public class CalendarTask extends Activity {
         final Calendar finishTime = Calendar.getInstance();
 
         day =startTime.get(Calendar.DAY_OF_WEEK)-1;
-
-
+        weeknumber.setFilters(new InputFilter[]{new InputFiletMinMax("1","52")});
         ImageView homescreenBgImage = (ImageView) findViewById(R.id.imageView);
-        Bitmap cachedBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.screenshots);
+        Bitmap cachedBitmap = DataManager.getInstance().getBitmap();
         if (cachedBitmap != null) {
             Bitmap blurredBitmap = BlurBuilder.blur(this, cachedBitmap);
             homescreenBgImage.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
@@ -138,7 +147,7 @@ public class CalendarTask extends Activity {
                 Group group = new Group(key, value, false);
                 arrayList.add(group);
             }
-            Group selected = new Group("Selected all", null, false);
+            Group selected = new Group("Select All", null, false);
             arrayList.add(selected);
 
 
@@ -280,6 +289,11 @@ public class CalendarTask extends Activity {
                             ArrayList<Device> devicelist = group.getList();
                             for (int j = 0; j < devicelist.size(); j++) {
                                 Device device = devicelist.get(j);
+                                byte oldP = DatabaseManager.getInstance().getlightingofDevice(device)[1];
+                                byte newP = SetParams[1];
+                                if (oldP > newP)SetParams[1] = oldP;
+                                device.setCurrentParams(SetParams);
+                                DatabaseManager.getInstance().updateDevice(device);
                                 choosedevice.add(device);
                             }
                         }
@@ -632,6 +646,32 @@ public class CalendarTask extends Activity {
             }
         });
 
+
+        seekBar.setProgress(100);
+        SetParams = new byte[5];
+        SetParams[0] = (byte) 17;
+        SetParams[1] = (byte) 100;
+        SetParams[2] = (byte) 0;
+        SetParams[3] = (byte) 0;
+        SetParams[4] = (byte) 0;
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                SetParams[1] = (byte) progress;
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
     }
 
 
@@ -645,7 +685,7 @@ public class CalendarTask extends Activity {
         }
 
         @Override
-        public View getView(int position, View convertView, final ViewGroup parent) {
+        public View getView(final int position, View convertView, final ViewGroup parent) {
 
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(
@@ -656,47 +696,55 @@ public class CalendarTask extends Activity {
 
             Group group = arrayList.get(position);
             TextView name = (TextView) convertView.findViewById(R.id.name);
-            final Switch checked = (Switch) convertView.findViewById(R.id.checked);
-
-            checked.setTag(group);
+            final EnhancedSwitch checked = (EnhancedSwitch) convertView.findViewById(R.id.checked);
             name.setText(group.getName());
-            checked.setChecked(group.getSelected());
-
-
+            checked.setCheckedProgrammatically(group.getSelected());
+            checked.setTag(group);
 
             checked.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Group group = (Group) buttonView.getTag();
                     if (checked.isChecked() == true) {
-                        if (group.getName() == "Selected all") {
+                        if (group.getName().equals("Select All")) {
                             for (int k = 0; k < arrayList.size(); k++) {
                                 Group every = arrayList.get(k);
                                 every.setSelected(true);
-                                arrayList.set(k, every);
                             }
-                            notifyDataSetChanged();
                         } else {
                             group.setSelected(true);
+
                         }
                     } else {
-                        if (group.getName() == "Selected all") {
+                        if (group.getName().equals("Select All")) {
                             for (int k = 0; k < arrayList.size(); k++) {
                                 Group every = arrayList.get(k);
                                 every.setSelected(false);
-                                arrayList.set(k, every);
                             }
-                            notifyDataSetChanged();
                         } else {
                             group.setSelected(false);
                         }
+
                     }
 
-                    for (int m = 0; m < arrayList.size(); m++) {
-                        Group every = arrayList.get(m);
+                    boolean check = true;
+                    for (int m = 0; m <arrayList.size()-1; m++)
+                    {
+                        if (arrayList.get(m).getSelected() == true){}
+                        else{check = false;}
                     }
+                    if (check == true)
+                    {
+                        arrayList.get(arrayList.size()-1).setSelected(true);
+                    }else
+                    {
+                        arrayList.get(arrayList.size()-1).setSelected(false);
+                    }
+
+                    notifyDataSetChanged();
                 }
             });
+
 
             return convertView;
 

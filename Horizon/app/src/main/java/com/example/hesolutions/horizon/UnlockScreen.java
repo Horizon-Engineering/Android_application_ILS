@@ -92,7 +92,7 @@ public class UnlockScreen extends Activity {
             //TODO: make sure this check will be removed in final version :)
             Intent startNewActivityIntent;
             if (code.equals("0000")) {
-                startNewActivityIntent = new Intent(UnlockScreen.this, AdminPage.class);
+                startNewActivityIntent = new Intent(UnlockScreen.this, TabViewAdmin.class);
                 clearPinCode();
                 startActivity(startNewActivityIntent);
             } else if (nameset != null) {

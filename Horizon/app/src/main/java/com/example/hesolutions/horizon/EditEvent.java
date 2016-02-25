@@ -5,7 +5,9 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -108,6 +111,12 @@ public class EditEvent extends Activity {
         finishTime.set(Calendar.HOUR_OF_DAY, hour2);
         finishTime.set(Calendar.MINUTE, min2);
 
+        ImageView homescreenBgImage = (ImageView) findViewById(R.id.imageView);
+        Bitmap cachedBitmap = DataManager.getInstance().getBitmap();
+        if (cachedBitmap != null) {
+            Bitmap blurredBitmap = BlurBuilder.blur(this, cachedBitmap);
+            homescreenBgImage.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
+        }
 
 
 //=======================================start date and time===============================================
