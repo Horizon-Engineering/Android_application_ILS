@@ -5,9 +5,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
+import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -49,38 +51,31 @@ import java.util.Random;
 
 public class AdminPage extends Activity {
 
-    BiMap<String, HashMap> sector = DataManager.getInstance().getsector();
+    BiMap<String, HashMap> sector;
+    BiMap<String, ArrayList> nameset;
     HashMap<String, ArrayList<Device>>sectordetail;
     ArrayList<Device> mDeviceList;
     Device mDevice;
-    EditText MSG,CODE,sectorname,devicename;
-    Button SAVE, savedevice, savesector;
-    Button LOAD, adduser, addsector, adddevice;
-    RelativeLayout addNewUser,addnewdevice,addnewsector;
+    Button adduser, addsector, adddevice;
+    RelativeLayout userlistlayout, sectorlistlayout, devicelistlayout;
     String userName = "";
     String sectorName = "";
-    Boolean uniquesectorname;
     UserCustomListAdapter useradapter;
     MyCustomListAdapter sectoradapter;
     MyCustomListAdapterfordevice deviceadapter;
     Boolean goahead = false;
+    ArrayList<String> sectorArray = new ArrayList<>();
+    final ArrayList<String> names = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_page);
-        SAVE = (Button)findViewById(R.id.SAVE);
-        LOAD = (Button)findViewById(R.id.LOAD);
-        MSG = (EditText)findViewById(R.id.MSG);
-        CODE = (EditText)findViewById(R.id.CODE);
-        addNewUser = (RelativeLayout)findViewById(R.id.addNewUser);
-        addnewdevice = (RelativeLayout)findViewById(R.id.addnewdevice);
-        addnewsector = (RelativeLayout)findViewById(R.id.addnewsector);
-        sectorname = (EditText)findViewById(R.id.sectorname);
-        devicename = (EditText)findViewById(R.id.devicename);
-        savedevice = (Button)findViewById(R.id.savedevice);
-        savesector = (Button)findViewById(R.id.savesector);
+
+        userlistlayout = (RelativeLayout)findViewById(R.id.userlistlayout);
+        sectorlistlayout = (RelativeLayout)findViewById(R.id.sectorlistlayout);
+        devicelistlayout = (RelativeLayout)findViewById(R.id.devicelistlayout);
         adduser = (Button)findViewById(R.id.adduser);
         addsector= (Button)findViewById(R.id.addsector);
         adddevice= (Button)findViewById(R.id.adddevice);
@@ -90,19 +85,37 @@ public class AdminPage extends Activity {
 
     public void LoadUserList()
     {
-        ArrayList<String> names = new ArrayList<>();
-        BiMap<String, ArrayList> nameset = DataManager.getInstance().getaccount();
+        sectorlistlayout.setVisibility(View.INVISIBLE);
+        devicelistlayout.setVisibility(View.INVISIBLE);
+        ListView userlist = (ListView) findViewById(R.id.userlist);
+        nameset = DataManager.getInstance().getaccount();
         if (!nameset.isEmpty()) {
+            names.clear();
             for (Map.Entry<String, ArrayList> entry : nameset.entrySet()) {
                 String name = (String) entry.getValue().get(0);
                 names.add(name);
             }
             useradapter = new UserCustomListAdapter(this, names);
-            ListView userlist = (ListView) findViewById(R.id.userlist);
             userlist.setAdapter(useradapter);
+            registerForContextMenu(userlist);
+            userlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    clickEvent(view);
+                    for (int i = 0; i < names.size(); i++) {
+                        if (position == i) {
+                            parent.getChildAt(i).setBackground(getResources().getDrawable(R.drawable.buttonclicked));
+                        } else {
+                            parent.getChildAt(i).setBackground(getResources().getDrawable(R.drawable.buttonunclick));
+                        }
+
+                    }
+                }
+            });
+
         }else
         {
-            EmptyUser();
+            userlist.setAdapter(null);
         }
 
     }
@@ -112,7 +125,7 @@ public class AdminPage extends Activity {
         private ArrayList<String> userlist;
 
         public UserCustomListAdapter(Activity adminPage,ArrayList<String> nameslist) {
-            super(adminPage,R.layout.row, nameslist);
+            super(adminPage, R.layout.row, nameslist);
             this.userlist = nameslist;
             this.context = adminPage;
         }
@@ -126,56 +139,16 @@ public class AdminPage extends Activity {
             adduser.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    addNewUser.setVisibility(View.VISIBLE);
-                    addnewsector.setVisibility(View.GONE);
-                    addnewdevice.setVisibility(View.GONE);
+                    View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                    Bitmap bitmap = getScreenShot(rootView);
+                    DataManager.getInstance().setBitmap(bitmap);
+                    Intent startNewActivityIntent = new Intent(AdminPage.this, AdminAddNew.class);
+                    startNewActivityIntent.putExtra("Case", 1);
+                    ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                    activityadminStack.push("AdminAddNew", startNewActivityIntent);
+
                 }
             });
-            SAVE.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-
-                    String Accounts = MSG.getText().toString();    //value
-                    String Passwords = CODE.getText().toString();  //key
-                    BiMap<String, ArrayList> bimap;
-                    bimap = DataManager.getInstance().getaccount();
-                    ArrayList<String> accout = new ArrayList<String>();
-
-                    String[] arr = {"#59dbe0", "#f57f68", "#87d288", "#f8b552", "#39add1", "#3079ab", "#c25975", "#e15258",
-                            "#f9845b", "#838cc7", "#7d669e", "#53bbb4", "#51b46d", "#e0ab18", "#f092b0", "#b7c0c7"};
-                    Random random = new Random();
-                    int select = random.nextInt(arr.length);
-                    String color = arr[select];
-
-                    if (Accounts.isEmpty() || Passwords.isEmpty()) {
-                        Toast.makeText(getApplicationContext(), "Missing Accounts or Passwords", Toast.LENGTH_LONG).show();
-                    } else if (bimap.get(Passwords) != null) {
-                        accout = bimap.get(Passwords);
-                        String accoutname = accout.get(0);
-                        Toast.makeText(getApplicationContext(), "Existant accout: " + accoutname, Toast.LENGTH_LONG).show();
-                        MSG.setText("");
-                        CODE.setText("");
-                    } else if (Passwords.length() != 4) {
-                        Toast.makeText(getApplicationContext(), "The Password must be 4 digits", Toast.LENGTH_LONG).show();
-                        CODE.setText("");
-                    } else {
-                        accout.add(Accounts);
-                        accout.add(color);
-                        bimap.put(Passwords, accout);
-                        DataManager.getInstance().setaccount(bimap);
-                        MSG.setText("");
-                        CODE.setText("");
-                        addNewUser.setVisibility(View.GONE);
-                        userlist.add(Accounts);
-                        notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(), "DATA saved", Toast.LENGTH_LONG).show();
-                    }
-
-                    addNewUser.setVisibility(View.GONE);
-                }
-            });
-
             return rowView;
         }
 
@@ -183,19 +156,19 @@ public class AdminPage extends Activity {
 
     public void clickEvent(View v) {
 //=====================case:User - Sector
+        sector = DataManager.getInstance().getsector();
         userName = ((TextView) v).getText().toString();
-        addNewUser.setVisibility(View.GONE);
-        addnewsector.setVisibility(View.GONE);
-        addnewdevice.setVisibility(View.GONE);
         sectordetail= sector.get(userName);
-        ArrayList<String> sectorArray = new ArrayList<>();
+        sectorlistlayout.setVisibility(View.VISIBLE);
+        devicelistlayout.setVisibility(View.INVISIBLE);
+        ListView sectorlist = (ListView) findViewById(R.id.sectorlist);
         if (sectordetail!=null)
         {
+            sectorArray.clear();
             for (Map.Entry<String, ArrayList<Device>> entry : sectordetail.entrySet()) {
                 sectorArray.add(entry.getKey());
             }
             sectoradapter = new MyCustomListAdapter(this, sectorArray);
-            ListView sectorlist = (ListView) findViewById(R.id.sectorlist);
             sectorlist.setVisibility(View.VISIBLE);
             sectorlist.setAdapter(sectoradapter);
             registerForContextMenu(sectorlist);
@@ -203,38 +176,79 @@ public class AdminPage extends Activity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     showDevice(view);
+                    for (int i = 0; i < sectorArray.size(); i++) {
+                        if (position == i) {
+                            parent.getChildAt(i).setBackground(getResources().getDrawable(R.drawable.buttonclicked));
+                        } else {
+                            parent.getChildAt(i).setBackground(getResources().getDrawable(R.drawable.buttonunclick));
+                        }
+
+                    }
                 }
             });
         }else{
-            EmptySector();
+            sectorlist.setAdapter(null);
         }
 
 
     }
+
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId()==R.id.sectorlist) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-            menu.setHeaderTitle("****");
-            String[] menuItems = getResources().getStringArray(R.array.menu);
-            for (int i = 0; i<menuItems.length; i++) {
-                menu.add(Menu.NONE, i, i, menuItems[i]);
-            }
+            menu.setHeaderTitle(sectorArray.get(info.position));
+            menu.add(0, 0, 0, "Share");
+            menu.add(0, 1, 0, "Remove");
+        }
+        if (v.getId() == R.id.userlist) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            menu.setHeaderTitle(names.get(info.position));
+            menu.add(0, 2, 0, "Delete");
         }
     }
-
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         int menuItemIndex = item.getItemId();
-        String[] menuItems = getResources().getStringArray(R.array.menu);
-        String menuItemName = menuItems[menuItemIndex];
+        sector = DataManager.getInstance().getsector();
+        if (menuItemIndex == 1)
+        {
+            sector.remove(userName);
+            sectordetail.remove(sectorArray.get(info.position));
+            sector.put(userName, sectordetail);
+            DataManager.getInstance().setsector(sector);
+            sectorArray.remove(info.position);
+            sectoradapter.notifyDataSetChanged();
+            ListView deviceList = (ListView) findViewById(R.id.devicelist);
+            deviceList.setAdapter(null);
+        }else if (menuItemIndex == 0)
+        {
+            View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+            Bitmap bitmap = getScreenShot(rootView);
+            DataManager.getInstance().setBitmap(bitmap);
+            Intent startNewActivityIntent = new Intent(AdminPage.this, AdminAddNew.class);
+            startNewActivityIntent.putExtra("Case", 4);
+            startNewActivityIntent.putExtra("UserName",userName);
+            startNewActivityIntent.putExtra("SectorName",sectorArray.get(info.position));
+            ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+            activityadminStack.push("AdminAddNew", startNewActivityIntent);
+        }else if (menuItemIndex == 2)
+        {
+            /*
+            sector.remove(userName);
+            DataManager.getInstance().setsector(sector);
+            nameset.remove(userName);
+            DataManager.getInstance().setaccount(nameset);
+            names.remove(info.position);
+            useradapter.notifyDataSetChanged();
+            */
+        }
 
         return true;
-
     }
+
     public class MyCustomListAdapter extends ArrayAdapter<String> {
 
         private final Activity context;
@@ -255,90 +269,45 @@ public class AdminPage extends Activity {
             txtTitle.setText(sectorname1);
 
 
+
             addsector.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    addnewdevice.setVisibility(View.GONE);
-                    addNewUser.setVisibility(View.GONE);
-                    if (!userName.equals("")) {
-                        uniquesectorname = true;
-                        addnewsector.setVisibility(View.VISIBLE);
-                    }else {
-                        Toast.makeText(AdminPage.this, "Please select a user", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-
-            savesector.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    HashMap<String, ArrayList> sectordetail1 = new HashMap<String, ArrayList>();
-                    String name = sectorname.getText().toString();
-                    if (!name.equals("")) {
-                        for (Map.Entry<String, HashMap> entry : sector.entrySet()) {
-                            HashMap<String, ArrayList> value = entry.getValue();
-                            for (Map.Entry<String, ArrayList> entrys : value.entrySet()) {
-                                if (entrys.getKey().equals(name)) {
-                                    sectorname.setText("");
-                                    uniquesectorname = false;
-                                    Toast.makeText(AdminPage.this, "Sector name alreay exsits", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        }
-
-
-                        if (uniquesectorname == true) {
-                            if (sectordetail!=null) {
-                                if (sectordetail.isEmpty()) {
-                                    HashMap<String, ArrayList<Device>> sectordetail2 = new HashMap<String, ArrayList<Device>>();
-                                    sectordetail2.put(name, null);
-                                    sector.put(userName, sectordetail2);
-                                    DataManager.getInstance().setsector(sector);
-                                    sectolist.add(name);
-                                    notifyDataSetChanged();
-                                } else {
-                                    sectordetail1 = sector.get(userName);
-                                    sectordetail1.put(name, null);
-                                    sector.remove(userName);
-                                    sector.put(userName, sectordetail1);
-                                    DataManager.getInstance().setsector(sector);
-                                    sectolist.add(name);
-                                    notifyDataSetChanged();
-                                }
-                            }
-                        }
-                    } else {
-                        Toast.makeText(AdminPage.this, "Sector Name cannot be empty", Toast.LENGTH_SHORT).show();
-                    }
-                    sectorname.setText("");
-                    addnewsector.setVisibility(View.GONE);
+                    View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                    Bitmap bitmap = getScreenShot(rootView);
+                    DataManager.getInstance().setBitmap(bitmap);
+                    Intent startNewActivityIntent = new Intent(AdminPage.this, AdminAddNew.class);
+                    startNewActivityIntent.putExtra("Case",2);
+                    startNewActivityIntent.putExtra("userName",userName);
+                    ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                    activityadminStack.push("AdminAddNew", startNewActivityIntent);
 
                 }
             });
+
+
             return rowView;
         }
     }
 
     public void showDevice(View v)
     {
+        ArrayList<String> devicename = new ArrayList<>();
         sectorName = ((TextView) v).getText().toString();
-        addNewUser.setVisibility(View.GONE);
-        addnewsector.setVisibility(View.GONE);
-        addnewdevice.setVisibility(View.GONE);
+        devicelistlayout.setVisibility(View.VISIBLE);
+        ListView deviceList = (ListView) findViewById(R.id.devicelist);
         if  (sectordetail!=null)
         {
             mDeviceList = sectordetail.get(sectorName);
             if (mDeviceList!=null){
-                ArrayList<String> devicename = new ArrayList<>();
                 for (int i = 0; i < mDeviceList.size(); i++) {
                     devicename.add(mDeviceList.get(i).getDeviceName());
                 }
                 deviceadapter = new MyCustomListAdapterfordevice(this, devicename);
-                ListView deviceList = (ListView) findViewById(R.id.devicelist);
                 deviceList.setVisibility(View.VISIBLE);
                 deviceList.setAdapter(deviceadapter);
             }else {
-                EmptyDevice();
+                deviceList.setAdapter(null);
             }
         }
     }
@@ -364,65 +333,11 @@ public class AdminPage extends Activity {
             adddevice.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!sectorname.equals("")) {
-                        addnewsector.setVisibility(View.GONE);
-                        addNewUser.setVisibility(View.GONE);
-                        AdminPage.this.startActivityForResult(new Intent(AdminPage.this, CaptureActivity.class), 0);
-                        AdminPage.this.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                    } else {
-                        Toast.makeText(AdminPage.this, "Please select a sector", Toast.LENGTH_SHORT).show();
-                    }
+                    AdminPage.this.startActivityForResult(new Intent(AdminPage.this, CaptureActivity.class), 0);
+                    AdminPage.this.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 }
             });
 
-            savedevice.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String name = devicename.getText().toString();
-                    if (!name.equals("")) {
-                        if (findDeviceName(name)) {
-                            Toast.makeText(AdminPage.this, "Devices already been added", Toast.LENGTH_SHORT).show();
-                       } else{
-                            Gateway gateways = SysApplication.getInstance().getCurrGateway(AdminPage.this);
-                            if (gateways != null) {
-                                if (mDeviceList==null) {
-                                    mDevice.setDeviceName(name);
-                                    ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
-                                    DatabaseManager.getInstance().addDevice(mDevice, null);
-                                    deviceArrayList.add(mDevice);
-                                    DatabaseManager.getInstance().WriteDeviceList(deviceArrayList, "devicelist");
-                                    mDeviceList = new ArrayList<Device>();
-                                    mDeviceList.add(mDevice);
-                                    sectordetail.put(sectorName, mDeviceList);
-                                    sector.put(userName, sectordetail);
-                                    DataManager.getInstance().setsector(sector);
-                                    devicelist.add(name);
-                                    notifyDataSetChanged();
-                                } else {
-                                    mDevice.setDeviceName(name);
-                                    ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
-                                    DatabaseManager.getInstance().addDevice(mDevice, null);
-                                    deviceArrayList.add(mDevice);
-                                    DatabaseManager.getInstance().WriteDeviceList(deviceArrayList, "devicelist");
-                                    mDeviceList.add(mDevice);
-                                    sectordetail.put(sectorName, mDeviceList);
-                                    sector.put(userName, sectordetail);
-                                    DataManager.getInstance().setsector(sector);
-                                    devicelist.add(name);
-                                    notifyDataSetChanged();
-                                }
-                            } else {
-                                Toast.makeText(AdminPage.this, "Gateway error", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-
-                    } else {
-                        Toast.makeText(AdminPage.this, "Device Name cannot be empty", Toast.LENGTH_SHORT).show();
-                    }
-                    devicename.setText("");
-                    addnewdevice.setVisibility(View.GONE);
-                }
-            });
             return rowView;
         }
 
@@ -461,7 +376,15 @@ public class AdminPage extends Activity {
                     mDevice.setDeviceAddress((short) Integer.parseInt(deviceaddress));
                     if (!findDeviceAddress(mDevice.getDeviceAddress()))
                     {
-                        addnewdevice.setVisibility(View.VISIBLE);
+                        View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                        Bitmap bitmap = getScreenShot(rootView);
+                        DataManager.getInstance().setBitmap(bitmap);
+                        Intent startNewActivityIntent = new Intent(AdminPage.this, AdminAddNew.class);
+                        startNewActivityIntent.putExtra("Case",3);
+                        startNewActivityIntent.putExtra("userName",userName);
+                        startNewActivityIntent.putExtra("sectorName", sectorName);
+                        ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                        activityadminStack.push("AdminAddNew", startNewActivityIntent);
                     }else
                     {
                         Toast.makeText(AdminPage.this, "The device has been added", Toast.LENGTH_SHORT).show();
@@ -514,16 +437,9 @@ public class AdminPage extends Activity {
         }
         return false;
     }
-    private boolean findDeviceName(String deviceName) {
-        ArrayList<Device> check = DatabaseManager.getInstance().LoadDeviceList("devicelist");
-        if (check!=null) {
-            for (int i=0; i<check.size(); i++)
-            {
-                if (check.get(i).getDeviceName().equals(deviceName)) return true;
-            }
-        }
-        return false;
-    }
+
+
+    /*
     public void EmptySector()
     {
         final ListView sectorlist = (ListView) findViewById(R.id.sectorlist);
@@ -534,8 +450,8 @@ public class AdminPage extends Activity {
             @Override
             public void onClick(View v) {
                 if (!userName.equals("")) {
-                    addnewdevice.setVisibility(View.GONE);
-                    addNewUser.setVisibility(View.GONE);
+                    addnewdevice.setVisibility(View.INVISIBLE);
+                    addNewUser.setVisibility(View.INVISIBLE);
                     uniquesectorname = true;
                     addnewsector.setVisibility(View.VISIBLE);
                 } else {
@@ -585,7 +501,7 @@ public class AdminPage extends Activity {
                     Toast.makeText(AdminPage.this, "Sector Name cannot be empty", Toast.LENGTH_SHORT).show();
                 }
                 sectorname.setText("");
-                addnewsector.setVisibility(View.GONE);
+                addnewsector.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -606,8 +522,8 @@ public class AdminPage extends Activity {
             @Override
             public void onClick(View v) {
                 if (!sectorname.equals("")) {
-                    addnewsector.setVisibility(View.GONE);
-                    addNewUser.setVisibility(View.GONE);
+                    addnewsector.setVisibility(View.INVISIBLE);
+                    addNewUser.setVisibility(View.INVISIBLE);
                     AdminPage.this.startActivityForResult(new Intent(AdminPage.this, CaptureActivity.class), 0);
                     AdminPage.this.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 } else {
@@ -668,7 +584,7 @@ public class AdminPage extends Activity {
                     Toast.makeText(AdminPage.this, "Device Name cannot be empty", Toast.LENGTH_SHORT).show();
                 }
                 devicename.setText("");
-                addnewdevice.setVisibility(View.GONE);
+                addnewdevice.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -685,9 +601,12 @@ public class AdminPage extends Activity {
         adduser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addNewUser.setVisibility(View.VISIBLE);
-                addnewsector.setVisibility(View.GONE);
-                addnewdevice.setVisibility(View.GONE);
+                View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                Bitmap bitmap = getScreenShot(rootView);
+                DataManager.getInstance().setBitmap(bitmap);
+                Intent startNewActivityIntent = new Intent(AdminPage.this, AdminAddNew.class);
+                ActivityStack activityStack = (ActivityStack) getParent();
+                activityStack.push("AdminAddNew", startNewActivityIntent);
             }
         });
         SAVE.setOnClickListener(new View.OnClickListener() {
@@ -727,11 +646,11 @@ public class AdminPage extends Activity {
                     DataManager.getInstance().setaccount(bimap);
                     MSG.setText("");
                     CODE.setText("");
-                    addNewUser.setVisibility(View.GONE);
+                    addNewUser.setVisibility(View.INVISIBLE);
                     Toast.makeText(getApplicationContext(), "DATA saved", Toast.LENGTH_LONG).show();
                 }
 
-                addNewUser.setVisibility(View.GONE);
+                addNewUser.setVisibility(View.INVISIBLE);
             }
         });
         if (goahead == true)
@@ -740,6 +659,17 @@ public class AdminPage extends Activity {
             ListView userlist = (ListView) findViewById(R.id.userlist);
             userlist.setAdapter(useradapter);
         }
+    }
+    */
+
+    public static Bitmap getScreenShot(View view) {
+        View screenView = view.getRootView();
+        screenView.setDrawingCacheEnabled(true);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,60,1000,
+                screenView.getDrawingCache().getHeight()-60);
+        screenView.setDrawingCacheEnabled(false);
+
+        return bitmap;
     }
 }
 

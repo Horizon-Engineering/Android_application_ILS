@@ -271,9 +271,12 @@
 
     <string name="action_example">Example action</string>
     <string-array name="menu">
-        <item>Edit</item>
+        <item>Share</item>
+        <item>Remove</item>
+    </string-array>
+    <string name="title_activity_admin_add_new">AdminAddNew</string>
+    <string-array name="usermenu">
         <item>Delete</item>
-        <item>Send</item>
     </string-array>
 
 </resources>

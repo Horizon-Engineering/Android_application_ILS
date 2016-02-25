@@ -215,20 +215,4 @@ public class GlobalCalendar extends Activity{
         return bitmap;
     }
 
-    public static void store(Bitmap bm, String filename){
-        File root = Environment.getExternalStorageDirectory();
-        File dir = new File(root.getAbsolutePath() + "/Horizon/Screenshots");
-        if(!dir.exists())
-            dir.mkdirs();
-        File file = new File(dir, filename);
-        try {
-            FileOutputStream fOut = new FileOutputStream(file);
-            bm.compress(Bitmap.CompressFormat.PNG, 85, fOut);
-            fOut.flush();
-            fOut.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }

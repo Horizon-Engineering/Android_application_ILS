@@ -14,7 +14,6 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:id="@+id/userlistlayout"
-        android:background="@drawable/backrec"
         android:layout_height="wrap_content">
         <ListView
             android:id="@+id/userlist"
@@ -25,10 +24,11 @@
             android:layout_marginTop="2dp"
             />
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="Add User"
             android:id="@+id/adduser"
+            android:background="@drawable/buttonclick"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
@@ -39,9 +39,9 @@
         android:layout_width="wrap_content"
         android:layout_alignTop="@+id/userlistlayout"
         android:layout_toEndOf="@+id/userlistlayout"
-        android:background="@drawable/backrec"
         android:id="@+id/sectorlistlayout"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp">
         <ListView
             android:id="@+id/sectorlist"
             android:layout_width="200dp"
@@ -49,9 +49,10 @@
             android:minHeight="?android:attr/listPreferredItemHeight"
         />
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="Add sector"
+            android:background="@drawable/buttonclick"
             android:id="@+id/addsector"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
@@ -60,136 +61,29 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/backrec"
+        android:id="@+id/devicelistlayout"
         android:layout_alignTop="@+id/sectorlistlayout"
-        android:layout_toEndOf="@+id/sectorlistlayout">
+        android:layout_toEndOf="@+id/sectorlistlayout"
+        android:layout_marginLeft="30dp">
         <ListView
             android:id="@+id/devicelist"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:minHeight="?android:attr/listPreferredItemHeight"
-            />
+            android:minHeight="?android:attr/listPreferredItemHeight" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add device"
             android:id="@+id/adddevice"
+            android:background="@drawable/buttonclick"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/addNewUser"
-        android:visibility="gone"
-        android:layout_alignTop="@+id/devicelist"
-        android:layout_toEndOf="@+id/devicelist">
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/MSG"
-            android:hint="Enter the account"
-            android:singleLine="true"
-            android:imeOptions="actionDone"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="LOAD"
-            android:id="@+id/LOAD"
-            android:layout_alignTop="@+id/SAVE"
-            android:layout_alignRight="@+id/textView"
-            android:layout_alignEnd="@+id/textView" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SAVE"
-            android:id="@+id/SAVE"
-            android:layout_below="@+id/CODE"
-/>
-
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="numberPassword"
-            android:ems="10"
-            android:maxLength="4"
-            android:id="@+id/CODE"
-            android:hint="Enter the password"
-            android:layout_below="@+id/MSG"
-            android:layout_alignLeft="@+id/MSG"
-            android:layout_alignStart="@+id/MSG"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:id="@+id/textView"
-            android:layout_below="@+id/CODE"
-            android:layout_alignLeft="@+id/CODE"
-            android:layout_alignStart="@+id/CODE"
-            android:layout_above="@+id/LOAD"
-            android:layout_alignRight="@+id/CODE"
-            android:layout_alignEnd="@+id/CODE" />
-
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:id="@+id/addnewsector"
-        android:visibility="gone"
-        android:layout_toEndOf="@+id/devicelist">
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/sectorname"
-            android:hint="Enter the account"
-            android:singleLine="true"
-            android:imeOptions="actionDone"></EditText>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SAVE"
-            android:id="@+id/savesector"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/sectorname" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/addnewdevice"
-        android:visibility="gone"
-        android:layout_above="@+id/adddevice"
-        android:layout_toEndOf="@+id/devicelist"
-        android:layout_marginBottom="105dp">
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/devicename"
-            android:hint="Enter the account"
-            android:singleLine="true"
-            android:imeOptions="actionDone"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SAVE"
-            android:id="@+id/savedevice"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/devicename" />
-    </RelativeLayout>
 
 </RelativeLayout>

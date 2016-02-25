@@ -343,11 +343,13 @@ public class ControlPanel extends Activity {
             if (devicelist!=null) {
                 for (int i = 0; i < devicelist.size(); i++) {
                     Device device = devicelist.get(i);
-                    if (DatabaseManager.getInstance().getlightingofDevice(device)[1] != 0) {
-                        switchid.setCheckedProgrammatically(true);
-                        break;
-                    }else {
-                        switchid.setCheckedProgrammatically(false);
+                    if (!devicelist.isEmpty()) {
+                        if (DatabaseManager.getInstance().getlightingofDevice(device)[1] != 0) {
+                            switchid.setCheckedProgrammatically(true);
+                            break;
+                        } else {
+                            switchid.setCheckedProgrammatically(false);
+                        }
                     }
                 }
             }

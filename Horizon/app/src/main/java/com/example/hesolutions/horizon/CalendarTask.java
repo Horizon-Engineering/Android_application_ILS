@@ -80,7 +80,6 @@ public class CalendarTask extends Activity {
     CheckBox Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday;
     Integer day;
     ListView sectorlistView;
-    boolean doit = true;
     byte[] SetParams;
     MyCustomAdapter deviceAdapter = null;
     SeekBar seekBar;
