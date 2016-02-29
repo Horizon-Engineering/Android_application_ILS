@@ -108,14 +108,14 @@ public class DataManager {
     //==================Sector Setting: Key = SectorName, Value = Hashmap of contained devices
 
 
-    public BiMap<String, HashMap> sector = HashBiMap.create();
+    public HashMap<String, HashMap> sector = new HashMap<>();
 
-    public BiMap getsector() {
+    public HashMap getsector() {
         dataupdateBi(sector, "sector");
         return sector;
     }
 
-    public BiMap setsector(BiMap sectorinfo) {
+    public HashMap setsector(HashMap sectorinfo) {
         this.sector = sectorinfo;
         writedata(sector, "sector");
         return sector;
@@ -269,7 +269,28 @@ public class DataManager {
         }
     }
 
-
+    public static void writedata(HashMap bimap, String filename) {
+        String state;
+        state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            File root = Environment.getExternalStorageDirectory();
+            File dir = new File(root.getAbsolutePath() + "/Horizon");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            File file = new File(dir, filename);
+            try {
+                FileOutputStream fos = new FileOutputStream(file);
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(bimap);
+                oos.flush();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 /*
     // ============================================Writedata for Arraylist=========================
     public static void writedata(ArrayList arrayList, String filename) {
@@ -387,7 +408,7 @@ public class DataManager {
 
 
 
-    public static void dataupdateBi(BiMap bimap, String filename) {
+    public static void dataupdateBi(HashMap bimap, String filename) {
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Horizon");
         File file = new File(dir, filename);
@@ -395,7 +416,7 @@ public class DataManager {
             try {
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois = new ObjectInputStream(fis);
-                Map<String, HashMap> readmap = (BiMap) ois.readObject();
+                Map<String, HashMap> readmap = (HashMap) ois.readObject();
                 for (Map.Entry<String, HashMap> entry : readmap.entrySet()) {
                     String key = entry.getKey();
                     HashMap value = entry.getValue();

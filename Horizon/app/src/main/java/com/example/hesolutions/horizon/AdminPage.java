@@ -51,7 +51,7 @@ import java.util.Random;
 
 public class AdminPage extends Activity {
 
-    BiMap<String, HashMap> sector;
+    HashMap<String, HashMap> sector;
     BiMap<String, ArrayList> nameset;
     HashMap<String, ArrayList<Device>>sectordetail;
     ArrayList<Device> mDeviceList;
@@ -80,6 +80,46 @@ public class AdminPage extends Activity {
         addsector= (Button)findViewById(R.id.addsector);
         adddevice= (Button)findViewById(R.id.adddevice);
         LoadUserList();
+        adduser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                Bitmap bitmap = getScreenShot(rootView);
+                DataManager.getInstance().setBitmap(bitmap);
+                Intent startNewActivityIntent = new Intent(AdminPage.this, AdminAddNew.class);
+                startNewActivityIntent.putExtra("Case", 1);
+                ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                activityadminStack.push("AdminAddNew", startNewActivityIntent);
+
+            }
+        });
+        addsector.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                Bitmap bitmap = getScreenShot(rootView);
+                DataManager.getInstance().setBitmap(bitmap);
+                Intent startNewActivityIntent = new Intent(AdminPage.this, AdminAddNew.class);
+                startNewActivityIntent.putExtra("Case",2);
+                startNewActivityIntent.putExtra("userName",userName);
+                ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                activityadminStack.push("AdminAddNew", startNewActivityIntent);
+
+            }
+        });
+        adddevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
+                Bitmap bitmap = getScreenShot(rootView);
+                DataManager.getInstance().setBitmap(bitmap);
+                Intent startNewActivityIntent = new Intent(AdminPage.this, CaptureActivity.class);
+                ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                startNewActivityIntent.putExtra("userName",userName);
+                startNewActivityIntent.putExtra("sectorName", sectorName);
+                activityadminStack.push("Scanner", startNewActivityIntent);
+            }
+        });
 
     }
 
@@ -116,6 +156,7 @@ public class AdminPage extends Activity {
         }else
         {
             userlist.setAdapter(null);
+
         }
 
     }
@@ -135,7 +176,7 @@ public class AdminPage extends Activity {
             View rowView = inflater.inflate(R.layout.row, null, true);
             TextView txtTitle = (TextView) rowView.findViewById(R.id.textView);
             txtTitle.setText(userlist.get(position));
-
+            /*
             adduser.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -149,6 +190,7 @@ public class AdminPage extends Activity {
 
                 }
             });
+            */
             return rowView;
         }
 
@@ -267,9 +309,7 @@ public class AdminPage extends Activity {
             TextView txtTitle = (TextView) rowView.findViewById(R.id.textView);
             final String sectorname1 = sectolist.get(position);
             txtTitle.setText(sectorname1);
-
-
-
+            /*
             addsector.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -284,8 +324,7 @@ public class AdminPage extends Activity {
 
                 }
             });
-
-
+*/
             return rowView;
         }
     }
@@ -329,7 +368,7 @@ public class AdminPage extends Activity {
             TextView txtTitle = (TextView) rowView.findViewById(R.id.textView);
             String devicename1 = devicelist.get(position);
             txtTitle.setText(devicename1);
-
+/*
             adddevice.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -337,12 +376,14 @@ public class AdminPage extends Activity {
                     AdminPage.this.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 }
             });
-
+*/
             return rowView;
         }
 
     }
+    /*
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("*************************************result");
         if (requestCode != 0) {
             Toast.makeText(this, getResources().getString(R.string.scanerfail), Toast.LENGTH_LONG).show();
         } else if (resultCode == -1) {
@@ -403,10 +444,10 @@ public class AdminPage extends Activity {
                 alertDialog.setMessage("QR code error");
                 alertDialog.setPositiveButton("Scan Another", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        /*
+
                         AdminPage.this.startActivityForResult(new Intent(AdminPage.this, CaptureActivity.class), 0);
                         AdminPage.this.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-                        */
+
                         startActivityForResult(new Intent(AdminPage.this, CaptureActivity.class) ,0);
                         Intent startNewActivityIntent = new Intent(AdminPage.this, CaptureActivity.class);
                         ActivityStack activityStack = (ActivityStack) getParent();
@@ -427,6 +468,7 @@ public class AdminPage extends Activity {
             }
         }
     }
+    /*
     private boolean findDeviceAddress(short deviceAddress) {
         ArrayList<Device> check = DatabaseManager.getInstance().LoadDeviceList("devicelist");
         if (check!=null) {
@@ -665,8 +707,8 @@ public class AdminPage extends Activity {
     public static Bitmap getScreenShot(View view) {
         View screenView = view.getRootView();
         screenView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,60,1000,
-                screenView.getDrawingCache().getHeight()-60);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,100,1000,
+                screenView.getDrawingCache().getHeight()-100);
         screenView.setDrawingCacheEnabled(false);
 
         return bitmap;

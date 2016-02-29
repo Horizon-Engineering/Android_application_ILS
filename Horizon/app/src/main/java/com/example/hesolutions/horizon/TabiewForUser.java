@@ -26,10 +26,8 @@ public class TabiewForUser extends TabActivity {
         tabHost.setup();
         TabHost.TabSpec spec;
         Intent intent;
-
         textview14.setText(DataManager.getInstance().getUsername());
         // Create an Intent to launch an Activity for the tab (to be reused)
-
 
 
         intent = new Intent().setClass(this, ActivityStack.class);
@@ -59,8 +57,10 @@ public class TabiewForUser extends TabActivity {
                 if (tabId == "Logout") finish();
             }
         });
-
-        //tabHost.getTabWidget().getChildAt(0).getLayoutParams().height=100;
+        for (int i = 0; i < tabHost.getTabWidget().getTabCount(); i++) {
+            tabHost.getTabWidget().getChildAt(i).getLayoutParams().height = 100;
+            tabHost.getTabWidget().getChildAt(i).getLayoutParams().width= 150;
+        }
     }
 
 

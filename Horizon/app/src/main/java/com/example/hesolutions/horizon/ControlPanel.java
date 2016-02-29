@@ -42,7 +42,7 @@ import java.util.Map;
 
 public class ControlPanel extends Activity {
 
-    BiMap<String, HashMap> sector = DataManager.getInstance().getsector();
+    HashMap<String, HashMap> sector = DataManager.getInstance().getsector();
     String username =DataManager.getInstance().getUsername();
     HashMap<String, ArrayList> sectordetail = sector.get(username);
     ArrayList<String> sectorArray = new ArrayList<>();
@@ -51,6 +51,7 @@ public class ControlPanel extends Activity {
     String str2;
     byte intensity;
     ExpandListAdapter adapter;
+    ArrayList<String> devicenamelist = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,12 +91,11 @@ public class ControlPanel extends Activity {
         @Override
         public Object getChild(int groupPosition, int childPosition) {
             ArrayList<Device> devicelist = sectordetail.get((groups.get(groupPosition)));
-            ArrayList<String> devicename = new ArrayList<>();
             for (int i = 0; i < devicelist.size(); i++) {
-                devicename.add(devicelist.get(i).getDeviceName());
+                devicenamelist.add(devicelist.get(i).getDeviceName());
             }
 
-            return devicename.get(childPosition);
+            return devicenamelist.get(childPosition);
         }
 
         @Override
@@ -118,7 +118,7 @@ public class ControlPanel extends Activity {
             tv.setText(devicename);
 
             final Device device = DatabaseManager.getInstance().getDeviceInforName(devicename);
-
+            
             /*
             final short address = device.getDeviceAddress();
             final ArrayList<Device> thedevice = DatabaseManager.getInstance().getSectorDeviceInforadd(address).getmDeviceList();
@@ -149,6 +149,7 @@ public class ControlPanel extends Activity {
                 public void onClick(View v) {
                     Device deviceA = (Device) v.getTag();
                     intensity = DatabaseManager.getInstance().getlightingofDevice(deviceA)[1];
+                    seekBar.setVisibility(View.VISIBLE);
                     DataManager.getInstance().setthedevice(deviceA);
                     if (switchid.isChecked() == true) {
                         seekBar.setProgressProgrammatically(intensity);
@@ -229,7 +230,7 @@ public class ControlPanel extends Activity {
             switchid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                    seekBar.setVisibility(View.INVISIBLE);
                     Calendar calendar = Calendar.getInstance();
                     List<WeekViewEvent> events = DataManager.getInstance().getevents();
                     if (events.size() != 0) {
@@ -357,6 +358,7 @@ public class ControlPanel extends Activity {
             txtTitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    seekBar.setVisibility(View.INVISIBLE);
                     if (isExpanded) ((ExpandableListView) parent).collapseGroup(groupPosition);
                     else ((ExpandableListView) parent).expandGroup(groupPosition, true);
                 }
@@ -365,6 +367,7 @@ public class ControlPanel extends Activity {
             switchid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    seekBar.setVisibility(View.INVISIBLE);
                     Calendar calendar = Calendar.getInstance();
                     List<WeekViewEvent> events = DataManager.getInstance().getevents();
                     if (events.size() != 0) {

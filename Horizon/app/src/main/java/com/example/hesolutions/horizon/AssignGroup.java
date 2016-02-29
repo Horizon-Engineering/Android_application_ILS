@@ -25,6 +25,7 @@ import com.homa.hls.database.Device;
 import com.homa.hls.database.DeviceList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +83,7 @@ public class AssignGroup extends Activity {
                 }
 
                 //===================check the group name unique
-                BiMap<String, BiMap> sector = DataManager.getInstance().getsector();
+                HashMap<String, BiMap> sector = DataManager.getInstance().getsector();
                 BiMap<String, ArrayList>sectordetail = HashBiMap.create();
                 for (Map.Entry<String, BiMap> entry : sector.entrySet()) {
                     BiMap<String,ArrayList> value = entry.getValue();

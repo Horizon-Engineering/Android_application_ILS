@@ -15,7 +15,7 @@ public class TabViewAdmin extends TabActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tabiew_for_user);
+        setContentView(R.layout.activity_tab_view_admin);
 
 
 
@@ -32,6 +32,12 @@ public class TabViewAdmin extends TabActivity {
                 .setContent(intent);
         tabHost.addTab(spec);
 
+        intent = new Intent().setClass(this, PaintPage.class);
+        spec = tabHost.newTabSpec("Layout")
+                .setIndicator("", getResources().getDrawable(R.drawable.layouticon))
+                .setContent(intent);
+        tabHost.addTab(spec);
+
         intent = new Intent().setClass(this, HomePage.class);
         spec = tabHost.newTabSpec("Logout")
                 .setIndicator("", getResources().getDrawable(R.drawable.logouticon))
@@ -45,6 +51,11 @@ public class TabViewAdmin extends TabActivity {
                 if (tabId == "Logout") finish();
             }
         });
+        for (int i = 0; i < tabHost.getTabWidget().getTabCount(); i++) {
+            tabHost.getTabWidget().getChildAt(i).getLayoutParams().height = 100;
+            tabHost.getTabWidget().getChildAt(i).getLayoutParams().width= 150;
+        }
+
     }
 
 }

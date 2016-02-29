@@ -1,6 +1,8 @@
 package com.example.hesolutions.horizon;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -24,6 +26,7 @@ import com.google.common.collect.BiMap;
 import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
 import com.homa.hls.database.Gateway;
+import com.zxing.activity.CaptureActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,32 +38,34 @@ public class AdminAddNew extends Activity {
     Button SAVE, savedevice, savesector, cancel, Apply;
     RelativeLayout addNewUser, addnewsector, addnewdevice, assignuser;
     Boolean uniquesectorname = true;
-    BiMap<String, HashMap> sector = DataManager.getInstance().getsector();
+    HashMap<String, HashMap> sector = DataManager.getInstance().getsector();
     HashMap<String, ArrayList<Device>>sectordetail;
     String userName = "";
     String UserName = "";
     String SectorName = "";
     String sectorName = "";
+    String result = "";
+    Device mDevice = new Device();
     ListView assignsector;
     MyCustomAdapter deviceAdapter =null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_add_new);
-        SAVE = (Button)findViewById(R.id.SAVE);
-        MSG = (EditText)findViewById(R.id.MSG);
-        CODE = (EditText)findViewById(R.id.CODE);
-        sectorname = (EditText)findViewById(R.id.sectorname);
-        devicename = (EditText)findViewById(R.id.devicename);
-        savedevice = (Button)findViewById(R.id.savedevice);
-        savesector = (Button)findViewById(R.id.savesector);
-        cancel = (Button)findViewById(R.id.cancel);
-        addNewUser = (RelativeLayout)findViewById(R.id.addNewUser);
-        addnewsector = (RelativeLayout)findViewById(R.id.addnewsector);
-        addnewdevice = (RelativeLayout)findViewById(R.id.addnewdevice);
-        assignuser = (RelativeLayout)findViewById(R.id.assignuser);
-        assignsector = (ListView)findViewById(R.id.assignsector);
-        Apply = (Button)findViewById(R.id.Apply);
+        SAVE = (Button) findViewById(R.id.SAVE);
+        MSG = (EditText) findViewById(R.id.MSG);
+        CODE = (EditText) findViewById(R.id.CODE);
+        sectorname = (EditText) findViewById(R.id.sectorname);
+        devicename = (EditText) findViewById(R.id.devicename);
+        savedevice = (Button) findViewById(R.id.savedevice);
+        savesector = (Button) findViewById(R.id.savesector);
+        cancel = (Button) findViewById(R.id.cancel);
+        addNewUser = (RelativeLayout) findViewById(R.id.addNewUser);
+        addnewsector = (RelativeLayout) findViewById(R.id.addnewsector);
+        addnewdevice = (RelativeLayout) findViewById(R.id.addnewdevice);
+        assignuser = (RelativeLayout) findViewById(R.id.assignuser);
+        assignsector = (ListView) findViewById(R.id.assignsector);
+        Apply = (Button) findViewById(R.id.Apply);
 
         ImageView homescreenBgImage = (ImageView) findViewById(R.id.imageView);
         Bitmap cachedBitmap = DataManager.getInstance().getBitmap();
@@ -70,39 +75,99 @@ public class AdminAddNew extends Activity {
         }
 
         int usecase = getIntent().getIntExtra("Case", 0);
-        if (usecase==1)
-        {
+        if (usecase == 1) {
             MSG.requestFocus();
             addNewUser.setVisibility(View.VISIBLE);
             addnewsector.setVisibility(View.GONE);
             addnewdevice.setVisibility(View.GONE);
             assignuser.setVisibility(View.GONE);
-        }else if (usecase == 2 )
-        {
+        } else if (usecase == 2) {
             sectorname.requestFocus();
             addnewsector.setVisibility(View.VISIBLE);
             addNewUser.setVisibility(View.GONE);
             userName = getIntent().getStringExtra("userName");
             addnewdevice.setVisibility(View.GONE);
             assignuser.setVisibility(View.GONE);
-        }else if (usecase ==3)
-        {
-            devicename.requestFocus();
-            userName = getIntent().getStringExtra("userName");
-            userName = getIntent().getStringExtra("sectorName");
-            addnewsector.setVisibility(View.GONE);
-            addNewUser.setVisibility(View.GONE);
-            assignuser.setVisibility(View.GONE);
-        }
-        else if (usecase == 4)
-        {
+        }  else if (usecase == 4) {
             assignuser.setVisibility(View.VISIBLE);
             UserName = getIntent().getStringExtra("UserName");
             SectorName = getIntent().getStringExtra("SectorName");
             addNewUser.setVisibility(View.GONE);
             addnewsector.setVisibility(View.GONE);
             addnewdevice.setVisibility(View.GONE);
+        } else if (usecase == 5) {
+            assignuser.setVisibility(View.VISIBLE);
+            result = getIntent().getStringExtra("result");
+            userName = getIntent().getStringExtra("userName");
+            sectorName = getIntent().getStringExtra("sectorName");
+            boolean boolresu = false;
+            if (result != null && result.length() == 7) {
+                int devtype;
+                int subdevtype = 0;
+                if (Integer.parseInt(result.substring(1, 2)) == 2 && Integer.parseInt(result.substring(0, 1)) == 5) {
+                    subdevtype = 2;
+                    devtype = 5;
+                } else if (Integer.parseInt(result.substring(1, 2)) != 1) {
+                    devtype = Integer.parseInt(result.substring(0, 2));
+                } else {
+                    devtype = Integer.parseInt(result.substring(0, 1));
+                }
+                String deviceaddress = result.substring(2, result.length());
+                if (Integer.parseInt(deviceaddress) <= 65500) {
+
+                    mDevice = new Device();
+                    if (subdevtype > 0) {
+                        try {
+                            mDevice.setSubDeviceType((short) subdevtype);
+                        } catch (Exception e) {
+                            Toast.makeText(this, getResources().getString(R.string.scanerfail), Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                    }
+                    mDevice.setChannelInfo((short) 1);
+                    mDevice.setDeviceType((short) devtype);
+                    mDevice.setDeviceAddress((short) Integer.parseInt(deviceaddress));
+                    if (!findDeviceAddress(mDevice.getDeviceAddress())) {
+                        assignuser.setVisibility(View.GONE);
+                        addNewUser.setVisibility(View.GONE);
+                        addnewsector.setVisibility(View.GONE);
+                        addnewdevice.setVisibility(View.VISIBLE);
+                    } else {
+                        Toast.makeText(AdminAddNew.this, "The device has been added", Toast.LENGTH_SHORT).show();
+                    }
+
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    result = null;
+                    boolresu = true;
+                }
+            }
+
+
+            if (result != null && !boolresu) {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this);
+                alertDialog.setTitle("Error");
+                alertDialog.setMessage("QR code error");
+                alertDialog.setPositiveButton("Scan Another", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Intent startNewActivityIntent = new Intent(AdminAddNew.this, CaptureActivity.class);
+                        ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                        startNewActivityIntent.putExtra("userName", userName);
+                        startNewActivityIntent.putExtra("sectorName", sectorName);
+                        activityadminStack.push("Scanner", startNewActivityIntent);
+
+                    }
+                });
+                alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.show();
+            }
         }
+
 
         SAVE.setOnClickListener(new View.OnClickListener() {
 
@@ -168,9 +233,9 @@ public class AdminAddNew extends Activity {
                         }
                     }
 
-                    sectordetail= sector.get(userName);
+                    sectordetail = sector.get(userName);
                     if (uniquesectorname == true) {
-                        if (sectordetail!=null) {
+                        if (sectordetail != null) {
                             if (sectordetail.isEmpty()) {
                                 HashMap<String, ArrayList<Device>> sectordetail2 = new HashMap<String, ArrayList<Device>>();
                                 sectordetail2.put(name, null);
@@ -189,14 +254,16 @@ public class AdminAddNew extends Activity {
                                 //sectolist.add(name);
                                 //notifyDataSetChanged();
                             }
+                        } else {
+                            HashMap<String, ArrayList<Device>> sectordetail2 = new HashMap<String, ArrayList<Device>>();
+                            sectordetail2.put(name, null);
+                            sector.put(userName, sectordetail2);
+                            DataManager.getInstance().setsector(sector);
                         }
                     }
                 } else {
                     Toast.makeText(AdminAddNew.this, "Sector Name cannot be empty", Toast.LENGTH_SHORT).show();
                 }
-                sectorname.setText("");
-                addnewsector.setVisibility(View.INVISIBLE);
-
             }
         });
 
@@ -205,15 +272,15 @@ public class AdminAddNew extends Activity {
             @Override
             public void onClick(View v) {
                 String name = devicename.getText().toString();
-                Device mDevice = new Device();
+                sectordetail = sector.get(userName);
                 ArrayList<Device> mDeviceList = sectordetail.get(sectorName);
                 if (!name.equals("")) {
                     if (findDeviceName(name)) {
-                        Toast.makeText(AdminAddNew.this, "Devices already been added", Toast.LENGTH_SHORT).show();
-                    } else{
+                        Toast.makeText(AdminAddNew.this, "Device has already been added", Toast.LENGTH_SHORT).show();
+                    } else {
                         Gateway gateways = SysApplication.getInstance().getCurrGateway(AdminAddNew.this);
                         if (gateways != null) {
-                            if (mDeviceList==null) {
+                            if (mDeviceList == null) {
                                 mDevice.setDeviceName(name);
                                 ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
                                 DatabaseManager.getInstance().addDevice(mDevice, null);
@@ -224,6 +291,9 @@ public class AdminAddNew extends Activity {
                                 sectordetail.put(sectorName, mDeviceList);
                                 sector.put(userName, sectordetail);
                                 DataManager.getInstance().setsector(sector);
+                                Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
+                                ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                                activityadminStack.push("AdminPage", startNewActivityIntent);
                                 //devicelist.add(name);
                                 //notifyDataSetChanged();
                             } else {
@@ -236,6 +306,9 @@ public class AdminAddNew extends Activity {
                                 sectordetail.put(sectorName, mDeviceList);
                                 sector.put(userName, sectordetail);
                                 DataManager.getInstance().setsector(sector);
+                                Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
+                                ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                                activityadminStack.push("AdminPage", startNewActivityIntent);
                                 //devicelist.add(name);
                                 //notifyDataSetChanged();
                             }
@@ -247,8 +320,6 @@ public class AdminAddNew extends Activity {
                 } else {
                     Toast.makeText(AdminAddNew.this, "Device Name cannot be empty", Toast.LENGTH_SHORT).show();
                 }
-                devicename.setText("");
-                addnewdevice.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -259,7 +330,7 @@ public class AdminAddNew extends Activity {
             names.clear();
             for (Map.Entry<String, ArrayList> entry : nameset.entrySet()) {
                 String name = (String) entry.getValue().get(0);
-                if (!name.equals(UserName)){
+                if (!name.equals(UserName)) {
                     Group group = new Group(name, false);
                     names.add(group);
                 }
@@ -285,45 +356,63 @@ public class AdminAddNew extends Activity {
                     ArrayList<Group> choosegrouplist = deviceAdapter.arrayList;
                     for (int i = 0; i < choosegrouplist.size(); i++) {
                         Group group = choosegrouplist.get(i);
-                        if (group.getSelected() == true ) {
-                          choosedevice.add(group);
+                        if (group.getSelected() == true) {
+                            choosedevice.add(group);
                         }
                     }
                 }
                 sectordetail = sector.get(UserName);
-                ArrayList<Device> list = sectordetail.get(SectorName);
+                final ArrayList<Device> list = sectordetail.get(SectorName);
                 HashMap<String, ArrayList<Device>> newassignsector = new HashMap<String, ArrayList<Device>>();
-                newassignsector.put(SectorName,list);
-                if (choosedevice.isEmpty()||choosedevice==null) {
+                newassignsector.put(SectorName, list);
+                if (choosedevice.isEmpty() || choosedevice == null) {
                     Toast.makeText(AdminAddNew.this, "At least one user should be selected", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     for (int k = 0; k < choosedevice.size(); k++) {
                         sectordetail = sector.get(choosedevice.get(k).getName());
-                        if (sectordetail!=null && !sectordetail.isEmpty())
-                        {
-                            /*
-                            if (sectordetail.get(SectorName)!=null||!sectordetail.get(SectorName).isEmpty())
+                        final String sectorname = choosedevice.get(k).getName();
+                        if (sectordetail != null && !sectordetail.isEmpty()) {
+                            if (sectordetail.get(SectorName)!=null)
                             {
-
-                            }else
-                            {
-                            */
-                                sectordetail.put(SectorName,list);
-                                sector.put(choosedevice.get(k).getName(), sectordetail);
+                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this.getParent());
+                                alertDialog.setTitle("Warnning");
+                                alertDialog.setMessage("Do you want to overwrite the sector?");
+                                alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        sectordetail.put(SectorName, list);
+                                        sector.put(sectorname, sectordetail);
+                                        DataManager.getInstance().setsector(sector);
+                                        finish();
+                                    }
+                                });
+                                alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                                alertDialog.show();
+                                break;
+                            }else {
+                                sectordetail.put(SectorName, list);
+                                sector.put(sectorname, sectordetail);
                                 DataManager.getInstance().setsector(sector);
                                 finish();
-                            //}
-                        } else {
+                            }
+                        }else
+                        {
                             sector.put(choosedevice.get(k).getName(), newassignsector);
                             DataManager.getInstance().setsector(sector);
                             finish();
                         }
                     }
-                    finish();
+
                 }
             }
         });
+
+
     }
+
     private boolean findDeviceName(String deviceName) {
         ArrayList<Device> check = DatabaseManager.getInstance().LoadDeviceList("devicelist");
         if (check!=null) {
@@ -335,7 +424,16 @@ public class AdminAddNew extends Activity {
         return false;
     }
 
-
+    private boolean findDeviceAddress(short deviceAddress) {
+        ArrayList<Device> check = DatabaseManager.getInstance().LoadDeviceList("devicelist");
+        if (check!=null) {
+            for (int i=0; i<check.size(); i++)
+            {
+                if (check.get(i).getDeviceAddress()== deviceAddress) return true;
+            }
+        }
+        return false;
+    }
     private class MyCustomAdapter extends ArrayAdapter<Group> {
         ArrayList<Group> arrayList;
 

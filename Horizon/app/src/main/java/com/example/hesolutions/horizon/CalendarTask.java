@@ -134,7 +134,7 @@ public class CalendarTask extends Activity {
 
 
 //========================================Loading the sector info
-        BiMap<String, HashMap> sector = DataManager.getInstance().getsector();
+        HashMap<String, HashMap> sector = DataManager.getInstance().getsector();
         String username = DataManager.getInstance().getUsername();
         ArrayList<Group> arrayList = new ArrayList<Group>();
         if (sector.get(username)==null) {}

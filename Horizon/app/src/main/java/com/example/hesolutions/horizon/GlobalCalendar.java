@@ -197,8 +197,8 @@ public class GlobalCalendar extends Activity{
     public static Bitmap getScreenShot(View view) {
         View screenView = view.getRootView();
         screenView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,60,800,
-                screenView.getDrawingCache().getHeight()-60);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,100,820,
+                screenView.getDrawingCache().getHeight()-100);
         screenView.setDrawingCacheEnabled(false);
 
         return bitmap;
@@ -208,8 +208,8 @@ public class GlobalCalendar extends Activity{
     public static Bitmap getScreenShotEdit(View view) {
         View screenView = view.getRootView();
         screenView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,60,1000,
-                screenView.getDrawingCache().getHeight()-60);
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,100,1000,
+                screenView.getDrawingCache().getHeight()-100);
         screenView.setDrawingCacheEnabled(false);
 
         return bitmap;

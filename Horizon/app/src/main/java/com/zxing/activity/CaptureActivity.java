@@ -22,7 +22,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.hesolutions.horizon.AccessPermission;
+import com.example.hesolutions.horizon.ActivityAdminStack;
+import com.example.hesolutions.horizon.ActivityStack;
+import com.example.hesolutions.horizon.AdminAddNew;
 import com.example.hesolutions.horizon.AdminPage;
+import com.example.hesolutions.horizon.CalendarTask;
 import com.example.hesolutions.horizon.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -121,13 +125,18 @@ public class CaptureActivity extends Activity implements Callback {
         if (resultString.equals("")) {
             Toast.makeText(CaptureActivity.this, "Scan failed!", Toast.LENGTH_SHORT).show();
         }else {
-            Intent resultIntent = new Intent() ;
-            Bundle bundle = new Bundle();
-            bundle.putString("result", resultString);
-            resultIntent.putExtras(bundle);
-            this.setResult(RESULT_OK, resultIntent);
+
+            Intent startNewActivityIntent = new Intent(CaptureActivity.this, AdminAddNew.class);
+            startNewActivityIntent.putExtra("result", resultString);
+            startNewActivityIntent.putExtra("Case",5);
+            String userName = getIntent().getStringExtra("userName");
+            String sectorName = getIntent().getStringExtra("sectorName");
+            startNewActivityIntent.putExtra("userName",userName);
+            startNewActivityIntent.putExtra("sectorName", sectorName);
+            ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+            activityadminStack.push("AdminPageFromScanner", startNewActivityIntent);
         }
-        finish();
+
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {

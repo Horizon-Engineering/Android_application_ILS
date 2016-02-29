@@ -47,11 +47,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/seekBar"
+        android:progressDrawable="@color/wordscolor"
+        android:thumb="@drawable/repswitch"
         android:layout_toEndOf="@+id/sectorListViewId"
         android:layout_below="@id/imageViewroomlayout"
         android:layout_alignLeft="@+id/imageViewroomlayout"
         android:layout_alignRight="@id/imageViewroomlayout"
         android:layout_centerVertical="true"
+        android:visibility="invisible"
         />
 
 

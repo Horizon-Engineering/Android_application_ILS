@@ -12,14 +12,14 @@
         android:thumb="@drawable/switch_thumb"
         android:track="@drawable/togglebg"
         android:focusable="true"
-        android:switchMinWidth="220dp"
+        android:switchMinWidth="200dp"
         android:textOn=""
         android:textOff=""
 />
 
     <TextView
         android:id="@+id/name"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
         android:textColor="@color/white"

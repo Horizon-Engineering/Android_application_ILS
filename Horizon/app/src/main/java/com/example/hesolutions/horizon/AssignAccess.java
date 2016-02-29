@@ -18,10 +18,11 @@ import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class AssignAccess extends Activity {
-    BiMap<String, BiMap> sector = DataManager.getInstance().getsector();
+    HashMap<String, BiMap> sector = DataManager.getInstance().getsector();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

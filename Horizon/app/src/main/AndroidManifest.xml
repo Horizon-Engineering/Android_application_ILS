@@ -130,8 +130,8 @@
             android:screenOrientation="landscape" />
         <activity
             android:name=".TabViewAdmin"
-            android:screenOrientation="landscape"
-            android:label="@string/title_activity_tab_view_admin" />
+            android:label="@string/title_activity_tab_view_admin"
+            android:screenOrientation="landscape" />
         <activity android:name=".ActivityAdminStack">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -145,7 +145,13 @@
         <activity
             android:name=".AdminAddNew"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateHidden" ></activity>
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".PaintPage"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".DrawingView"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

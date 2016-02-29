@@ -67,36 +67,44 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignLeft="@id/gridView"
-        android:paddingLeft="35dp">
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/gridView">
 
-        <RadioButton
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:id="@+id/radioButton1"
+            android:background="@drawable/circledots"
+            android:layout_weight="0.25"
+            android:enabled="false"
+            android:gravity="center" />
+        <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:enabled="false" />
-
-        <RadioButton
             android:id="@+id/radioButton2"
+            android:background="@drawable/circledots"
+            android:layout_weight="0.25"
+            android:enabled="false"
+            android:gravity="center"
+            />
+        <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:enabled="false" />
-
-        <RadioButton
             android:id="@+id/radioButton3"
+            android:background="@drawable/circledots"
+            android:layout_weight="0.25"
+            android:enabled="false"
+            android:gravity="center"
+            />
+        <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.25"
-            android:enabled="false" />
-
-        <RadioButton
             android:id="@+id/radioButton4"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:background="@drawable/circledots"
             android:layout_weight="0.25"
-            android:enabled="false" />
+            android:enabled="false"
+            android:gravity="center"
+            />
+
     </LinearLayout>
 </RelativeLayout>
