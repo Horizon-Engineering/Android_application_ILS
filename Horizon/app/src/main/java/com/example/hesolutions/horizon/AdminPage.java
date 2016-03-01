@@ -184,7 +184,6 @@ public class AdminPage extends Activity {
     public void clickEvent(View v) {
 //=====================case:User - Sector
         sector = DataManager.getInstance().getsector();
-        System.out.println(sector.toString() + "*******************************");
         userName = ((TextView) v).getText().toString();
         sectordetail= sector.get(userName);
         sectorlistlayout.setVisibility(View.VISIBLE);

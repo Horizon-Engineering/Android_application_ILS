@@ -97,7 +97,7 @@ public class AdminAddNew extends Activity {
             addnewsector.setVisibility(View.GONE);
             addnewdevice.setVisibility(View.GONE);
         } else if (usecase == 5) {
-            assignuser.setVisibility(View.VISIBLE);
+            assignuser.setVisibility(View.GONE);
             result = getIntent().getStringExtra("result");
             userName = getIntent().getStringExtra("userName");
             sectorName = getIntent().getStringExtra("sectorName");
@@ -134,7 +134,27 @@ public class AdminAddNew extends Activity {
                         addnewsector.setVisibility(View.GONE);
                         addnewdevice.setVisibility(View.VISIBLE);
                     } else {
-                        Toast.makeText(AdminAddNew.this, "The device has been added", Toast.LENGTH_SHORT).show();
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this.getParent());
+                        alertDialog.setTitle("Error");
+                        alertDialog.setMessage("This device has been added already");
+                        alertDialog.setPositiveButton("Scan Another", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent startNewActivityIntent = new Intent(AdminAddNew.this, CaptureActivity.class);
+                                ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                                startNewActivityIntent.putExtra("userName", userName);
+                                startNewActivityIntent.putExtra("sectorName", sectorName);
+                                activityadminStack.push("Scanner", startNewActivityIntent);
+                            }
+                        });
+                        alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
+                                ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                                activityadminStack.push("Adr", startNewActivityIntent);
+                            }
+                        });
+                        alertDialog.show();
                     }
 
                     overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
@@ -145,7 +165,7 @@ public class AdminAddNew extends Activity {
 
 
             if (result != null && !boolresu) {
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this);
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this.getParent());
                 alertDialog.setTitle("Error");
                 alertDialog.setMessage("QR code error");
                 alertDialog.setPositiveButton("Scan Another", new DialogInterface.OnClickListener() {
@@ -161,8 +181,9 @@ public class AdminAddNew extends Activity {
                 });
                 alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.cancel();
+                        Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
+                        ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                        activityadminStack.push("Admin", startNewActivityIntent);
                     }
                 });
                 alertDialog.show();
@@ -237,7 +258,6 @@ public class AdminAddNew extends Activity {
                         HashMap<String, ArrayList> value = entry.getValue();
                         if (value!=null) {
                             for (Map.Entry<String, ArrayList> entrys : value.entrySet()) {
-                                System.out.println(name + "*********sector*************" + entrys.getKey());
                                 if (entrys.getKey().equals(name)) {
                                     sectorname.setText("");
                                     uniquesectorname = false;
@@ -317,8 +337,6 @@ public class AdminAddNew extends Activity {
                                 Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
-                                //devicelist.add(name);
-                                //notifyDataSetChanged();
                             } else {
                                 mDevice.setDeviceName(name);
                                 ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
@@ -335,8 +353,6 @@ public class AdminAddNew extends Activity {
                                 Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
-                                //devicelist.add(name);
-                                //notifyDataSetChanged();
                             }
                         } else {
                             Toast.makeText(AdminAddNew.this, "Gateway error", Toast.LENGTH_SHORT).show();
@@ -370,7 +386,9 @@ public class AdminAddNew extends Activity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
+                ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                activityadminStack.push("Admin", startNewActivityIntent);
             }
         });
 
@@ -408,7 +426,6 @@ public class AdminAddNew extends Activity {
                                         sectordetail.put(SectorName, list);
                                         sector.put(sectorname, sectordetail);
                                         DataManager.getInstance().setsector(sector);
-                                        finish();
                                     }
                                 });
                                 alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -422,16 +439,14 @@ public class AdminAddNew extends Activity {
                                 sectordetail.put(SectorName, list);
                                 sector.put(sectorname, sectordetail);
                                 DataManager.getInstance().setsector(sector);
-                                finish();
                             }
                         }else
                         {
                             sector.put(choosedevice.get(k).getName(), newassignsector);
                             DataManager.getInstance().setsector(sector);
-                            finish();
                         }
                     }
-
+                    finish();
                 }
             }
         });

@@ -56,15 +56,22 @@
                 android:id="@+id/save_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:contentDescription="@string/save"
+                android:contentDescription="Save"
                 android:src="@drawable/save" />
 
             <ImageButton
                 android:id="@+id/load_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:contentDescription="@string/save"
-                android:src="@drawable/save" />
+                android:contentDescription="Load"
+                android:src="@drawable/loadicon" />
+
+            <ImageButton
+                android:id="@+id/mode_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:contentDescription="Mode"
+                android:src="@drawable/modeicon" />
 
             <TextView
                 android:layout_width="wrap_content"

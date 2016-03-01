@@ -30,6 +30,10 @@ public class DrawingView extends View {
     private Bitmap canvasBitmap;
     private float brushSize, lastBrushSize;
     private boolean erase=false;
+    private int modeint = 1;
+
+    private float startX = 0F;
+    private float startY = 0F;
 
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -65,27 +69,73 @@ public class DrawingView extends View {
 //draw view
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
-
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 //detect user touch
         float touchX = event.getX();
         float touchY = event.getY();
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                drawPath.moveTo(touchX, touchY);
+        switch (modeint) {
+            case 1:
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        drawPath.moveTo(touchX, touchY);
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        drawPaint.setStyle(Paint.Style.STROKE);
+                        drawPath.lineTo(touchX, touchY);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        drawCanvas.drawPath(drawPath, drawPaint);
+                        drawPath.reset();
+                        break;
+                    default:
+                        return false;
+                }
                 break;
-            case MotionEvent.ACTION_MOVE:
-                drawPath.lineTo(touchX, touchY);
+            case 2:
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        this.startX = event.getX();
+                        this.startY = event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        drawPath.reset();
+                        drawPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                        drawPath.addRect(startX, startY, touchX, touchY, Path.Direction.CCW);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        drawCanvas.drawPath(drawPath, drawPaint);
+                        drawPath.reset();
+                        break;
+                    default:
+                        return false;
+                }
                 break;
-            case MotionEvent.ACTION_UP:
-                drawCanvas.drawPath(drawPath, drawPaint);
-                drawPath.reset();
+            case 3:
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        this.startX = event.getX();
+                        this.startY = event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        double distanceX = Math.abs((double)(startX-touchX));
+                        double distanceY = Math.abs((double)(startY-touchY));
+                        double radius =Math.sqrt(Math.pow(distanceX, 2.0)+ Math.pow(distanceY, 2.0));
+                        drawPath.reset();
+                        drawPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                        drawPath.addCircle(startX, startY, (float) radius, Path.Direction.CCW);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        drawCanvas.drawPath(drawPath, drawPaint);
+                        drawPath.reset();
+                        break;
+                    default:
+                        return false;
+                }
                 break;
-            default:
-                return false;
         }
+
         invalidate();
         return true;
     }
@@ -128,6 +178,22 @@ public class DrawingView extends View {
     {
         Drawable d = new BitmapDrawable(getResources(), bitmap);
         setBackground(d);
+    }
+
+    public void setMode(Integer getmode)
+    {
+        switch (getmode)
+        {
+            case 1:
+                modeint = 1;
+                break;
+            case 2:
+                modeint = 2;
+                break;
+            case 3:
+                modeint = 3;
+                break;
+        }
     }
 
 }
