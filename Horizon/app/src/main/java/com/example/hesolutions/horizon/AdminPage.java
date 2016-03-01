@@ -100,8 +100,8 @@ public class AdminPage extends Activity {
                 Bitmap bitmap = getScreenShot(rootView);
                 DataManager.getInstance().setBitmap(bitmap);
                 Intent startNewActivityIntent = new Intent(AdminPage.this, AdminAddNew.class);
-                startNewActivityIntent.putExtra("Case",2);
-                startNewActivityIntent.putExtra("userName",userName);
+                startNewActivityIntent.putExtra("Case", 2);
+                startNewActivityIntent.putExtra("userName", userName);
                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
                 activityadminStack.push("AdminAddNew", startNewActivityIntent);
 
@@ -176,21 +176,6 @@ public class AdminPage extends Activity {
             View rowView = inflater.inflate(R.layout.row, null, true);
             TextView txtTitle = (TextView) rowView.findViewById(R.id.textView);
             txtTitle.setText(userlist.get(position));
-            /*
-            adduser.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
-                    Bitmap bitmap = getScreenShot(rootView);
-                    DataManager.getInstance().setBitmap(bitmap);
-                    Intent startNewActivityIntent = new Intent(AdminPage.this, AdminAddNew.class);
-                    startNewActivityIntent.putExtra("Case", 1);
-                    ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
-                    activityadminStack.push("AdminAddNew", startNewActivityIntent);
-
-                }
-            });
-            */
             return rowView;
         }
 
@@ -199,6 +184,7 @@ public class AdminPage extends Activity {
     public void clickEvent(View v) {
 //=====================case:User - Sector
         sector = DataManager.getInstance().getsector();
+        System.out.println(sector.toString() + "*******************************");
         userName = ((TextView) v).getText().toString();
         sectordetail= sector.get(userName);
         sectorlistlayout.setVisibility(View.VISIBLE);
@@ -240,31 +226,45 @@ public class AdminPage extends Activity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         if (v.getId()==R.id.sectorlist) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-            menu.setHeaderTitle(sectorArray.get(info.position));
+            sectorName = sectorArray.get(info.position);
+            menu.setHeaderTitle(sectorName);
             menu.add(0, 0, 0, "Share");
             menu.add(0, 1, 0, "Remove");
         }
         if (v.getId() == R.id.userlist) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            menu.setHeaderTitle(names.get(info.position));
+            userName = names.get(info.position);
+            menu.setHeaderTitle(userName);
             menu.add(0, 2, 0, "Delete");
         }
     }
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        final AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         int menuItemIndex = item.getItemId();
         sector = DataManager.getInstance().getsector();
         if (menuItemIndex == 1)
         {
-            sector.remove(userName);
-            sectordetail.remove(sectorArray.get(info.position));
-            sector.put(userName, sectordetail);
-            DataManager.getInstance().setsector(sector);
-            sectorArray.remove(info.position);
-            sectoradapter.notifyDataSetChanged();
-            ListView deviceList = (ListView) findViewById(R.id.devicelist);
-            deviceList.setAdapter(null);
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminPage.this.getParent());
+            alertDialog.setTitle("Warnning");
+            alertDialog.setMessage("Do you want to remove the sector?");
+            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    sectordetail.remove(sectorArray.get(info.position));
+                    sector.put(userName, sectordetail);
+                    DataManager.getInstance().setsector(sector);
+                    sectorArray.remove(info.position);
+                    sectoradapter.notifyDataSetChanged();
+                    ListView deviceList = (ListView) findViewById(R.id.devicelist);
+                    deviceList.setAdapter(null);
+                }
+            });
+            alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
         }else if (menuItemIndex == 0)
         {
             View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
@@ -278,14 +278,36 @@ public class AdminPage extends Activity {
             activityadminStack.push("AdminAddNew", startNewActivityIntent);
         }else if (menuItemIndex == 2)
         {
-            /*
-            sector.remove(userName);
-            DataManager.getInstance().setsector(sector);
-            nameset.remove(userName);
-            DataManager.getInstance().setaccount(nameset);
-            names.remove(info.position);
-            useradapter.notifyDataSetChanged();
-            */
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminPage.this.getParent());
+            alertDialog.setTitle("Warnning");
+            alertDialog.setMessage("Do you want to delete the user?");
+            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    for (Map.Entry<String, ArrayList> entry : nameset.entrySet()) {
+                        ArrayList<String>  account = entry.getValue();
+                        String passwords = entry.getKey();
+                        if (account.get(0).equals(userName))
+                        {
+                            nameset.remove(passwords);
+                            DataManager.getInstance().setaccount(nameset);
+                            break;
+                        }
+                    }
+                    sector.remove(userName);
+                    DataManager.getInstance().setsector(sector);
+                    names.remove(info.position);
+                    useradapter.notifyDataSetChanged();
+                }
+            });
+            alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            alertDialog.show();
+
+
         }
 
         return true;

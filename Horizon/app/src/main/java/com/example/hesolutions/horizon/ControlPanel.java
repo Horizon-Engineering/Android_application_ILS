@@ -2,8 +2,14 @@ package com.example.hesolutions.horizon;
 
 import android.content.Context;
 import android.database.DefaultDatabaseErrorHandler;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -16,6 +22,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -33,6 +40,11 @@ import com.homa.hls.socketconn.DeviceSocket;
 import com.mylibrary.WeekView;
 import com.mylibrary.WeekViewEvent;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -50,6 +62,7 @@ public class ControlPanel extends Activity {
     String str1;
     String str2;
     byte intensity;
+    ImageView imageViewroomlayout;
     ExpandListAdapter adapter;
     ArrayList<String> devicenamelist = new ArrayList<>();
     @Override
@@ -57,6 +70,7 @@ public class ControlPanel extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control_panel);
         seekBar = (EnhancedSeekBar)findViewById(R.id.seekBar);
+        imageViewroomlayout = (ImageView)findViewById(R.id.imageViewroomlayout);
 
         if (sector.get(username)==null) {}
         else
@@ -361,6 +375,17 @@ public class ControlPanel extends Activity {
                     seekBar.setVisibility(View.INVISIBLE);
                     if (isExpanded) ((ExpandableListView) parent).collapseGroup(groupPosition);
                     else ((ExpandableListView) parent).expandGroup(groupPosition, true);
+                    Bitmap bitmap = null;
+                    bitmap = dataupdate(sectorname+".png");
+                    if (bitmap!=null)
+                    {
+                        Drawable d = new BitmapDrawable(getResources(), bitmap);
+                        imageViewroomlayout.setBackground(d);
+                    }else
+                    {
+                        imageViewroomlayout.setBackground(null);
+                    }
+
                 }
             });
 
@@ -448,5 +473,23 @@ public class ControlPanel extends Activity {
         }
 
     }
-
+    public static Bitmap dataupdate(String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon/Bitmap");
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            try {
+                FileInputStream streamIn = new FileInputStream(file);
+                Bitmap bitmap = BitmapFactory.decodeStream(streamIn);
+                return bitmap;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
+    }
 }

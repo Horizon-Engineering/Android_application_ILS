@@ -14,6 +14,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 
 
 public class DrawingView extends View {
@@ -40,6 +41,7 @@ public class DrawingView extends View {
         drawPath = new Path();
         drawPaint = new Paint();
         drawPaint.setColor(paintColor);
+        drawPaint.setAlpha(125);
         drawPaint.setAntiAlias(true);
         drawPaint.setStrokeWidth(20);
         drawPaint.setStyle(Paint.Style.STROKE);
@@ -92,7 +94,7 @@ public class DrawingView extends View {
         invalidate();
         paintColor = Color.parseColor(newColor);
         drawPaint.setColor(paintColor);
-
+        drawPaint.setAlpha(125);
     }
 
     public void setBrushSize(float newSize){
@@ -124,16 +126,6 @@ public class DrawingView extends View {
 
     public void setImageBitmap(Bitmap bitmap)
     {
-        /*
-        mDrawable = null;
-        if (mRecycleableBitmapDrawable == null) {
-            mRecycleableBitmapDrawable = new ImageViewBitmapDrawable(
-                    mContext.getResources(), bm);
-        } else {
-            mRecycleableBitmapDrawable.setBitmap(bm);
-        }
-        setImageDrawable(mRecycleableBitmapDrawable);
-        */
         Drawable d = new BitmapDrawable(getResources(), bitmap);
         setBackground(d);
     }

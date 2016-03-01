@@ -40,6 +40,7 @@
 
         <Button
             android:layout_width="100dp"
+            android:layout_marginTop="50dp"
             android:layout_height="50dp"
             android:background="@drawable/saveforevent"
             android:id="@+id/SAVE"
@@ -58,25 +59,14 @@
             android:layout_alignLeft="@+id/MSG"
             android:layout_alignStart="@+id/MSG"
             />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:id="@+id/textView"
-            android:layout_below="@+id/CODE"
-            android:layout_alignLeft="@+id/CODE"
-            android:layout_alignStart="@+id/CODE"
-            android:layout_above="@+id/LOAD"
-            android:layout_alignRight="@+id/CODE"
-            android:layout_alignEnd="@+id/CODE" />
-
     </RelativeLayout>
 
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:id="@+id/addnewsector"
         android:visibility="gone"
         android:layout_above="@+id/cancel">
@@ -93,6 +83,7 @@
         <Button
             android:layout_width="100dp"
             android:layout_height="50dp"
+            android:layout_marginTop="50dp"
             android:background="@drawable/saveforevent"
             android:id="@+id/savesector"
             android:layout_centerVertical="true"
@@ -104,6 +95,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/addnewdevice"
         android:visibility="gone"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_above="@+id/cancel"
         >
         <EditText
@@ -120,6 +113,7 @@
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:background="@drawable/saveforevent"
+            android:layout_marginTop="50dp"
             android:id="@+id/savedevice"
             android:layout_centerVertical="true"
             android:layout_below="@+id/devicename" />

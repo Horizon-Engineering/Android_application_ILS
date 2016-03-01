@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -185,6 +186,11 @@ public class AdminAddNew extends Activity {
                 Random random = new Random();
                 int select = random.nextInt(arr.length);
                 String color = arr[select];
+                boolean duplicated = true;
+                for (Map.Entry<String, ArrayList> entry : bimap.entrySet()) {
+                    ArrayList<String>  account = entry.getValue();
+                    if (account.get(0).equals(Accounts)) duplicated = false;
+                }
 
                 if (Accounts.isEmpty() || Passwords.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Missing Accounts or Passwords", Toast.LENGTH_LONG).show();
@@ -197,6 +203,12 @@ public class AdminAddNew extends Activity {
                 } else if (Passwords.length() != 4) {
                     Toast.makeText(getApplicationContext(), "The Password must be 4 digits", Toast.LENGTH_LONG).show();
                     CODE.setText("");
+                } else if (duplicated==false)
+                {
+                    Toast.makeText(getApplicationContext(), "Existant accout: " + Accounts, Toast.LENGTH_LONG).show();
+                    MSG.setText("");
+                    CODE.setText("");
+
                 } else {
                     accout.add(Accounts);
                     accout.add(color);
@@ -204,11 +216,10 @@ public class AdminAddNew extends Activity {
                     DataManager.getInstance().setaccount(bimap);
                     MSG.setText("");
                     CODE.setText("");
-                    //addNewUser.setVisibility(View.INVISIBLE);
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                     finish();
-                    //userlist.add(Accounts);
-                    //notifyDataSetChanged();
-                    //Toast.makeText(getApplicationContext(), "DATA saved", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                 }
 
                 //addNewUser.setVisibility(View.INVISIBLE);
@@ -224,11 +235,14 @@ public class AdminAddNew extends Activity {
                 if (!name.equals("")) {
                     for (Map.Entry<String, HashMap> entry : sector.entrySet()) {
                         HashMap<String, ArrayList> value = entry.getValue();
-                        for (Map.Entry<String, ArrayList> entrys : value.entrySet()) {
-                            if (entrys.getKey().equals(name)) {
-                                sectorname.setText("");
-                                uniquesectorname = false;
-                                Toast.makeText(AdminAddNew.this, "Sector name alreay exsits", Toast.LENGTH_SHORT).show();
+                        if (value!=null) {
+                            for (Map.Entry<String, ArrayList> entrys : value.entrySet()) {
+                                System.out.println(name + "*********sector*************" + entrys.getKey());
+                                if (entrys.getKey().equals(name)) {
+                                    sectorname.setText("");
+                                    uniquesectorname = false;
+                                    Toast.makeText(AdminAddNew.this, "Existant sector: " + name, Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     }
@@ -241,24 +255,30 @@ public class AdminAddNew extends Activity {
                                 sectordetail2.put(name, null);
                                 sector.put(userName, sectordetail2);
                                 DataManager.getInstance().setsector(sector);
+                                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                                 finish();
-                                //sectolist.add(name);
-                                //notifyDataSetChanged();
+                                Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                             } else {
                                 sectordetail1 = sector.get(userName);
                                 sectordetail1.put(name, null);
                                 sector.remove(userName);
                                 sector.put(userName, sectordetail1);
                                 DataManager.getInstance().setsector(sector);
+                                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                                 finish();
-                                //sectolist.add(name);
-                                //notifyDataSetChanged();
+                                Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                             }
                         } else {
                             HashMap<String, ArrayList<Device>> sectordetail2 = new HashMap<String, ArrayList<Device>>();
                             sectordetail2.put(name, null);
                             sector.put(userName, sectordetail2);
                             DataManager.getInstance().setsector(sector);
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                            finish();
+                            Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                         }
                     }
                 } else {
@@ -291,6 +311,9 @@ public class AdminAddNew extends Activity {
                                 sectordetail.put(sectorName, mDeviceList);
                                 sector.put(userName, sectordetail);
                                 DataManager.getInstance().setsector(sector);
+                                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                                Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                                 Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
@@ -306,6 +329,9 @@ public class AdminAddNew extends Activity {
                                 sectordetail.put(sectorName, mDeviceList);
                                 sector.put(userName, sectordetail);
                                 DataManager.getInstance().setsector(sector);
+                                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                                Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                                 Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
                                 activityadminStack.push("AdminPage", startNewActivityIntent);

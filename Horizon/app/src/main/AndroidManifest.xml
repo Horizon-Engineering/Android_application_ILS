@@ -148,9 +148,11 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".PaintPage"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".DrawingView"
+            android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

@@ -3,19 +3,33 @@ package com.example.hesolutions.horizon;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.LayoutInflater;
 import android.view.View;
 
 
-import java.util.UUID;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import android.provider.MediaStore;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.view.View.OnClickListener;
-import android.widget.ImageView;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -26,15 +40,23 @@ public class PaintPage extends Activity implements OnClickListener{
     private float smallBrush, mediumBrush, largeBrush;
     private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, loadBtn;
     private DrawingView drawView;
+    private LinearLayout drawingpart;
+    private TextView sectorinfo;
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
-
+    String sectorsave = "";
+    ListView sectorlistlayout;
+    ArrayList<String> sectorlist = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paint_page);
         drawBtn = (ImageButton)findViewById(R.id.draw_btn);
         drawView = (DrawingView)findViewById(R.id.drawing);
+        drawingpart = (LinearLayout)findViewById(R.id.drawingpart);
+        sectorinfo = (TextView)findViewById(R.id.sectorinfo);
         smallBrush = getResources().getInteger(R.integer.small_size);
         mediumBrush = getResources().getInteger(R.integer.medium_size);
         largeBrush = getResources().getInteger(R.integer.large_size);
@@ -55,6 +77,8 @@ public class PaintPage extends Activity implements OnClickListener{
 
         loadBtn = (ImageButton)findViewById(R.id.load_btn);
         loadBtn.setOnClickListener(this);
+
+        LoadList();
     }
     @Override
     public void onClick(View view){
@@ -134,7 +158,7 @@ public class PaintPage extends Activity implements OnClickListener{
 
         }else if(view.getId()==R.id.new_btn){
             //new button
-            AlertDialog.Builder newDialog = new AlertDialog.Builder(this);
+            AlertDialog.Builder newDialog = new AlertDialog.Builder(this.getParent());
             newDialog.setTitle("New drawing");
             newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
             newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
@@ -152,25 +176,20 @@ public class PaintPage extends Activity implements OnClickListener{
 
         }else if(view.getId()==R.id.save_btn){
             //save drawing
-            AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
+            AlertDialog.Builder saveDialog = new AlertDialog.Builder(this.getParent());
             saveDialog.setTitle("Save drawing");
             saveDialog.setMessage("Save drawing to device Gallery?");
             saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     drawView.setDrawingCacheEnabled(true);
-                    String imgSaved = MediaStore.Images.Media.insertImage(
-                            getContentResolver(), drawView.getDrawingCache(),
-                            UUID.randomUUID().toString() + ".png", "drawing");
-                    if (imgSaved != null) {
+                    if (!sectorsave.equals("")) {
+                        writedata(drawView.getDrawingCache(), sectorsave + ".png");
                         Toast savedToast = Toast.makeText(getApplicationContext(),
                                 "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
                         savedToast.show();
-                    } else {
-                        Toast unsavedToast = Toast.makeText(getApplicationContext(),
-                                "Oops! Image could not be saved.", Toast.LENGTH_SHORT);
-                        unsavedToast.show();
+                        drawView.destroyDrawingCache();
                     }
-                    drawView.destroyDrawingCache();
+
                 }
             });
             saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -245,5 +264,75 @@ public class PaintPage extends Activity implements OnClickListener{
         }
 
     }
+    public static void writedata(Bitmap bitmap, String filename) {
+        String state;
+        state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
 
+            File root = Environment.getExternalStorageDirectory();
+            File dir = new File(root.getAbsolutePath() + "/Horizon/Bitmap");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            File file = new File(dir, filename);
+            try {
+                FileOutputStream fos = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public void LoadList()
+    {
+        HashMap<String, HashMap> sector = DataManager.getInstance().getsector();
+        for (Map.Entry<String, HashMap> entry : sector.entrySet()) {
+            HashMap<String, ArrayList> value = entry.getValue();
+            for (Map.Entry<String, ArrayList> entrys : value.entrySet()) {
+                String sectorname = entrys.getKey();
+                if (!sectorlist.contains(sectorname)) {
+                    sectorlist.add(sectorname);
+                }
+            }
+        }
+        sectorlistlayout = (ListView)findViewById(R.id.sectorlistlayout);
+        if (!sectorlist.isEmpty()) {
+            MyAdapter adapter = new MyAdapter(this, sectorlist);
+            sectorlistlayout.setAdapter(adapter);
+        }
+    }
+    public class MyAdapter extends ArrayAdapter<String> {
+
+        private final Activity context;
+        private final ArrayList<String> devicelist;
+
+        public MyAdapter(Activity context, ArrayList<String> zoneList) {
+            super(context, R.layout.devicelistadmin, zoneList);
+            this.context = context;
+            this.devicelist = zoneList;
+        }
+
+        @Override
+        public View getView(int position, View view, ViewGroup parent) {
+            LayoutInflater inflater = context.getLayoutInflater();
+            View rowView = inflater.inflate(R.layout.devicelistadmin, null);
+            final TextView txtTitle = (TextView) rowView.findViewById(R.id.textView);
+            final String sectorname = devicelist.get(position);
+            txtTitle.setText(sectorname);
+            txtTitle.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    drawingpart.setVisibility(View.VISIBLE);
+                    drawView.startNew();
+                    sectorsave = sectorname;
+                    drawView.setBackground(null);
+                    sectorinfo.setText(sectorsave);
+                }
+            });
+            return rowView;
+        }
+
+    }
 }

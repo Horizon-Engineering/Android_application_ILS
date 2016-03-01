@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
 
+import com.allin.activity.action.SysApplication;
 import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
 import com.homa.hls.database.Gateway;
@@ -60,7 +61,6 @@ public class HomePage extends AppCompatActivity {
         }
         */
 
-
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -71,7 +71,12 @@ public class HomePage extends AppCompatActivity {
             public void run() {
                 try {
                     while(true) {
-                        MakeAlert();
+                        Gateway gateways = SysApplication.getInstance().getCurrGateway(HomePage.this);
+                        if (gateways!=null) {
+                            MakeAlert();
+                        }else {
+                            Toast.makeText(HomePage.this, "Gateway Error", Toast.LENGTH_SHORT).show();
+                        }
                         Thread.sleep(5 * 1000);
                     }
                 } catch (InterruptedException e) {

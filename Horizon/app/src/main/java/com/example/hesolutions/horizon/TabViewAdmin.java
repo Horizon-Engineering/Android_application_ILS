@@ -33,6 +33,7 @@ public class TabViewAdmin extends TabActivity {
         tabHost.addTab(spec);
 
         intent = new Intent().setClass(this, PaintPage.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         spec = tabHost.newTabSpec("Layout")
                 .setIndicator("", getResources().getDrawable(R.drawable.layouticon))
                 .setContent(intent);
