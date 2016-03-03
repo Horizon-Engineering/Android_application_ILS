@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -36,16 +37,14 @@ import android.widget.LinearLayout;
 
 
 
-public class PaintPage extends Activity implements OnClickListener{
+public class PaintPage extends Activity{
     private float smallBrush, mediumBrush, largeBrush;
     private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, loadBtn, modeBtn;
     private DrawingView drawView;
     private LinearLayout drawingpart;
-    private TextView sectorinfo;
     private static int RESULT_LOAD_IMG = 1;
     String imgDecodableString;
     String sectorsave = "";
-    ListView sectorlistlayout;
     ArrayList<String> sectorlist = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,198 +55,195 @@ public class PaintPage extends Activity implements OnClickListener{
         drawBtn = (ImageButton)findViewById(R.id.draw_btn);
         drawView = (DrawingView)findViewById(R.id.drawing);
         drawingpart = (LinearLayout)findViewById(R.id.drawingpart);
-        sectorinfo = (TextView)findViewById(R.id.sectorinfo);
         smallBrush = getResources().getInteger(R.integer.small_size);
         mediumBrush = getResources().getInteger(R.integer.medium_size);
         largeBrush = getResources().getInteger(R.integer.large_size);
 
         eraseBtn = (ImageButton)findViewById(R.id.erase_btn);
-        eraseBtn.setOnClickListener(this);
+        eraseBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog brushDialog = new Dialog(PaintPage.this);
+                brushDialog.setTitle("Eraser size:");
+                brushDialog.setContentView(R.layout.brush_chooser);
+                ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
+                smallBtn.setOnClickListener(new OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        drawView.setErase(true);
+                        drawView.setBrushSize(smallBrush);
+                        brushDialog.dismiss();
+                    }
+                });
+                ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
+                mediumBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        drawView.setErase(true);
+                        drawView.setBrushSize(mediumBrush);
+                        brushDialog.dismiss();
+                    }
+                });
+                ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
+                largeBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        drawView.setErase(true);
+                        drawView.setBrushSize(largeBrush);
+                        brushDialog.dismiss();
+                    }
+                });
+                brushDialog.show();
+            }
+        });
 
         LinearLayout paintLayout = (LinearLayout)findViewById(R.id.paint_colors);
         currPaint = (ImageButton)paintLayout.getChildAt(0);
         currPaint.setImageDrawable(getResources().getDrawable(R.drawable.paint_pressed));
-        drawBtn.setOnClickListener(this);
+        drawBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog brushDialog = new Dialog(PaintPage.this);
+                brushDialog.setTitle("Brush size:");
+                brushDialog.setContentView(R.layout.brush_chooser);
+                ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
+                smallBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        drawView.setBrushSize(smallBrush);
+                        drawView.setLastBrushSize(smallBrush);
+                        drawView.setErase(false);
+                        brushDialog.dismiss();
+                    }
+                });
+                ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
+                mediumBtn.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        drawView.setBrushSize(mediumBrush);
+                        drawView.setLastBrushSize(mediumBrush);
+                        drawView.setErase(false);
+                        brushDialog.dismiss();
+                    }
+                });
+
+                ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
+                largeBtn.setOnClickListener(new OnClickListener(){
+                    @Override
+                    public void onClick(View v) {
+                        drawView.setBrushSize(largeBrush);
+                        drawView.setLastBrushSize(largeBrush);
+                        drawView.setErase(false);
+                        brushDialog.dismiss();
+                    }
+                });
+                brushDialog.show();
+                drawView.setBrushSize(mediumBrush);
+            }
+        });
 
         newBtn = (ImageButton)findViewById(R.id.new_btn);
-        newBtn.setOnClickListener(this);
+        newBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder newDialog = new AlertDialog.Builder(PaintPage.this);
+                newDialog.setTitle("New drawing");
+                newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
+                newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        drawView.startNew();
+                        dialog.dismiss();
+                    }
+                });
+                newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        dialog.cancel();
+                    }
+                });
+                newDialog.show();
+            }
+        });
 
         saveBtn = (ImageButton)findViewById(R.id.save_btn);
-        saveBtn.setOnClickListener(this);
+        saveBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder saveDialog = new AlertDialog.Builder(PaintPage.this);
+                saveDialog.setTitle("Save drawing");
+                saveDialog.setMessage("Save drawing to device Gallery?");
+                saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        drawView.setDrawingCacheEnabled(true);
+                        if (!sectorsave.equals("")) {
+                            writedata(drawView.getDrawingCache(), sectorsave + ".png");
+                            Toast savedToast = Toast.makeText(getApplicationContext(),
+                                    "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
+                            savedToast.show();
+                            drawView.destroyDrawingCache();
+                        }
+
+                    }
+                });
+                saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                saveDialog.show();
+
+            }
+        });
 
         loadBtn = (ImageButton)findViewById(R.id.load_btn);
-        loadBtn.setOnClickListener(this);
+        loadBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+// Start the Intent
+                startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
+            }
+        });
 
         modeBtn = (ImageButton)findViewById(R.id.mode_btn);
-        modeBtn.setOnClickListener(this);
+        modeBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog modeDialog = new Dialog(PaintPage.this);
+                modeDialog.setTitle("Brush mode:");
+                modeDialog.setContentView(R.layout.modes_chooser);
+                ImageButton penmode = (ImageButton)modeDialog.findViewById(R.id.pen_mode);
+                penmode.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        drawView.setErase(false);
+                        drawView.setMode(1);
+                        modeDialog.dismiss();
+                    }
+                });
+                ImageButton recmode = (ImageButton)modeDialog.findViewById(R.id.rec_mode);
+                recmode.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        drawView.setErase(false);
+                        drawView.setMode(2);
+                        modeDialog.dismiss();
+                    }
+                });
+                ImageButton cirmode = (ImageButton)modeDialog.findViewById(R.id.cir_mode);
+                cirmode.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        drawView.setErase(false);
+                        drawView.setMode(3);
+                        modeDialog.dismiss();
+                    }
+                });
+                modeDialog.show();
+            }
+        });
 
         LoadList();
-    }
-    @Override
-    public void onClick(View view){
-//respond to clicks
-        if(view.getId()==R.id.draw_btn){
-            //draw button clicked
-            final Dialog brushDialog = new Dialog(this);
-            brushDialog.setTitle("Brush size:");
-            brushDialog.setContentView(R.layout.brush_chooser);
-            ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
-            smallBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawView.setBrushSize(smallBrush);
-                    drawView.setLastBrushSize(smallBrush);
-                    drawView.setErase(false);
-                    brushDialog.dismiss();
-                }
-            });
-            ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
-            mediumBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawView.setBrushSize(mediumBrush);
-                    drawView.setLastBrushSize(mediumBrush);
-                    drawView.setErase(false);
-                    brushDialog.dismiss();
-                }
-            });
-
-            ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
-            largeBtn.setOnClickListener(new OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    drawView.setBrushSize(largeBrush);
-                    drawView.setLastBrushSize(largeBrush);
-                    drawView.setErase(false);
-                    brushDialog.dismiss();
-                }
-            });
-            brushDialog.show();
-            drawView.setBrushSize(mediumBrush);
-
-        } else if(view.getId()==R.id.erase_btn){
-            //switch to erase - choose size
-            final Dialog brushDialog = new Dialog(this);
-            brushDialog.setTitle("Eraser size:");
-            brushDialog.setContentView(R.layout.brush_chooser);
-            ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
-            smallBtn.setOnClickListener(new OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    drawView.setErase(true);
-                    drawView.setBrushSize(smallBrush);
-                    brushDialog.dismiss();
-                }
-            });
-            ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
-            mediumBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawView.setErase(true);
-                    drawView.setBrushSize(mediumBrush);
-                    brushDialog.dismiss();
-                }
-            });
-            ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
-            largeBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawView.setErase(true);
-                    drawView.setBrushSize(largeBrush);
-                    brushDialog.dismiss();
-                }
-            });
-            brushDialog.show();
-
-        }else if(view.getId()==R.id.new_btn){
-            //new button
-            AlertDialog.Builder newDialog = new AlertDialog.Builder(this.getParent());
-            newDialog.setTitle("New drawing");
-            newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
-            newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    drawView.startNew();
-                    dialog.dismiss();
-                }
-            });
-            newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    dialog.cancel();
-                }
-            });
-            newDialog.show();
-
-        }else if(view.getId()==R.id.save_btn){
-            //save drawing
-            AlertDialog.Builder saveDialog = new AlertDialog.Builder(this.getParent());
-            saveDialog.setTitle("Save drawing");
-            saveDialog.setMessage("Save drawing to device Gallery?");
-            saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    drawView.setDrawingCacheEnabled(true);
-                    if (!sectorsave.equals("")) {
-                        writedata(drawView.getDrawingCache(), sectorsave + ".png");
-                        Toast savedToast = Toast.makeText(getApplicationContext(),
-                                "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
-                        savedToast.show();
-                        drawView.destroyDrawingCache();
-                    }
-
-                }
-            });
-            saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-            saveDialog.show();
-
-
-        }else if(view.getId()==R.id.load_btn)
-        {
-            // Create intent to Open Image applications like Gallery, Google Photos
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK,
-                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-// Start the Intent
-            startActivityForResult(galleryIntent, RESULT_LOAD_IMG);
-
-        }else if (view.getId()==R.id.mode_btn)
-        {
-            final Dialog modeDialog = new Dialog(this);
-            modeDialog.setTitle("Brush size:");
-            modeDialog.setContentView(R.layout.modes_chooser);
-            ImageButton penmode = (ImageButton)modeDialog.findViewById(R.id.pen_mode);
-            penmode.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawView.setErase(false);
-                    drawView.setMode(1);
-                    modeDialog.dismiss();
-                }
-            });
-            ImageButton recmode = (ImageButton)modeDialog.findViewById(R.id.rec_mode);
-            recmode.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawView.setErase(false);
-                    drawView.setMode(2);
-                    modeDialog.dismiss();
-                }
-            });
-            ImageButton cirmode = (ImageButton)modeDialog.findViewById(R.id.cir_mode);
-            cirmode.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawView.setErase(false);
-                    drawView.setMode(3);
-                    modeDialog.dismiss();
-                }
-            });
-            modeDialog.show();
-        }
-
-
-
     }
     public void paintClicked(View view){
         //use chosen color
@@ -333,22 +329,29 @@ public class PaintPage extends Activity implements OnClickListener{
                 }
             }
         }
-        sectorlistlayout = (ListView)findViewById(R.id.sectorlistlayout);
+        ListView sectorlistlayout = (ListView)findViewById(R.id.sectorlistlayout);
         if (!sectorlist.isEmpty()) {
             MyAdapter adapter = new MyAdapter(this, sectorlist);
             sectorlistlayout.setAdapter(adapter);
             sectorlistlayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                    for (int i = 0; i < sectorlist.size(); i++) {
+                        showContent(view);
+                        if (position == i) {
+                            parent.getChildAt(i).setBackground(getResources().getDrawable(R.drawable.buttonclicked));
+                        } else {
+                            parent.getChildAt(i).setBackground(getResources().getDrawable(R.drawable.buttonunclick));
+                        }
+                    }
                 }
             });
         }
     }
     public class MyAdapter extends ArrayAdapter<String> {
 
-        private final Activity context;
-        private final ArrayList<String> devicelist;
+        private Activity context;
+        private ArrayList<String> devicelist;
 
         public MyAdapter(Activity context, ArrayList<String> zoneList) {
             super(context, R.layout.devicelistadmin, zoneList);
@@ -360,21 +363,17 @@ public class PaintPage extends Activity implements OnClickListener{
         public View getView(int position, View view, ViewGroup parent) {
             LayoutInflater inflater = context.getLayoutInflater();
             View rowView = inflater.inflate(R.layout.devicelistadmin, null);
-            final TextView txtTitle = (TextView) rowView.findViewById(R.id.textView);
-            final String sectorname = devicelist.get(position);
-            txtTitle.setText(sectorname);
-            txtTitle.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    drawingpart.setVisibility(View.VISIBLE);
-                    drawView.startNew();
-                    sectorsave = sectorname;
-                    drawView.setBackground(null);
-                    sectorinfo.setText(sectorsave);
-                }
-            });
+            TextView txtTitle = (TextView) rowView.findViewById(R.id.textView);
+            txtTitle.setText(devicelist.get(position));
             return rowView;
         }
 
+    }
+    public void showContent(View view)
+    {
+        sectorsave = ((TextView) view).getText().toString();
+        drawingpart.setVisibility(View.VISIBLE);
+        drawView.startNew();
+        drawView.setBackground(null);
     }
 }

@@ -8,6 +8,114 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
 >
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="500dp"
+        android:layout_marginTop="180dp"
+        android:layout_marginRight="500dp"
+        android:layout_marginBottom="180dp">
+            <TextView
+                android:id="@+id/CODE1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+            <GridView
+                android:id="@+id/gridView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/CODE1"
+                android:layout_marginTop="80dp"
+                android:numColumns="3"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="10dp"
+                android:horizontalSpacing="10dp"/>
+
+            <TextView
+                android:id="@+id/CODE2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/gridView"
+                android:layout_toEndOf="@+id/CODE1"
+                android:layout_toRightOf="@+id/CODE1"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/CODE3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/gridView"
+                android:layout_toEndOf="@+id/CODE2"
+                android:layout_toRightOf="@+id/CODE2"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/CODE4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/gridView"
+                android:layout_toEndOf="@+id/CODE3"
+                android:layout_toRightOf="@+id/CODE3"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@color/white"
+                android:visibility="gone" />
 
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/gridView">
+
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radioButton1"
+                    android:background="@drawable/circledots"
+                    android:layout_weight="0.25"
+                    android:enabled="false"
+                    android:gravity="center" />
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radioButton2"
+                    android:background="@drawable/circledots"
+                    android:layout_weight="0.25"
+                    android:enabled="false"
+                    android:gravity="center"
+                    />
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radioButton3"
+                    android:background="@drawable/circledots"
+                    android:layout_weight="0.25"
+                    android:enabled="false"
+                    android:gravity="center"
+                    />
+                <Button
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radioButton4"
+                    android:background="@drawable/circledots"
+                    android:layout_weight="0.25"
+                    android:enabled="false"
+                    android:gravity="center"
+                    />
+
+            </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

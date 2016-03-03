@@ -131,6 +131,7 @@ public class EditEvent extends Activity {
                     startTime.set(Calendar.MONTH, monthOfYear);
                     startTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     startdate.setText(ddf.format(startTime.getTime()));
+
                     finishTime.set(Calendar.YEAR, year);
                     finishTime.set(Calendar.MONTH, monthOfYear);
                     finishTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -143,8 +144,10 @@ public class EditEvent extends Activity {
 
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(EditEvent.this, date, year1, getMonth(month1), date1).show();
-
+                Context context = getParent();
+                new DatePickerDialog(context, date, startTime
+                        .get(Calendar.YEAR), startTime.get(Calendar.MONTH),
+                        startTime.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
 
@@ -157,6 +160,7 @@ public class EditEvent extends Activity {
                     startTime.set(Calendar.MINUTE, Minute);
                     startTime.set(Calendar.SECOND,0);
                     starttime.setText(sdf.format(startTime.getTime()));
+
                     finishTime.set(Calendar.HOUR_OF_DAY, Hour);
                     finishTime.set(Calendar.MINUTE, Minute);
                     finishTime.set(Calendar.SECOND,0);
@@ -166,7 +170,9 @@ public class EditEvent extends Activity {
 
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(EditEvent.this, time, hour1, min1, true).show();
+                Context context = getParent();
+                new TimePickerDialog(context, time, startTime.get(Calendar.HOUR_OF_DAY), startTime.get(Calendar.MINUTE), true).show();
+
             }
         });
 
@@ -192,7 +198,10 @@ public class EditEvent extends Activity {
 
             @Override
             public void onClick(View v) {
-                new DatePickerDialog(EditEvent.this, date, year2, getMonth(month2),date2).show();
+                Context context = getParent();
+                new DatePickerDialog(context, date, finishTime
+                        .get(Calendar.YEAR), finishTime.get(Calendar.MONTH),
+                        finishTime.get(Calendar.DAY_OF_MONTH)).show();
 
             }
         });
@@ -212,7 +221,8 @@ public class EditEvent extends Activity {
             };
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(EditEvent.this, time, hour2,min2,true).show();
+                Context context = getParent();
+                new TimePickerDialog(context, time, finishTime.get(Calendar.HOUR_OF_DAY),finishTime.get(Calendar.MINUTE),true).show();
             }
         });
         //===================================================================================================
@@ -232,8 +242,6 @@ public class EditEvent extends Activity {
             public void onClick(final View v) {
                 textView6.setVisibility(View.VISIBLE);
                         // delete a single event
-
-
                         if (group.isChecked()==false)
                         {
                             int ite = getGroup(ID);
@@ -259,11 +267,11 @@ public class EditEvent extends Activity {
                                 if (!groupid.equals(null)) {
                                     for (int i = 0; i < groupid.size(); i++) {
                                         Long id = groupid.get(i);
+                                        CheckCurrent();
                                         listevent.remove(getEvent(id));
                                     }
                                     grouplist.remove(groupid);
                                 }
-                                CheckCurrent();
                                 DataManager.getInstance().setevents(listevent);
                                 DataManager.getInstance().setGroupID(grouplist);
                                 finish();
@@ -283,7 +291,6 @@ public class EditEvent extends Activity {
                                 textView6.setVisibility(View.GONE);
                             }
                         }
-
             }
         });
 
@@ -292,8 +299,6 @@ public class EditEvent extends Activity {
             @Override
             public void onClick(final View v) {
                 textView6.setVisibility(View.VISIBLE);
-
-
                         if (finishTime.after(startTime)) {
                             if (group.isChecked()==false) {
                                 int ite = getGroup(ID);
@@ -312,8 +317,7 @@ public class EditEvent extends Activity {
                                 WeekViewEvent event = new WeekViewEvent(ID, cname, startTime, finishTime, colorName,devicelist);
                                 listevent.add(event);
                                 DataManager.getInstance().setevents(listevent);
-                                Intent intent1 = new Intent(v.getContext(), GlobalCalendar.class);
-                                startActivity(intent1);
+                                finish();
                             }else
                             {
                                 int ite = getGroup(ID);
@@ -367,13 +371,9 @@ public class EditEvent extends Activity {
                                 }
                             });
                         }
-
             }
 
         });
-
-
-
     }
 
     int getMonth(String month)

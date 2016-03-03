@@ -213,6 +213,7 @@ public class DataManager {
     }
     public List setGroupID(List<List<Long>> list)
     {
+        System.out.println(list.toString() + "************************************ group list");
         this.groupID = list;
         writedata2(groupID,"group");
         return groupID;
@@ -405,8 +406,6 @@ public class DataManager {
             }
         }
     }
-
-
 
     public static void dataupdateBi(HashMap bimap, String filename) {
         File root = Environment.getExternalStorageDirectory();

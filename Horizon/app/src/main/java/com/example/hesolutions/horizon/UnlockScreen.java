@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -84,36 +85,43 @@ public class UnlockScreen extends Activity {
         }
 
         if (jump == true) {
-            String code1 = CODE1.getText().toString();
-            String code2 = CODE2.getText().toString();
-            String code3 = CODE3.getText().toString();
-            String code4 = CODE4.getText().toString();
-            String code = code1 + code2 + code3 + code4;
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    String code1 = CODE1.getText().toString();
+                    String code2 = CODE2.getText().toString();
+                    String code3 = CODE3.getText().toString();
+                    String code4 = CODE4.getText().toString();
+                    String code = code1 + code2 + code3 + code4;
 
-            BiMap<String, ArrayList> bimap;
-            bimap = DataManager.getInstance().getaccount();
-            ArrayList<String> nameset = new ArrayList<String>();
-            nameset = bimap.get(code);
-            //TODO: make sure this check will be removed in final version :)
-            Intent startNewActivityIntent;
-            if (code.equals("0000")) {
-                startNewActivityIntent = new Intent(UnlockScreen.this, TabViewAdmin.class);
-                clearPinCode();
-                startActivity(startNewActivityIntent);
-            } else if (nameset != null) {
-                String Caccount = nameset.get(0);
-                String color = nameset.get(1);
-                startNewActivityIntent = new Intent(UnlockScreen.this, TabiewForUser.class);
-                DataManager.getInstance().setUsername(Caccount);
-                DataManager.getInstance().setcolorname(color);
-                clearPinCode();
-                startActivity(startNewActivityIntent);
-            } else {
-                Toast.makeText(getApplicationContext(), "No Accounts exist", Toast.LENGTH_LONG).show();
-                clearPinCode();
-                jump = false;
+                    BiMap<String, ArrayList> bimap;
+                    bimap = DataManager.getInstance().getaccount();
+                    ArrayList<String> nameset = new ArrayList<String>();
+                    nameset = bimap.get(code);
+                    //TODO: make sure this check will be removed in final version :)
+                    Intent startNewActivityIntent;
+                    if (code.equals("0000")) {
+                        startNewActivityIntent = new Intent(UnlockScreen.this, TabViewAdmin.class);
+                        clearPinCode();
+                        startActivity(startNewActivityIntent);
+                    } else if (nameset != null) {
+                        String Caccount = nameset.get(0);
+                        String color = nameset.get(1);
+                        startNewActivityIntent = new Intent(UnlockScreen.this, TabiewForUser.class);
+                        DataManager.getInstance().setUsername(Caccount);
+                        DataManager.getInstance().setcolorname(color);
+                        clearPinCode();
+                        startActivity(startNewActivityIntent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Password does not match any account", Toast.LENGTH_LONG).show();
+                        clearPinCode();
+                        jump = false;
 
-            }
+                    }
+                }
+            }, 300);
+
         }
 
     }

@@ -142,7 +142,7 @@ public class CalendarTask extends Activity {
             HashMap<String, ArrayList> sectordetails = sector.get(username);
             for (Map.Entry<String, ArrayList> entry : sectordetails.entrySet()) {
                 String key = entry.getKey();
-                ArrayList value = entry.getValue();
+                ArrayList<Device> value = entry.getValue();
                 Group group = new Group(key, value, false);
                 arrayList.add(group);
             }
@@ -176,7 +176,6 @@ public class CalendarTask extends Activity {
                 }
 
             };
-
 
             @Override
             public void onClick(View v) {
@@ -220,7 +219,6 @@ public class CalendarTask extends Activity {
                 @Override
                 public void onDateSet(DatePicker view, int year, int monthOfYear,
                                       int dayOfMonth) {
-
                     finishTime.set(Calendar.YEAR, year);
                     finishTime.set(Calendar.MONTH, monthOfYear);
                     finishTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -272,10 +270,9 @@ public class CalendarTask extends Activity {
             String cname = DataManager.getInstance().getUsername();
             String colorname = DataManager.getInstance().getcolorname();
             int colorName = Color.parseColor(colorname);
-            long id, oldid;
+            long oldid;
             final List<WeekViewEvent> list = DataManager.getInstance().getevents();
             final List<Long> IDlist = DataManager.getInstance().getEventID();
-            final List<List<Long>> grouplist = DataManager.getInstance().getGroupID();
 
             @Override
             public void onClick(final View v) {
@@ -288,11 +285,7 @@ public class CalendarTask extends Activity {
                             ArrayList<Device> devicelist = group.getList();
                             for (int j = 0; j < devicelist.size(); j++) {
                                 Device device = devicelist.get(j);
-                                byte oldP = DatabaseManager.getInstance().getlightingofDevice(device)[1];
-                                byte newP = SetParams[1];
-                                if (oldP > newP)SetParams[1] = oldP;
                                 device.setCurrentParams(SetParams);
-                                DatabaseManager.getInstance().updateDevice(device);
                                 choosedevice.add(device);
                             }
                         }
@@ -306,232 +299,251 @@ public class CalendarTask extends Activity {
                     if (switch1.isChecked()) {
                         if (!weeknumber.getText().toString().isEmpty()) {
                             weeks = Integer.parseInt(weeknumber.getText().toString());
-
-                            final List<Long> groupedlist = new ArrayList<Long>();
-
                             if (weeks > 0) {
                                 if ((finishTime.after(startTime))) {
-                                    // repeat i weeks
 
-                                            if (!IDlist.isEmpty()) {
-                                                oldid = IDlist.get((IDlist.size() - 1));
+                                    if (!IDlist.isEmpty()) {
+                                        oldid = IDlist.get((IDlist.size() - 1));
+                                    }
+                                    final AtomicLong counter = new AtomicLong(oldid);
+                                    Thread[] threads = new Thread[7];
+                                    for (int i = 0; i < weeks; i++) {
+                                        final int j = i;
+                                        threads[0] = new Thread()
+                                        {
+                                            public void run()
+                                            {
+                                                if (Monday.isChecked()) {
+                                                    long id = counter.incrementAndGet();
+                                                    System.out.println(" Monday is called at " + j + " week ******************* id is "  + id);
+                                                    Calendar MonSt = Calendar.getInstance(), MonFi = Calendar.getInstance();
+                                                    MonSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                    MonSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                    MonSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    MonSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                    MonSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                    MonFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                    MonFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                    MonFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    MonFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                    MonFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                    Integer date = 1 - day;
+                                                    MonSt.add(Calendar.DAY_OF_MONTH, date);
+                                                    MonFi.add(Calendar.DAY_OF_MONTH, date);
+                                                    WeekViewEvent event;
+                                                    event = new WeekViewEvent(id, cname, MonSt, MonFi, colorName, choosedevice);
+                                                    list.add(event);
+                                                    IDlist.add(id);
+                                                }
                                             }
-                                            final AtomicLong counter = new AtomicLong(oldid);
-                                            for (int i = 0; i < weeks; i++) {
-                                                final int j = i;
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (Monday.isChecked()) {
-                                                            id = counter.incrementAndGet();
-                                                            Calendar MonSt = Calendar.getInstance(), MonFi = Calendar.getInstance();
-                                                            MonSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                            MonSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                            MonSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            MonSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                            MonSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                            MonFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                            MonFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                            MonFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            MonFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                            MonFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                                            Integer date = 1 - day;
-                                                            MonSt.add(Calendar.DAY_OF_MONTH, date);
-                                                            MonFi.add(Calendar.DAY_OF_MONTH, date);
-                                                            WeekViewEvent event;
-                                                            event = new WeekViewEvent(id, cname, MonSt, MonFi, colorName, choosedevice);
-                                                            list.add(event);
-                                                            groupedlist.add(id);
-                                                            IDlist.add(id);
+                                        };
+                                        threads[0].start();
+                                        threads[1] = new Thread()
+                                        {
+                                            public void run()
+                                            {
+                                                if (Tuesday.isChecked()) {
+                                                    long id = counter.incrementAndGet();
+                                                    System.out.println(" Tuesday is called at " + j + " week ******************* id is "  + id);
+                                                    Calendar TueSt = Calendar.getInstance(), TusFi = Calendar.getInstance();
+                                                    TueSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                    TueSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                    TueSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    TueSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                    TueSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                    TusFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                    TusFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                    TusFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    TusFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                    TusFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                    Integer date = 2 - day;
+                                                    TueSt.add(Calendar.DAY_OF_MONTH, date);
+                                                    TusFi.add(Calendar.DAY_OF_MONTH, date);
+                                                    WeekViewEvent event;
+                                                    event = new WeekViewEvent(id, cname, TueSt, TusFi, colorName, choosedevice);
+                                                    list.add(event);
+                                                    IDlist.add(id);
 
-                                                        }
-                                                    }
-                                                }).start();
-
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (Tuesday.isChecked()) {
-                                                            id = counter.incrementAndGet();
-                                                            Calendar TueSt = Calendar.getInstance(), TusFi = Calendar.getInstance();
-                                                            TueSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                            TueSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                            TueSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            TueSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                            TueSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                            TusFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                            TusFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                            TusFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            TusFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                            TusFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                                            Integer date = 2 - day;
-                                                            TueSt.add(Calendar.DAY_OF_MONTH, date);
-                                                            TusFi.add(Calendar.DAY_OF_MONTH, date);
-                                                            WeekViewEvent event;
-                                                            event = new WeekViewEvent(id, cname, TueSt, TusFi, colorName, choosedevice);
-                                                            list.add(event);
-                                                            groupedlist.add(id);
-                                                            IDlist.add(id);
-
-                                                        }
-                                                    }
-                                                }).start();
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (Wednesday.isChecked()) {
-                                                            id = counter.incrementAndGet();
-                                                            Calendar WedSt = Calendar.getInstance(), WedFi = Calendar.getInstance();
-                                                            WedSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                            WedSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                            WedSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            WedSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                            WedSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                            WedFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                            WedFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                            WedFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            WedFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                            WedFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                                            Integer date = 3 - day;
-                                                            WedSt.add(Calendar.DAY_OF_MONTH, date);
-                                                            WedFi.add(Calendar.DAY_OF_MONTH, date);
-                                                            WeekViewEvent event;
-                                                            event = new WeekViewEvent(id, cname, WedSt, WedFi, colorName, choosedevice);
-                                                            list.add(event);
-                                                            groupedlist.add(id);
-                                                            IDlist.add(id);
-
-                                                        }
-                                                    }
-                                                }).start();
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (Thursday.isChecked()) {
-                                                            id = counter.incrementAndGet();
-                                                            Calendar ThuSt = Calendar.getInstance(), ThuFi = Calendar.getInstance();
-                                                            ThuSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                            ThuSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                            ThuSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            ThuSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                            ThuSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                            ThuFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                            ThuFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                            ThuFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            ThuFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                            ThuFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                                            Integer date = 4 - day;
-                                                            ThuSt.add(Calendar.DAY_OF_MONTH, date);
-                                                            ThuFi.add(Calendar.DAY_OF_MONTH, date);
-                                                            WeekViewEvent event;
-                                                            event = new WeekViewEvent(id, cname, ThuSt, ThuFi, colorName, choosedevice);
-                                                            list.add(event);
-                                                            groupedlist.add(id);
-                                                            IDlist.add(id);
-
-                                                        }
-                                                    }
-                                                }).start();
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (Friday.isChecked()) {
-                                                            id = counter.incrementAndGet();
-                                                            Calendar FriSt = Calendar.getInstance(), FriFi = Calendar.getInstance();
-                                                            FriSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                            FriSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                            FriSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            FriSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                            FriSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                            FriFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                            FriFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                            FriFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            FriFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                            FriFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                                            Integer date = 5 - day;
-                                                            FriSt.add(Calendar.DAY_OF_MONTH, date);
-                                                            FriFi.add(Calendar.DAY_OF_MONTH, date);
-                                                            WeekViewEvent event;
-                                                            event = new WeekViewEvent(id, cname, FriSt, FriFi, colorName, choosedevice);
-                                                            list.add(event);
-                                                            groupedlist.add(id);
-                                                            IDlist.add(id);
-
-                                                        }
-                                                    }
-                                                }).start();
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (Saturday.isChecked()) {
-                                                            id = counter.incrementAndGet();
-                                                            Calendar SatSt = Calendar.getInstance(), SatFi = Calendar.getInstance();
-                                                            SatSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                            SatSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                            SatSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            SatSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                            SatSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                            SatFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                            SatFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                            SatFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            SatFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                            SatFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-
-                                                            Integer date = 6 - day;
-                                                            SatSt.add(Calendar.DAY_OF_MONTH, date);
-                                                            SatFi.add(Calendar.DAY_OF_MONTH, date);
-                                                            WeekViewEvent event;
-                                                            event = new WeekViewEvent(id, cname, SatSt, SatFi, colorName, choosedevice);
-                                                            list.add(event);
-                                                            IDlist.add(id);
-                                                            groupedlist.add(id);
-
-                                                        }
-                                                    }
-                                                }).start();
-
-                                                new Thread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (Sunday.isChecked()) {
-                                                            id = counter.incrementAndGet();
-
-                                                            Calendar SunSt = Calendar.getInstance(), SunFi = Calendar.getInstance();
-                                                            SunSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                            SunSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                            SunSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            SunSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                            SunSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                            SunFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                            SunFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                            SunFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                            SunFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                            SunFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-
-                                                            Integer date = 0 - day;
-                                                            SunSt.add(Calendar.DAY_OF_MONTH, date);
-                                                            SunFi.add(Calendar.DAY_OF_MONTH, date);
-                                                            WeekViewEvent event;
-                                                            event = new WeekViewEvent(id, cname, SunSt, SunFi, colorName, choosedevice);
-                                                            list.add(event);
-                                                            IDlist.add(id);
-                                                            groupedlist.add(id);
-
-                                                        }
-                                                    }
-                                                }).start();
-
+                                                }
                                             }
-                                            grouplist.add(groupedlist);
-                                            DataManager.getInstance().setGroupID(grouplist);
-                                            DataManager.getInstance().setEventID(IDlist);
-                                            DataManager.getInstance().setevents(list);
-                                            finish();
+                                        };
+                                        threads[1].start();
+
+
+                                        threads[2] = new Thread()
+                                        {
+                                            public void run()
+                                            {
+                                                if (Wednesday.isChecked()) {
+                                                    long id = counter.incrementAndGet();
+                                                    System.out.println(" Wednesday is called at " + j + " week ******************* id is "  + id);
+                                                    Calendar WedSt = Calendar.getInstance(), WedFi = Calendar.getInstance();
+                                                    WedSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                    WedSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                    WedSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    WedSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                    WedSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                    WedFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                    WedFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                    WedFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    WedFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                    WedFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                    Integer date = 3 - day;
+                                                    WedSt.add(Calendar.DAY_OF_MONTH, date);
+                                                    WedFi.add(Calendar.DAY_OF_MONTH, date);
+                                                    WeekViewEvent event;
+                                                    event = new WeekViewEvent(id, cname, WedSt, WedFi, colorName, choosedevice);
+                                                    list.add(event);
+                                                    IDlist.add(id);
+
+                                                }
+                                            }
+                                        };
+                                        threads[2].start();
+
+                                        threads[3] = new Thread()
+                                        {
+                                            public void run()
+                                            {
+                                                if (Thursday.isChecked()) {
+                                                    long id = counter.incrementAndGet();
+                                                    System.out.println(" Thursday is called at " + j + " week ******************* id is "  + id);
+                                                    Calendar ThuSt = Calendar.getInstance(), ThuFi = Calendar.getInstance();
+                                                    ThuSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                    ThuSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                    ThuSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    ThuSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                    ThuSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                    ThuFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                    ThuFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                    ThuFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    ThuFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                    ThuFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                    Integer date = 4 - day;
+                                                    ThuSt.add(Calendar.DAY_OF_MONTH, date);
+                                                    ThuFi.add(Calendar.DAY_OF_MONTH, date);
+                                                    WeekViewEvent event;
+                                                    event = new WeekViewEvent(id, cname, ThuSt, ThuFi, colorName, choosedevice);
+                                                    list.add(event);
+                                                    IDlist.add(id);
+                                                }
+                                            }
+                                        };
+                                        threads[3].start();
+
+
+                                        threads[4] = new Thread()
+                                        {
+                                            public void run()
+                                            {
+                                                if (Friday.isChecked()) {
+                                                    long id = counter.incrementAndGet();
+                                                    System.out.println(" Friday is called at " + j + " week ******************* id is "  + id);
+                                                    Calendar FriSt = Calendar.getInstance(), FriFi = Calendar.getInstance();
+                                                    FriSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                    FriSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                    FriSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    FriSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                    FriSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                    FriFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                    FriFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                    FriFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    FriFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                    FriFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                    Integer date = 5 - day;
+                                                    FriSt.add(Calendar.DAY_OF_MONTH, date);
+                                                    FriFi.add(Calendar.DAY_OF_MONTH, date);
+                                                    WeekViewEvent event;
+                                                    event = new WeekViewEvent(id, cname, FriSt, FriFi, colorName, choosedevice);
+                                                    list.add(event);
+                                                    IDlist.add(id);
+                                                }
+                                            }
+                                        };
+                                        threads[4].start();
+
+                                        threads[5] = new Thread()
+                                        {
+                                            public void run()
+                                            {
+                                                if (Saturday.isChecked()) {
+                                                    long id = counter.incrementAndGet();
+                                                    System.out.println(" Satursay is called at " + j + " week ******************* id is "  + id);
+                                                    Calendar SatSt = Calendar.getInstance(), SatFi = Calendar.getInstance();
+                                                    SatSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                    SatSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                    SatSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    SatSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                    SatSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                    SatFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                    SatFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                    SatFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    SatFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                    SatFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+
+                                                    Integer date = 6 - day;
+                                                    SatSt.add(Calendar.DAY_OF_MONTH, date);
+                                                    SatFi.add(Calendar.DAY_OF_MONTH, date);
+                                                    WeekViewEvent event;
+                                                    event = new WeekViewEvent(id, cname, SatSt, SatFi, colorName, choosedevice);
+                                                    list.add(event);
+                                                    IDlist.add(id);
+                                                }
+                                            }
+                                        };
+                                        threads[5].start();
+
+
+                                        threads[6] = new Thread()
+                                        {
+                                            public void run()
+                                            {
+                                                if (Sunday.isChecked()) {
+                                                    long id = counter.incrementAndGet();
+                                                    System.out.println(" Sunday is called at " + j + " week ******************* id is "  + id);
+                                                    Calendar SunSt = Calendar.getInstance(), SunFi = Calendar.getInstance();
+                                                    SunSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                    SunSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                    SunSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    SunSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                    SunSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                    SunFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                    SunFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                    SunFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                    SunFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                    SunFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+
+                                                    Integer date = 0 - day;
+                                                    SunSt.add(Calendar.DAY_OF_MONTH, date);
+                                                    SunFi.add(Calendar.DAY_OF_MONTH, date);
+                                                    WeekViewEvent event;
+                                                    event = new WeekViewEvent(id, cname, SunSt, SunFi, colorName, choosedevice);
+                                                    list.add(event);
+                                                    IDlist.add(id);
+                                                }
+                                            }
+                                        };
+                                        threads[6].start();
+
+
+                                    }
+
+                                    for (Thread thread:threads) {
+                                        try {
+                                            thread.join();
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }
+                                    System.out.println(IDlist.toString() + "**********************************************");
+                                    DataManager.getInstance().setEventID(IDlist);
+                                    DataManager.getInstance().setevents(list);
+                                    finish();
 
                                 } else {
                                     runOnUiThread(new Runnable() {
                                         public void run() {
-
                                             Toast.makeText(CalendarTask.this, "Unvaild time", Toast.LENGTH_LONG).show();
                                         }
                                     });
@@ -539,7 +551,6 @@ public class CalendarTask extends Activity {
                             } else {
                                 runOnUiThread(new Runnable() {
                                     public void run() {
-
                                         Toast.makeText(CalendarTask.this, "Enter a valid week number (at least 1)", Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -548,7 +559,6 @@ public class CalendarTask extends Activity {
                         } else {
                             runOnUiThread(new Runnable() {
                                 public void run() {
-
                                     Toast.makeText(CalendarTask.this, "Please enter a number", Toast.LENGTH_LONG).show();
                                 }
                             });
@@ -558,6 +568,7 @@ public class CalendarTask extends Activity {
                     // not repetition
                     if (switch1.isChecked() == false) {
                         if ((finishTime.after(startTime))) {
+                            long id = 0;
                             if (!IDlist.isEmpty()) {
                                 id = IDlist.get((IDlist.size() - 1)) + 1;
                             }

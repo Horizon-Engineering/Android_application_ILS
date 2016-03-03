@@ -1,5 +1,6 @@
 package com.example.hesolutions.horizon;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.app.Activity;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,10 +18,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CalendarView;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
 import com.homa.hls.datadeal.DevicePacket;
 import com.homa.hls.datadeal.Message;
@@ -79,11 +83,11 @@ public class GlobalCalendar extends Activity{
 
         WeekView.EventLongPressListener mEventLongPressListener = new WeekView.EventLongPressListener() {
             @Override
-            public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
+            public void onEventLongPress(final WeekViewEvent event, RectF eventRect) {
 
                 if (event.getName().equals(DataManager.getInstance().getUsername()))
                 {
-
+                    /*
                     Intent editevent = new Intent(GlobalCalendar.this, EditEvent.class);
 
                     Date starttime = event.getStartTime().getTime();
@@ -107,9 +111,32 @@ public class GlobalCalendar extends Activity{
                     DataManager.getInstance().setthisevent(event);
                     ActivityStack activityStack = (ActivityStack) getParent();
                     activityStack.push("ThirdActivity", editevent);
+
+                    */
+                    final List<WeekViewEvent> listevent = DataManager.getInstance().getevents();
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(GlobalCalendar.this.getParent());
+                    alertDialog.setTitle("Warnning");
+                    alertDialog.setMessage("Do you want to remove this event?");
+                    alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            CheckCurrent(event);
+                            listevent.remove(event);
+                            DataManager.getInstance().setevents(listevent);
+                            dialog.cancel();
+                            Intent startNewActivityIntent = new Intent(getIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                            ActivityStack activityStack = (ActivityStack) getParent();
+                            activityStack.push("AdminAddNew", startNewActivityIntent);
+                        }
+                    });
+                    alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    alertDialog.show();
                 }else
                 {
-                    Toast.makeText(GlobalCalendar.this, "Don not have permission", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GlobalCalendar.this, "Do not have permission!", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -214,5 +241,23 @@ public class GlobalCalendar extends Activity{
 
         return bitmap;
     }
-
+    public void CheckCurrent(WeekViewEvent event)
+    {
+        Calendar cur = Calendar.getInstance();
+        ArrayList<Device> devices = event.getdeviceList();
+        if (cur.before(event.getEndTime())&&cur.after(event.getStartTime()))
+        {
+            for (int p=0; p <devices.size(); p++)
+            {
+                Device devicep = devices.get(p);
+                byte[]data;
+                data = new byte[]{(byte) 17, (byte) 0, devicep.getCurrentParams()[2], (byte) 0, (byte) 0};
+                DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                devicep.getDeviceAddress(), (short) 0, data), devicep.getGatewayMacAddr(), devicep.getGatewayPassword(),
+                        devicep.getGatewaySSID(), GlobalCalendar.this));
+                devicep.setCurrentParams(data);
+                DatabaseManager.getInstance().updateDevice(devicep);
+            }
+        }
+    }
 }

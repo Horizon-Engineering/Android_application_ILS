@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:thumb="@drawable/switch_thumb"
         android:track="@drawable/togglebg"
-        android:focusable="true"
+        android:focusable="false"
         android:switchMinWidth="250dp"
         android:textOn=""
         android:textOff=""

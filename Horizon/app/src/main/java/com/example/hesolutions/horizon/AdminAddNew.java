@@ -1,6 +1,8 @@
 package com.example.hesolutions.horizon;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -229,7 +231,11 @@ public class AdminAddNew extends Activity {
                     Toast.makeText(getApplicationContext(), "Existant accout: " + Accounts, Toast.LENGTH_LONG).show();
                     MSG.setText("");
                     CODE.setText("");
-
+                }else if (Passwords.equals("0000"))
+                {
+                    Toast.makeText(AdminAddNew.this, "The password cannot be the same as for the Admin", Toast.LENGTH_SHORT).show();
+                    MSG.setText("");
+                    CODE.setText("");
                 } else {
                     accout.add(Accounts);
                     accout.add(color);
@@ -355,7 +361,7 @@ public class AdminAddNew extends Activity {
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
                             }
                         } else {
-                            Toast.makeText(AdminAddNew.this, "Gateway error", Toast.LENGTH_SHORT).show();
+                            RestartApp();
                         }
                     }
 
@@ -544,6 +550,30 @@ public class AdminAddNew extends Activity {
             this.name = name;
         }
 
+    }
+
+    public void RestartApp()
+    {
+
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this);
+        alertDialog.setTitle("Error");
+        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
+        alertDialog.setCancelable(false);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent mStartActivity = new Intent(getApplicationContext(), LogoActivity.class);
+                int mPendingIntentId = 123456;
+                PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                System.exit(0);
+            }
+        });
+        runOnUiThread(new Runnable() {
+            public void run() {
+                alertDialog.show();
+            }
+        });
     }
 
 }

@@ -1,6 +1,11 @@
 package com.example.hesolutions.horizon;
 
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.DefaultDatabaseErrorHandler;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,11 +34,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.allin.activity.action.SysApplication;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
 import com.homa.hls.database.DeviceList;
+import com.homa.hls.database.Gateway;
 import com.homa.hls.datadeal.DevicePacket;
 import com.homa.hls.datadeal.Message;
 import com.homa.hls.socketconn.DeviceSocket;
@@ -64,7 +71,6 @@ public class ControlPanel extends Activity {
     byte intensity;
     ImageView imageViewroomlayout;
     ExpandListAdapter adapter;
-    ArrayList<String> devicenamelist = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +81,6 @@ public class ControlPanel extends Activity {
         if (sector.get(username)==null) {}
         else
         {
-
             for (Map.Entry<String, ArrayList> entry : sectordetail.entrySet()) {
                 sectorArray.add(entry.getKey());
             }
@@ -85,12 +90,10 @@ public class ControlPanel extends Activity {
                 adapter = new ExpandListAdapter(this, sectorArray);
                 ExpandableListView sectorListView = (ExpandableListView) findViewById(R.id.sectorListViewId);
                 sectorListView.setAdapter(adapter);
-
             }
         }
 
     }
-
 
     public class ExpandListAdapter extends BaseExpandableListAdapter {
 
@@ -103,8 +106,9 @@ public class ControlPanel extends Activity {
         }
 
         @Override
-        public Object getChild(int groupPosition, int childPosition) {
-            ArrayList<Device> devicelist = sectordetail.get((groups.get(groupPosition)));
+        public String getChild(int groupPosition, int childPosition) {
+            ArrayList<Device> devicelist = sectordetail.get(getGroup(groupPosition));
+            ArrayList<String> devicenamelist = new ArrayList<>();
             for (int i = 0; i < devicelist.size(); i++) {
                 devicenamelist.add(devicelist.get(i).getDeviceName());
             }
@@ -121,7 +125,7 @@ public class ControlPanel extends Activity {
         public View getChildView(int groupPosition, int childPosition,
                                  boolean isLastChild, View convertView, ViewGroup parent) {
 
-            final String devicename = (String) getChild(groupPosition, childPosition);
+            final String devicename = getChild(groupPosition, childPosition);
             if (convertView == null) {
                 LayoutInflater inf = (LayoutInflater) context
                         .getSystemService(context.LAYOUT_INFLATER_SERVICE);
@@ -132,23 +136,7 @@ public class ControlPanel extends Activity {
             tv.setText(devicename);
 
             final Device device = DatabaseManager.getInstance().getDeviceInforName(devicename);
-            
-            /*
-            final short address = device.getDeviceAddress();
-            final ArrayList<Device> thedevice = DatabaseManager.getInstance().getSectorDeviceInforadd(address).getmDeviceList();
 
-            for (int i = 0; i < thedevice.size(); i++) {
-                if (DatabaseManager.getInstance().getlightingofDevice(thedevice.get(i))[1] != 0) {
-                    System.out.println(thedevice.get(i).getDeviceName() + "**********************1");
-                    switchid.setCheckedProgrammatically(true);
-                    intensity = DatabaseManager.getInstance().getlightingofDevice(thedevice.get(i))[1];
-                    break;
-                } else {
-                    System.out.println(thedevice.get(i).getDeviceName() + "**********************2");
-                    switchid.setCheckedProgrammatically(false);
-                }
-            }
-            */
             if (DatabaseManager.getInstance().getlightingofDevice(device)[1]!=0)
             {
                 switchid.setCheckedProgrammatically(true);
@@ -176,57 +164,65 @@ public class ControlPanel extends Activity {
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    Calendar calendar = Calendar.getInstance();
-                    List<WeekViewEvent> events = DataManager.getInstance().getevents();
-                    Device devicea = DataManager.getInstance().getthedevice();
-                    if (events.size() != 0) {
-                        for (int i = 0; i < events.size(); i++) {
-                            WeekViewEvent event = events.get(i);
-                            Calendar starttime = event.getStartTime();
-                            Calendar finishtime = event.getEndTime();
-                            if (calendar.after(starttime) && calendar.before(finishtime)) {
-                                ArrayList<Device> devicelist = event.getdeviceList();
-                                if (devicelist != null) {
-                                    str2 = devicea.getDeviceName();
-                                    Iterator<Device> firstIt = devicelist.iterator();
-                                    while (firstIt.hasNext()) {
-                                        str1 = firstIt.next().getDeviceName();
-                                        if (str1.equals(str2)) {
-                                            firstIt.remove();
-                                        }
-                                        if (devicelist.isEmpty()) {
-                                            events.remove(i);
+                    Gateway gateways = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
+                    if (gateways!=null) {
+                        Calendar calendar = Calendar.getInstance();
+                        List<WeekViewEvent> events = DataManager.getInstance().getevents();
+                        Device devicea = DataManager.getInstance().getthedevice();
+                        if (events.size() != 0) {
+
+                            Iterator<WeekViewEvent> eventIterator = events.iterator();
+                            while (eventIterator.hasNext()) {
+                                WeekViewEvent event = eventIterator.next();
+                                Calendar starttime = event.getStartTime();
+                                Calendar finishtime = event.getEndTime();
+                                if (calendar.after(starttime) && calendar.before(finishtime)) {
+                                    ArrayList<Device> devicelist = event.getdeviceList();
+                                    if (devicelist != null) {
+                                        str2 = devicea.getDeviceName();
+                                        Iterator<Device> firstIt = devicelist.iterator();
+                                        while (firstIt.hasNext()) {
+                                            str1 = firstIt.next().getDeviceName();
+                                            if (str1.equals(str2)) {
+                                                firstIt.remove();
+                                            }
+                                            if (devicelist.isEmpty()) {
+                                                eventIterator.remove();
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    DataManager.getInstance().setevents(events);
+                        DataManager.getInstance().setevents(events);
 
-                    byte[] SetParams = new byte[5];
-                    if (fromUser) {
-                        if (progress == 0) {
-                            SetParams[0] = (byte) 17;
-                            SetParams[1] = (byte) 0;
-                            SetParams[2] = (byte) 0;
-                            SetParams[3] = (byte) 0;
-                            SetParams[4] = (byte) 0;
-                        } else {
-                            SetParams[0] = (byte) 17;
-                            SetParams[1] = (byte) progress;
-                            SetParams[2] = (byte) 0;
-                            SetParams[3] = (byte) 0;
-                            SetParams[4] = (byte) 0;
+                        byte[] SetParams = new byte[5];
+                        if (fromUser) {
+                            if (progress == 0) {
+                                SetParams[0] = (byte) 17;
+                                SetParams[1] = (byte) 0;
+                                SetParams[2] = (byte) 0;
+                                SetParams[3] = (byte) 0;
+                                SetParams[4] = (byte) 0;
+                            } else {
+                                SetParams[0] = (byte) 17;
+                                SetParams[1] = (byte) progress;
+                                SetParams[2] = (byte) 0;
+                                SetParams[3] = (byte) 0;
+                                SetParams[4] = (byte) 0;
+                            }
                         }
-                    }
-                    DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                         devicea.getDeviceAddress(), (short) 0, SetParams), devicea.getGatewayMacAddr(), devicea.getGatewayPassword(),
                                 devicea.getGatewaySSID(), ControlPanel.this));
 
-                    devicea.setCurrentParams(SetParams);
-                    DatabaseManager.getInstance().updateDevice(devicea);
-                    notifyDataSetChanged();
+                        devicea.setCurrentParams(SetParams);
+                        DatabaseManager.getInstance().updateDevice(devicea);
+                        notifyDataSetChanged();
+                    }else
+                    {
+                        RestartApp();
+                    }
                 }
 
                 @Override
@@ -244,75 +240,62 @@ public class ControlPanel extends Activity {
             switchid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    seekBar.setVisibility(View.INVISIBLE);
-                    Calendar calendar = Calendar.getInstance();
-                    List<WeekViewEvent> events = DataManager.getInstance().getevents();
-                    if (events.size() != 0) {
-                        for (int i = 0; i < events.size(); i++) {
-                            WeekViewEvent event = events.get(i);
-                            Calendar starttime = event.getStartTime();
-                            Calendar finishtime = event.getEndTime();
-                            if (calendar.after(starttime) && calendar.before(finishtime)) {
-                                ArrayList<Device> devicelist = event.getdeviceList();
-                                if (devicelist != null) {
-                                    str2 = device.getDeviceName();
-                                    Iterator<Device> firstIt = devicelist.iterator();
-                                    while (firstIt.hasNext()) {
-                                        str1 = firstIt.next().getDeviceName();
-                                        if (str1.equals(str2)) {
-                                            firstIt.remove();
-                                        }
-                                        if (devicelist.isEmpty()) {
-                                            events.remove(i);
+                    Gateway gateways = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
+                    if (gateways!=null) {
+                        seekBar.setVisibility(View.INVISIBLE);
+                        Calendar calendar = Calendar.getInstance();
+                        List<WeekViewEvent> events = DataManager.getInstance().getevents();
+                        if (events.size() != 0) {
+
+                            Iterator<WeekViewEvent> eventIterator = events.iterator();
+                            while (eventIterator.hasNext()) {
+                                WeekViewEvent event = eventIterator.next();
+                                Calendar starttime = event.getStartTime();
+                                Calendar finishtime = event.getEndTime();
+                                if (calendar.after(starttime) && calendar.before(finishtime)) {
+                                    ArrayList<Device> devicelist = event.getdeviceList();
+                                    if (devicelist != null) {
+                                        str2 = device.getDeviceName();
+                                        Iterator<Device> firstIt = devicelist.iterator();
+                                        while (firstIt.hasNext()) {
+                                            str1 = firstIt.next().getDeviceName();
+                                            if (str1.equals(str2)) {
+                                                firstIt.remove();
+                                            }
+                                            if (devicelist.isEmpty()) {
+                                                eventIterator.remove();
+                                            }
                                         }
                                     }
                                 }
-
                             }
                         }
-                    }
-                    DataManager.getInstance().setevents(events);
+                        DataManager.getInstance().setevents(events);
 
-                    if (switchid.isChecked() == true) {
-                        byte[] data;
-                        data = new byte[]{(byte) 17, (byte) 100, device.getCurrentParams()[2], (byte) 0, (byte) 0};
-                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                        device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
-                                device.getGatewaySSID(), ControlPanel.this));
-                        device.setCurrentParams(data);
-                        DatabaseManager.getInstance().updateDevice(device);
-                    } else {
-
-                        byte[] data;
-                        data = new byte[]{(byte) 17, (byte) 0, device.getCurrentParams()[2], (byte) 0, (byte) 0};
-                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                        device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
-                                device.getGatewaySSID(), ControlPanel.this));
-                        /*
-                        boolean here = true;
-                        ArrayList<Device> sameDevice = DatabaseManager.getInstance().getSameAddressDevice(device.getDeviceAddress()).getmDeviceList();
-                        for (int i = 0; i<sameDevice.size();i++)
-                        {
-                            Device devicew = sameDevice.get(i);
-                            if (DatabaseManager.getInstance().getlightingofDevice(devicew)[1]!=0 &&
-                                    !devicew.getDeviceName().equals(device.getDeviceName()))
-                            {
-                                here = false;
-                            }
-
-                        }
-                        if (here==true)
-                        {
+                        if (switchid.isChecked() == true) {
+                            byte[] data;
+                            data = new byte[]{(byte) 17, (byte) 100, device.getCurrentParams()[2], (byte) 0, (byte) 0};
                             DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                             device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                     device.getGatewaySSID(), ControlPanel.this));
-                        }
-                        */
-                        device.setCurrentParams(data);
-                        DatabaseManager.getInstance().updateDevice(device);
-                    }
-                    notifyDataSetChanged();
+                            device.setCurrentParams(data);
+                            DatabaseManager.getInstance().updateDevice(device);
+                        } else {
 
+                            byte[] data;
+                            data = new byte[]{(byte) 17, (byte) 0, device.getCurrentParams()[2], (byte) 0, (byte) 0};
+                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                            device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
+                                    device.getGatewaySSID(), ControlPanel.this));
+
+                            device.setCurrentParams(data);
+                            DatabaseManager.getInstance().updateDevice(device);
+                        }
+                        notifyDataSetChanged();
+                    }else
+                    {
+                        RestartApp();
+                    }
                 }
             });
 
@@ -326,7 +309,7 @@ public class ControlPanel extends Activity {
         }
 
         @Override
-        public Object getGroup(int groupPosition) {
+        public String getGroup(int groupPosition) {
             return groups.get(groupPosition);
         }
 
@@ -351,10 +334,9 @@ public class ControlPanel extends Activity {
 
             TextView txtTitle = (TextView) convertView.findViewById(R.id.textView);
             final EnhancedSwitch switchid = (EnhancedSwitch)convertView.findViewById(R.id.switchid);
-            final String sectorname = groups.get(groupPosition);
+            final String sectorname = getGroup(groupPosition);
             txtTitle.setText(sectorname);
             final ArrayList<Device> devicelist = sectordetail.get(sectorname);
-
             if (devicelist!=null) {
                 for (int i = 0; i < devicelist.size(); i++) {
                     Device device = devicelist.get(i);
@@ -365,8 +347,14 @@ public class ControlPanel extends Activity {
                         } else {
                             switchid.setCheckedProgrammatically(false);
                         }
+                    }else
+                    {
+                        switchid.setCheckedProgrammatically(false);
                     }
                 }
+            }else
+            {
+                switchid.setCheckedProgrammatically(false);
             }
 
             txtTitle.setOnClickListener(new View.OnClickListener() {
@@ -388,73 +376,78 @@ public class ControlPanel extends Activity {
 
                 }
             });
-
             switchid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    seekBar.setVisibility(View.INVISIBLE);
-                    Calendar calendar = Calendar.getInstance();
-                    List<WeekViewEvent> events = DataManager.getInstance().getevents();
-                    if (events.size() != 0) {
-                        for (int i = 0; i < events.size(); i++) {
-                            WeekViewEvent event = events.get(i);
-                            Calendar starttime = event.getStartTime();
-                            Calendar finishtime = event.getEndTime();
-                            if (calendar.after(starttime) && calendar.before(finishtime)) {
-                                ArrayList<Device> devicelistevent = event.getdeviceList();
-
-                                Iterator<Device> firstIt = devicelistevent.iterator();
-                                if (devicelist != null) {
-                                    while (firstIt.hasNext()) {
-                                        str1 = firstIt.next().getDeviceName();
-                                        // recreate iterator for second list
-                                        Iterator<Device> secondIt = devicelist.iterator();
-                                        while (secondIt.hasNext()) {
-                                            str2 = secondIt.next().getDeviceName();
-                                            if (str1.equals(str2)) {
-                                                firstIt.remove();
-                                            }
-                                            if (devicelistevent.isEmpty()) {
-                                                events.remove(i);
+                    Gateway gateways = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
+                    if (gateways!=null) {
+                        seekBar.setVisibility(View.INVISIBLE);
+                        Calendar calendar = Calendar.getInstance();
+                        List<WeekViewEvent> events = DataManager.getInstance().getevents();
+                        if (events.size() != 0) {
+                            Iterator<WeekViewEvent> eventIterator = events.iterator();
+                            while (eventIterator.hasNext()) {
+                                WeekViewEvent event = eventIterator.next();
+                                Calendar starttime = event.getStartTime();
+                                Calendar finishtime = event.getEndTime();
+                                if (calendar.after(starttime) && calendar.before(finishtime)) {
+                                    ArrayList<Device> devicelistevent = event.getdeviceList();
+                                    Iterator<Device> firstIt = devicelistevent.iterator();
+                                    if (devicelist != null) {
+                                        while (firstIt.hasNext()) {
+                                            str1 = firstIt.next().getDeviceName();
+                                            Iterator<Device> secondIt = devicelist.iterator();
+                                            while (secondIt.hasNext()) {
+                                                str2 = secondIt.next().getDeviceName();
+                                                if (str1.equals(str2)) {
+                                                    firstIt.remove();
+                                                }
+                                                if (devicelistevent.isEmpty()) {
+                                                    eventIterator.remove();
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    DataManager.getInstance().setevents(events);
+                        DataManager.getInstance().setevents(events);
 
-                    if (!sectorname.equals(" ")) {
-                        if (devicelist != null) {
-                            if (switchid.isChecked() == true) {
-                                for (int i = 0; i < devicelist.size(); i++) {
-                                    Device thedevice = devicelist.get(i);
-                                    byte[] data;
-                                    data = new byte[]{(byte) 17, (byte) 100, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
-                                    DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                                    thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
-                                            thedevice.getGatewaySSID(), ControlPanel.this));
-                                    thedevice.setCurrentParams(data);
-                                    DatabaseManager.getInstance().updateDevice(thedevice);
+                        if (!sectorname.equals(" ")) {
+                            if (devicelist != null) {
+                                if (switchid.isChecked() == true) {
+                                    for (int i = 0; i < devicelist.size(); i++) {
+                                        Device thedevice = devicelist.get(i);
+                                        byte[] data;
+                                        data = new byte[]{(byte) 17, (byte) 100, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
+                                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                                        thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                                thedevice.getGatewaySSID(), ControlPanel.this));
+                                        thedevice.setCurrentParams(data);
+                                        DatabaseManager.getInstance().updateDevice(thedevice);
+                                    }
+                                } else {
+                                    for (int i = 0; i < devicelist.size(); i++) {
+                                        Device thedevice = devicelist.get(i);
+                                        byte[] data;
+                                        data = new byte[]{(byte) 17, (byte) 0, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
+                                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                                        thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                                thedevice.getGatewaySSID(), ControlPanel.this));
+                                        thedevice.setCurrentParams(data);
+                                        DatabaseManager.getInstance().updateDevice(thedevice);
+                                    }
                                 }
                             } else {
-                                for (int i = 0; i < devicelist.size(); i++) {
-                                    Device thedevice = devicelist.get(i);
-                                    byte[] data;
-                                    data = new byte[]{(byte) 17, (byte) 0, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
-                                    DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                                    thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
-                                            thedevice.getGatewaySSID(), ControlPanel.this));
-                                    thedevice.setCurrentParams(data);
-                                    DatabaseManager.getInstance().updateDevice(thedevice);
-                                }
+                                switchid.setCheckedProgrammatically(false);
                             }
                         }
+                        notifyDataSetChanged();
+                    }else
+                    {
+                        RestartApp();
                     }
-                    notifyDataSetChanged();
-
                 }
             });
 
@@ -491,5 +484,29 @@ public class ControlPanel extends Activity {
             }
         }
         return null;
+    }
+
+    public void RestartApp()
+    {
+
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ControlPanel.this);
+        alertDialog.setTitle("Error");
+        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
+        alertDialog.setCancelable(false);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent mStartActivity = new Intent(getApplicationContext(), LogoActivity.class);
+                int mPendingIntentId = 123456;
+                PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+                AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                System.exit(0);
+            }
+        });
+        runOnUiThread(new Runnable() {
+            public void run() {
+                alertDialog.show();
+            }
+        });
     }
 }
