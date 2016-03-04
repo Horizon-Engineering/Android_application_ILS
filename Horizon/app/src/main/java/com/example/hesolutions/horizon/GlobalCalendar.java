@@ -69,9 +69,12 @@ public class GlobalCalendar extends Activity{
             @Override
             public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
                 // Populate the week view with some events.
+                /*
                 List<WeekViewEvent> events;
                 events = DataManager.getInstance().getevents();
-
+                */
+                List<WeekViewEvent> events;
+                events = DataManager.getInstance().getnewevents();
                 return events;
             }
 
@@ -87,33 +90,8 @@ public class GlobalCalendar extends Activity{
 
                 if (event.getName().equals(DataManager.getInstance().getUsername()))
                 {
-                    /*
-                    Intent editevent = new Intent(GlobalCalendar.this, EditEvent.class);
 
-                    Date starttime = event.getStartTime().getTime();
-                    Date endtime = event.getEndTime().getTime();
-                    ArrayList<Device> devicelist = event.getdeviceList();
-                    SimpleDateFormat date = new SimpleDateFormat("MMM dd, yyyy");
-                    SimpleDateFormat time = new SimpleDateFormat("HH:mm");
-                    System.out.println("--------------------------------------------------------------------");
-                    editevent.putExtra("eventID", Long.toString(event.getId()));
-                    editevent.putExtra("startdate", date.format(starttime));
-                    editevent.putExtra("starttime",time.format(starttime));
-                    editevent.putExtra("finishdate",date.format(endtime));
-                    editevent.putExtra("finishtime", time.format(endtime));
-                    editevent.putExtra("devicelist", devicelist);
-
-
-                    View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
-                    Bitmap bitmap = getScreenShotEdit(rootView);
-                    DataManager.getInstance().setBitmap(bitmap);
-
-                    DataManager.getInstance().setthisevent(event);
-                    ActivityStack activityStack = (ActivityStack) getParent();
-                    activityStack.push("ThirdActivity", editevent);
-
-                    */
-                    final List<WeekViewEvent> listevent = DataManager.getInstance().getevents();
+                    final List<WeekViewEvent> listevent = DataManager.getInstance().getnewevents();
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(GlobalCalendar.this.getParent());
                     alertDialog.setTitle("Warnning");
                     alertDialog.setMessage("Do you want to remove this event?");
@@ -121,7 +99,7 @@ public class GlobalCalendar extends Activity{
                         public void onClick(DialogInterface dialog, int which) {
                             CheckCurrent(event);
                             listevent.remove(event);
-                            DataManager.getInstance().setevents(listevent);
+                            DataManager.getInstance().setnewevents(listevent);
                             dialog.cancel();
                             Intent startNewActivityIntent = new Intent(getIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                             ActivityStack activityStack = (ActivityStack) getParent();
@@ -231,16 +209,6 @@ public class GlobalCalendar extends Activity{
         return bitmap;
     }
 
-
-    public static Bitmap getScreenShotEdit(View view) {
-        View screenView = view.getRootView();
-        screenView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,100,1000,
-                screenView.getDrawingCache().getHeight()-100);
-        screenView.setDrawingCacheEnabled(false);
-
-        return bitmap;
-    }
     public void CheckCurrent(WeekViewEvent event)
     {
         Calendar cur = Calendar.getInstance();

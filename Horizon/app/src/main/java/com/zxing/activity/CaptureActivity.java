@@ -93,6 +93,7 @@ public class CaptureActivity extends Activity implements Callback {
             public void onClick(View v) {
                 Intent startNewActivityIntent = new Intent(CaptureActivity.this, AdminPage.class);
                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activityadminStack.push("Admin", startNewActivityIntent);
             }
         });

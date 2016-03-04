@@ -17,8 +17,6 @@ public class TabViewAdmin extends TabActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab_view_admin);
 
-
-
         final TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
         tabHost.setup();
         TabHost.TabSpec spec;
@@ -39,7 +37,7 @@ public class TabViewAdmin extends TabActivity {
                 .setContent(intent);
         tabHost.addTab(spec);
 
-        intent = new Intent().setClass(this, HomePage.class);
+        intent = new Intent().setClass(this, EmptyActivity.class);
         spec = tabHost.newTabSpec("Logout")
                 .setIndicator("", getResources().getDrawable(R.drawable.logouticon))
                 .setContent(intent);
@@ -49,7 +47,7 @@ public class TabViewAdmin extends TabActivity {
         tabHost.setCurrentTab(0);
         getTabHost().setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             public void onTabChanged(String tabId) {
-                if (tabId == "Logout") finish();
+                if (tabId == "Logout") {finish();}
             }
         });
         for (int i = 0; i < tabHost.getTabWidget().getTabCount(); i++) {

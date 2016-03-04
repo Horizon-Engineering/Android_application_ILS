@@ -529,7 +529,7 @@ public class SysApplication extends Application {
     public void addActivity(Activity activity) {
         for (int i = 0; i < activityList.size(); i++) {
             if (activity.getComponentName().getClassName().equals(((Activity) activityList.get(i)).getComponentName().getClassName())) {
-                ((Activity) activityList.get(i)).finish();
+                //((Activity) activityList.get(i)).finish();
                 activityList.remove(i);
             }
         }

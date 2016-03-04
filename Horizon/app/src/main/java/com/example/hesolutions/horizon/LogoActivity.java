@@ -1,7 +1,10 @@
 package com.example.hesolutions.horizon;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.wifi.WifiManager;
 import com.allin.activity.action.DataStorage;
 import com.allin.activity.action.SysApplication;

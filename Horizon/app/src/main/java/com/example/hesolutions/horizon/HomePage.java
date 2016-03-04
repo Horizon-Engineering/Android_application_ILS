@@ -103,6 +103,19 @@ public class HomePage extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        new Thread(new MyRunnable())
+        {
+            @Override
+            public void run()
+            {
+                Calendar calendar = Calendar.getInstance();
+                while (calendar.get(Calendar.DAY_OF_MONTH)==1 && calendar.get(Calendar.HOUR_OF_DAY)==0
+                        && calendar.get(Calendar.MINUTE)==0 && calendar.get(Calendar.SECOND)==0 )
+                {
+                    GetNewEvent();
+                }
+            }
+        }.start();
 
         new Thread(new MyRunnable() {
             @Override
@@ -122,13 +135,7 @@ public class HomePage extends AppCompatActivity {
                         alertDialog.setCancelable(false);
                         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-
-                                Intent mStartActivity = new Intent(getApplicationContext(), LogoActivity.class);
-                                int mPendingIntentId = 123456;
-                                PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-                                AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-                                System.exit(0);
+                                Restart();
                             }
                         });
                         runOnUiThread(new Runnable() {
@@ -175,8 +182,8 @@ public class HomePage extends AppCompatActivity {
     {
         List<WeekViewEvent> events;
         Calendar calendar = Calendar.getInstance();
-        events = DataManager.getInstance().getevents();
-        if (events.size()!=0)
+        events = DataManager.getInstance().getnewevents();
+        if (events!=null)
         {
             for (int i = 0; i< events.size(); i++)
             {
@@ -251,14 +258,11 @@ public class HomePage extends AppCompatActivity {
                             DatabaseManager.getInstance().updateDevice(device);
                         }
                     }
-
-
-
                 }
 
             }
         }
-        DataManager.getInstance().setevents(events);
+        DataManager.getInstance().setnewevents(events);
     }
     public void clickHandler(View v) {
         if (!((Button) v).getText().toString().equals(" ")) {
@@ -298,12 +302,14 @@ public class HomePage extends AppCompatActivity {
                     Intent startNewActivityIntent;
                     if (code.equals("0000")) {
                         startNewActivityIntent = new Intent(HomePage.this, TabViewAdmin.class);
+                        startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         clearPinCode();
                         startActivity(startNewActivityIntent);
                     } else if (nameset != null) {
                         String Caccount = nameset.get(0);
                         String color = nameset.get(1);
                         startNewActivityIntent = new Intent(HomePage.this, TabiewForUser.class);
+                        startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         DataManager.getInstance().setUsername(Caccount);
                         DataManager.getInstance().setcolorname(color);
                         clearPinCode();
@@ -333,5 +339,34 @@ public class HomePage extends AppCompatActivity {
         radioButton4.setBackground(getResources().getDrawable(R.drawable.circledots));
     }
 
+    public void GetNewEvent()
+    {
+        List<WeekViewEvent> events = DataManager.getInstance().getevents();
+        List<WeekViewEvent> newevents = DataManager.getInstance().getnewevents();
+        if (events!=null) {
+            Calendar calendar = Calendar.getInstance();
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            for (int i = 0; i < events.size(); i++) {
+                WeekViewEvent event = events.get(i);
+                if (year == event.getStartTime().get(Calendar.YEAR) && month == event.getStartTime().get(Calendar.MONTH)) {
+                    newevents.add(event);
+                    events.remove(event);
+                }
+            }
+            DataManager.getInstance().setnewevents(newevents);
+            DataManager.getInstance().setevents(events);
+        }
+    }
 
+    public void Restart(){
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        int mPendingIntentId = 3;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
+        System.exit(0);
+    }
 }

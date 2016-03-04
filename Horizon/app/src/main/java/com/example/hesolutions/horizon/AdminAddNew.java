@@ -185,6 +185,7 @@ public class AdminAddNew extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                         ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+
                         activityadminStack.push("Admin", startNewActivityIntent);
                     }
                 });
@@ -342,6 +343,7 @@ public class AdminAddNew extends Activity {
                                 Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                                 Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                                startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
                             } else {
                                 mDevice.setDeviceName(name);
@@ -358,10 +360,25 @@ public class AdminAddNew extends Activity {
                                 Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                                 Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                                startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
                             }
                         } else {
-                            RestartApp();
+
+                            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this);
+                            alertDialog.setTitle("Error");
+                            alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
+                            alertDialog.setCancelable(false);
+                            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Restart();
+                                }
+                            });
+                            runOnUiThread(new Runnable() {
+                                public void run() {
+                                    alertDialog.show();
+                                }
+                            });
                         }
                     }
 
@@ -394,6 +411,7 @@ public class AdminAddNew extends Activity {
             public void onClick(View v) {
                 Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activityadminStack.push("Admin", startNewActivityIntent);
             }
         });
@@ -551,21 +569,20 @@ public class AdminAddNew extends Activity {
         }
 
     }
-
-    public void RestartApp()
-    {
-
+    public void Restart(){
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this);
         alertDialog.setTitle("Error");
         alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
         alertDialog.setCancelable(false);
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Intent mStartActivity = new Intent(getApplicationContext(), LogoActivity.class);
-                int mPendingIntentId = 123456;
-                PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-                AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                Intent i = getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                int mPendingIntentId = 3;
+                PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
+                AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
                 System.exit(0);
             }
         });
@@ -574,6 +591,7 @@ public class AdminAddNew extends Activity {
                 alertDialog.show();
             }
         });
+
     }
 
 }

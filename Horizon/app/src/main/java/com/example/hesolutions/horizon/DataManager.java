@@ -189,6 +189,20 @@ public class DataManager {
         return events;
     }
 
+    public List<WeekViewEvent> newevents = new ArrayList<WeekViewEvent>();
+    public List getnewevents()
+    {
+        dataupdateList(newevents, "schedule");
+        return newevents;
+    }
+
+    public List setnewevents(List<WeekViewEvent> list)
+    {
+        this.newevents = list;
+        writedata1(newevents, "schedule");
+        return newevents;
+    }
+
     public List<Long> listID = new ArrayList<Long>();
     public List getEventID()
     {
@@ -330,18 +344,12 @@ public class DataManager {
                 dir.mkdir();
             }
             File file = new File(dir, filename);
-
             try {
-
-
                 FileOutputStream fos = new FileOutputStream(file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
-
                 oos.writeObject(list);
-
                 oos.flush();
             } catch (FileNotFoundException e) {
-
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();

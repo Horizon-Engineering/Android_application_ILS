@@ -20,6 +20,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
@@ -73,11 +74,12 @@ public class ControlPanel extends Activity {
     ExpandListAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control_panel);
         seekBar = (EnhancedSeekBar)findViewById(R.id.seekBar);
         imageViewroomlayout = (ImageView)findViewById(R.id.imageViewroomlayout);
-
+        DatabaseManager.getInstance().addDevice(null, null);
         if (sector.get(username)==null) {}
         else
         {
@@ -167,7 +169,7 @@ public class ControlPanel extends Activity {
                     Gateway gateways = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
                     if (gateways!=null) {
                         Calendar calendar = Calendar.getInstance();
-                        List<WeekViewEvent> events = DataManager.getInstance().getevents();
+                        List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
                         Device devicea = DataManager.getInstance().getthedevice();
                         if (events.size() != 0) {
 
@@ -194,7 +196,7 @@ public class ControlPanel extends Activity {
                                 }
                             }
                         }
-                        DataManager.getInstance().setevents(events);
+                        DataManager.getInstance().setnewevents(events);
 
                         byte[] SetParams = new byte[5];
                         if (fromUser) {
@@ -221,7 +223,21 @@ public class ControlPanel extends Activity {
                         notifyDataSetChanged();
                     }else
                     {
-                        RestartApp();
+
+                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ControlPanel.this);
+                        alertDialog.setTitle("Error");
+                        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
+                        alertDialog.setCancelable(false);
+                        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Restart();
+                            }
+                        });
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                alertDialog.show();
+                            }
+                        });
                     }
                 }
 
@@ -244,7 +260,7 @@ public class ControlPanel extends Activity {
                     if (gateways!=null) {
                         seekBar.setVisibility(View.INVISIBLE);
                         Calendar calendar = Calendar.getInstance();
-                        List<WeekViewEvent> events = DataManager.getInstance().getevents();
+                        List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
                         if (events.size() != 0) {
 
                             Iterator<WeekViewEvent> eventIterator = events.iterator();
@@ -270,7 +286,7 @@ public class ControlPanel extends Activity {
                                 }
                             }
                         }
-                        DataManager.getInstance().setevents(events);
+                        DataManager.getInstance().setnewevents(events);
 
                         if (switchid.isChecked() == true) {
                             byte[] data;
@@ -294,7 +310,21 @@ public class ControlPanel extends Activity {
                         notifyDataSetChanged();
                     }else
                     {
-                        RestartApp();
+
+                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ControlPanel.this);
+                        alertDialog.setTitle("Error");
+                        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
+                        alertDialog.setCancelable(false);
+                        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Restart();
+                            }
+                        });
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                alertDialog.show();
+                            }
+                        });
                     }
                 }
             });
@@ -383,7 +413,7 @@ public class ControlPanel extends Activity {
                     if (gateways!=null) {
                         seekBar.setVisibility(View.INVISIBLE);
                         Calendar calendar = Calendar.getInstance();
-                        List<WeekViewEvent> events = DataManager.getInstance().getevents();
+                        List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
                         if (events.size() != 0) {
                             Iterator<WeekViewEvent> eventIterator = events.iterator();
                             while (eventIterator.hasNext()) {
@@ -412,7 +442,7 @@ public class ControlPanel extends Activity {
                             }
                         }
 
-                        DataManager.getInstance().setevents(events);
+                        DataManager.getInstance().setnewevents(events);
 
                         if (!sectorname.equals(" ")) {
                             if (devicelist != null) {
@@ -446,7 +476,21 @@ public class ControlPanel extends Activity {
                         notifyDataSetChanged();
                     }else
                     {
-                        RestartApp();
+
+                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ControlPanel.this);
+                        alertDialog.setTitle("Error");
+                        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
+                        alertDialog.setCancelable(false);
+                        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Restart();
+                            }
+                        });
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                alertDialog.show();
+                            }
+                        });
                     }
                 }
             });
@@ -485,21 +529,20 @@ public class ControlPanel extends Activity {
         }
         return null;
     }
-
-    public void RestartApp()
-    {
-
+    public void Restart(){
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ControlPanel.this);
         alertDialog.setTitle("Error");
         alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
         alertDialog.setCancelable(false);
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Intent mStartActivity = new Intent(getApplicationContext(), LogoActivity.class);
-                int mPendingIntentId = 123456;
-                PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-                AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+                Intent i = getBaseContext().getPackageManager()
+                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                int mPendingIntentId = 3;
+                PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
+                AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
                 System.exit(0);
             }
         });
@@ -508,5 +551,6 @@ public class ControlPanel extends Activity {
                 alertDialog.show();
             }
         });
+
     }
 }

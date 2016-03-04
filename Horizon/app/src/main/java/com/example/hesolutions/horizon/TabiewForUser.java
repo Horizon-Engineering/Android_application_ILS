@@ -19,8 +19,6 @@ public class TabiewForUser extends TabActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabiew_for_user);
 
-
-
         final TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
         TextView textview14 = (TextView)findViewById(R.id.textView14);
         tabHost.setup();
@@ -44,7 +42,8 @@ public class TabiewForUser extends TabActivity {
                 .setContent(intent);
         tabHost.addTab(spec);
 
-        intent = new Intent().setClass(this, HomePage.class);
+        intent = new Intent().setClass(this, EmptyActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         spec = tabHost.newTabSpec("Logout")
                 .setIndicator("", getResources().getDrawable(R.drawable.logouticon))
                 .setContent(intent);
@@ -53,8 +52,9 @@ public class TabiewForUser extends TabActivity {
         //set tab which one you want open first time 0 or 1 or 2
         tabHost.setCurrentTab(0);
         getTabHost().setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
             public void onTabChanged(String tabId) {
-                if (tabId == "Logout") finish();
+                if (tabId == "Logout") {finish();}
             }
         });
         for (int i = 0; i < tabHost.getTabWidget().getTabCount(); i++) {
@@ -62,6 +62,5 @@ public class TabiewForUser extends TabActivity {
             tabHost.getTabWidget().getChildAt(i).getLayoutParams().width= 150;
         }
     }
-
 
 }

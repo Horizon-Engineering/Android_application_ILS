@@ -45,13 +45,7 @@ import com.mylibrary.WeekViewEvent;
 import com.google.common.collect.BiMap;
 import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.text.DateFormat;
+import com.example.hesolutions.horizon.HomePage;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -273,7 +267,7 @@ public class CalendarTask extends Activity {
             long oldid;
             final List<WeekViewEvent> list = DataManager.getInstance().getevents();
             final List<Long> IDlist = DataManager.getInstance().getEventID();
-
+            final List<WeekViewEvent> newlist = DataManager.getInstance().getnewevents();
             @Override
             public void onClick(final View v) {
                 final ArrayList<Device> choosedevice = new ArrayList<Device>();
@@ -307,6 +301,7 @@ public class CalendarTask extends Activity {
                                     }
                                     final AtomicLong counter = new AtomicLong(oldid);
                                     Thread[] threads = new Thread[7];
+
                                     for (int i = 0; i < weeks; i++) {
                                         final int j = i;
                                         threads[0] = new Thread()
@@ -315,7 +310,6 @@ public class CalendarTask extends Activity {
                                             {
                                                 if (Monday.isChecked()) {
                                                     long id = counter.incrementAndGet();
-                                                    System.out.println(" Monday is called at " + j + " week ******************* id is "  + id);
                                                     Calendar MonSt = Calendar.getInstance(), MonFi = Calendar.getInstance();
                                                     MonSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
                                                     MonSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
@@ -332,7 +326,13 @@ public class CalendarTask extends Activity {
                                                     MonFi.add(Calendar.DAY_OF_MONTH, date);
                                                     WeekViewEvent event;
                                                     event = new WeekViewEvent(id, cname, MonSt, MonFi, colorName, choosedevice);
-                                                    list.add(event);
+                                                    if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
+                                                            && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
+                                                        System.out.println(newlist.size() + "***********MONDAY");
+                                                        newlist.add(event);
+                                                    }else {
+                                                        list.add(event);
+                                                    }
                                                     IDlist.add(id);
                                                 }
                                             }
@@ -344,7 +344,6 @@ public class CalendarTask extends Activity {
                                             {
                                                 if (Tuesday.isChecked()) {
                                                     long id = counter.incrementAndGet();
-                                                    System.out.println(" Tuesday is called at " + j + " week ******************* id is "  + id);
                                                     Calendar TueSt = Calendar.getInstance(), TusFi = Calendar.getInstance();
                                                     TueSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
                                                     TueSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
@@ -361,7 +360,12 @@ public class CalendarTask extends Activity {
                                                     TusFi.add(Calendar.DAY_OF_MONTH, date);
                                                     WeekViewEvent event;
                                                     event = new WeekViewEvent(id, cname, TueSt, TusFi, colorName, choosedevice);
-                                                    list.add(event);
+                                                    if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
+                                                            && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
+                                                        newlist.add(event);
+                                                    }else {
+                                                        list.add(event);
+                                                    }
                                                     IDlist.add(id);
 
                                                 }
@@ -376,7 +380,6 @@ public class CalendarTask extends Activity {
                                             {
                                                 if (Wednesday.isChecked()) {
                                                     long id = counter.incrementAndGet();
-                                                    System.out.println(" Wednesday is called at " + j + " week ******************* id is "  + id);
                                                     Calendar WedSt = Calendar.getInstance(), WedFi = Calendar.getInstance();
                                                     WedSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
                                                     WedSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
@@ -393,7 +396,12 @@ public class CalendarTask extends Activity {
                                                     WedFi.add(Calendar.DAY_OF_MONTH, date);
                                                     WeekViewEvent event;
                                                     event = new WeekViewEvent(id, cname, WedSt, WedFi, colorName, choosedevice);
-                                                    list.add(event);
+                                                    if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
+                                                            && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
+                                                        newlist.add(event);
+                                                    }else {
+                                                        list.add(event);
+                                                    }
                                                     IDlist.add(id);
 
                                                 }
@@ -407,7 +415,6 @@ public class CalendarTask extends Activity {
                                             {
                                                 if (Thursday.isChecked()) {
                                                     long id = counter.incrementAndGet();
-                                                    System.out.println(" Thursday is called at " + j + " week ******************* id is "  + id);
                                                     Calendar ThuSt = Calendar.getInstance(), ThuFi = Calendar.getInstance();
                                                     ThuSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
                                                     ThuSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
@@ -424,7 +431,12 @@ public class CalendarTask extends Activity {
                                                     ThuFi.add(Calendar.DAY_OF_MONTH, date);
                                                     WeekViewEvent event;
                                                     event = new WeekViewEvent(id, cname, ThuSt, ThuFi, colorName, choosedevice);
-                                                    list.add(event);
+                                                    if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
+                                                            && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
+                                                        newlist.add(event);
+                                                    }else {
+                                                        list.add(event);
+                                                    }
                                                     IDlist.add(id);
                                                 }
                                             }
@@ -438,7 +450,6 @@ public class CalendarTask extends Activity {
                                             {
                                                 if (Friday.isChecked()) {
                                                     long id = counter.incrementAndGet();
-                                                    System.out.println(" Friday is called at " + j + " week ******************* id is "  + id);
                                                     Calendar FriSt = Calendar.getInstance(), FriFi = Calendar.getInstance();
                                                     FriSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
                                                     FriSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
@@ -455,7 +466,12 @@ public class CalendarTask extends Activity {
                                                     FriFi.add(Calendar.DAY_OF_MONTH, date);
                                                     WeekViewEvent event;
                                                     event = new WeekViewEvent(id, cname, FriSt, FriFi, colorName, choosedevice);
-                                                    list.add(event);
+                                                    if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
+                                                            && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
+                                                        newlist.add(event);
+                                                    }else {
+                                                        list.add(event);
+                                                    }
                                                     IDlist.add(id);
                                                 }
                                             }
@@ -468,7 +484,6 @@ public class CalendarTask extends Activity {
                                             {
                                                 if (Saturday.isChecked()) {
                                                     long id = counter.incrementAndGet();
-                                                    System.out.println(" Satursay is called at " + j + " week ******************* id is "  + id);
                                                     Calendar SatSt = Calendar.getInstance(), SatFi = Calendar.getInstance();
                                                     SatSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
                                                     SatSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
@@ -486,7 +501,12 @@ public class CalendarTask extends Activity {
                                                     SatFi.add(Calendar.DAY_OF_MONTH, date);
                                                     WeekViewEvent event;
                                                     event = new WeekViewEvent(id, cname, SatSt, SatFi, colorName, choosedevice);
-                                                    list.add(event);
+                                                    if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
+                                                            && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
+                                                        newlist.add(event);
+                                                    }else {
+                                                        list.add(event);
+                                                    }
                                                     IDlist.add(id);
                                                 }
                                             }
@@ -500,7 +520,6 @@ public class CalendarTask extends Activity {
                                             {
                                                 if (Sunday.isChecked()) {
                                                     long id = counter.incrementAndGet();
-                                                    System.out.println(" Sunday is called at " + j + " week ******************* id is "  + id);
                                                     Calendar SunSt = Calendar.getInstance(), SunFi = Calendar.getInstance();
                                                     SunSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
                                                     SunSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
@@ -518,14 +537,17 @@ public class CalendarTask extends Activity {
                                                     SunFi.add(Calendar.DAY_OF_MONTH, date);
                                                     WeekViewEvent event;
                                                     event = new WeekViewEvent(id, cname, SunSt, SunFi, colorName, choosedevice);
-                                                    list.add(event);
+                                                    if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
+                                                            && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
+                                                        newlist.add(event);
+                                                    }else {
+                                                        list.add(event);
+                                                    }
                                                     IDlist.add(id);
                                                 }
                                             }
                                         };
                                         threads[6].start();
-
-
                                     }
 
                                     for (Thread thread:threads) {
@@ -536,9 +558,12 @@ public class CalendarTask extends Activity {
                                         }
 
                                     }
-                                    System.out.println(IDlist.toString() + "**********************************************");
+
                                     DataManager.getInstance().setEventID(IDlist);
                                     DataManager.getInstance().setevents(list);
+                                    DataManager.getInstance().setnewevents(newlist);
+                                    System.out.println("old" + list.size() + "*********************");
+                                    System.out.println("new" + newlist.size() + "***********************");
                                     finish();
 
                                 } else {
@@ -573,10 +598,17 @@ public class CalendarTask extends Activity {
                                 id = IDlist.get((IDlist.size() - 1)) + 1;
                             }
                             WeekViewEvent event = new WeekViewEvent(id, cname, startTime, finishTime, colorName, choosedevice);
-                            list.add(event);
+                            int year = Calendar.getInstance().get(Calendar.YEAR);
+                            int month = Calendar.getInstance().get(Calendar.MONTH);
+                            if (year == event.getStartTime().get(Calendar.YEAR) && month == event.getStartTime().get(Calendar.MONTH)) {
+                                newlist.add(event);
+                            }else {
+                                list.add(event);
+                            }
                             IDlist.add(id);
                             DataManager.getInstance().setevents(list);
                             DataManager.getInstance().setEventID(IDlist);
+                            DataManager.getInstance().setnewevents(newlist);
                             finish();
                         } else {
                             runOnUiThread(new Runnable() {
@@ -797,5 +829,4 @@ public class CalendarTask extends Activity {
         }
 
     }
-
 }
