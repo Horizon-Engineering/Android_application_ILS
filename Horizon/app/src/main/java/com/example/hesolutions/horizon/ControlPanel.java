@@ -79,22 +79,21 @@ public class ControlPanel extends Activity {
         setContentView(R.layout.activity_control_panel);
         seekBar = (EnhancedSeekBar)findViewById(R.id.seekBar);
         imageViewroomlayout = (ImageView)findViewById(R.id.imageViewroomlayout);
-        DatabaseManager.getInstance().addDevice(null, null);
-        if (sector.get(username)==null) {}
-        else
-        {
+        //DatabaseManager.getInstance().addDevice(null, null);
+
+        if (sector.get(username) == null) {
+        } else {
             for (Map.Entry<String, ArrayList> entry : sectordetail.entrySet()) {
                 sectorArray.add(entry.getKey());
             }
 
-            if (sectorArray.isEmpty()||sectorArray.size()==0){}
-            else{
+            if (sectorArray.isEmpty() || sectorArray.size() == 0) {
+            } else {
                 adapter = new ExpandListAdapter(this, sectorArray);
                 ExpandableListView sectorListView = (ExpandableListView) findViewById(R.id.sectorListViewId);
                 sectorListView.setAdapter(adapter);
             }
         }
-
     }
 
     public class ExpandListAdapter extends BaseExpandableListAdapter {
@@ -166,8 +165,9 @@ public class ControlPanel extends Activity {
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    Gateway gateways = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
-                    if (gateways!=null) {
+                    Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
+                    if (gateway!=null) {
+                        seekBar.setEnabled(true);
                         Calendar calendar = Calendar.getInstance();
                         List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
                         Device devicea = DataManager.getInstance().getthedevice();
@@ -223,21 +223,8 @@ public class ControlPanel extends Activity {
                         notifyDataSetChanged();
                     }else
                     {
-
-                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ControlPanel.this);
-                        alertDialog.setTitle("Error");
-                        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
-                        alertDialog.setCancelable(false);
-                        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Restart();
-                            }
-                        });
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                alertDialog.show();
-                            }
-                        });
+                        Restart();
+                        seekBar.setEnabled(false);
                     }
                 }
 
@@ -256,8 +243,8 @@ public class ControlPanel extends Activity {
             switchid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Gateway gateways = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
-                    if (gateways!=null) {
+                    Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
+                    if (gateway!=null) {
                         seekBar.setVisibility(View.INVISIBLE);
                         Calendar calendar = Calendar.getInstance();
                         List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
@@ -310,21 +297,7 @@ public class ControlPanel extends Activity {
                         notifyDataSetChanged();
                     }else
                     {
-
-                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ControlPanel.this);
-                        alertDialog.setTitle("Error");
-                        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
-                        alertDialog.setCancelable(false);
-                        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Restart();
-                            }
-                        });
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                alertDialog.show();
-                            }
-                        });
+                        Restart();
                     }
                 }
             });
@@ -354,7 +327,7 @@ public class ControlPanel extends Activity {
         }
 
         @Override
-        public View getGroupView(final int groupPosition,final boolean isExpanded,
+        public View getGroupView(final int groupPosition, final boolean isExpanded,
                                  View convertView, final ViewGroup parent) {
             if (convertView == null) {
                 LayoutInflater inf = (LayoutInflater) context
@@ -409,8 +382,8 @@ public class ControlPanel extends Activity {
             switchid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    Gateway gateways = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
-                    if (gateways!=null) {
+                    Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
+                    if (gateway!=null) {
                         seekBar.setVisibility(View.INVISIBLE);
                         Calendar calendar = Calendar.getInstance();
                         List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
@@ -434,6 +407,7 @@ public class ControlPanel extends Activity {
                                                 }
                                                 if (devicelistevent.isEmpty()) {
                                                     eventIterator.remove();
+                                                    break;
                                                 }
                                             }
                                         }
@@ -450,6 +424,7 @@ public class ControlPanel extends Activity {
                                     for (int i = 0; i < devicelist.size(); i++) {
                                         Device thedevice = devicelist.get(i);
                                         byte[] data;
+                                        System.out.println(thedevice.getDeviceName() + "************************ON");
                                         data = new byte[]{(byte) 17, (byte) 100, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
                                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                                         thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
@@ -460,6 +435,7 @@ public class ControlPanel extends Activity {
                                 } else {
                                     for (int i = 0; i < devicelist.size(); i++) {
                                         Device thedevice = devicelist.get(i);
+                                        System.out.println(thedevice.getDeviceName() + "************************OFF");
                                         byte[] data;
                                         data = new byte[]{(byte) 17, (byte) 0, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
                                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
@@ -476,21 +452,7 @@ public class ControlPanel extends Activity {
                         notifyDataSetChanged();
                     }else
                     {
-
-                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ControlPanel.this);
-                        alertDialog.setTitle("Error");
-                        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
-                        alertDialog.setCancelable(false);
-                        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Restart();
-                            }
-                        });
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-                                alertDialog.show();
-                            }
-                        });
+                        Restart();
                     }
                 }
             });
@@ -530,27 +492,21 @@ public class ControlPanel extends Activity {
         return null;
     }
     public void Restart(){
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ControlPanel.this);
-        alertDialog.setTitle("Error");
-        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
-        alertDialog.setCancelable(false);
-        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(ControlPanel.this);
+        builder.setTitle("Error");
+        builder.setMessage("Gateway Error, please connect the wifi and press OK");
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Intent i = getBaseContext().getPackageManager()
-                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                int mPendingIntentId = 3;
-                PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
-                AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
-                System.exit(0);
+                dialog.cancel();
+                Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
+                if (gateway!=null) seekBar.setEnabled(true);
             }
         });
-        runOnUiThread(new Runnable() {
-            public void run() {
-                alertDialog.show();
-            }
-        });
+        AlertDialog myAlertDialog = builder.create();
+        if (myAlertDialog != null && !myAlertDialog.isShowing()) {
+            myAlertDialog.show();
+        }
 
     }
 }

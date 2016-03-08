@@ -123,28 +123,35 @@ public class HomePage extends AppCompatActivity {
                 try {
                     Gateway gateways = SysApplication.getInstance().getCurrGateway(HomePage.this);
                     while(gateways!=null){
-                        MakeAlert();
-                        Thread.sleep(5*1000);
+                            MakeAlert();
+                            Thread.sleep(5 * 1000);
                     }
+
                     if (gateways==null)
                     {
-
-                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(HomePage.this);
-                        alertDialog.setTitle("Error");
-                        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
-                        alertDialog.setCancelable(false);
-                        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                Restart();
-                            }
-                        });
                         runOnUiThread(new Runnable() {
+                            @Override
                             public void run() {
+                                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(HomePage.this);
+                                alertDialog.setTitle("Error");
+                                alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
+                                alertDialog.setCancelable(false);
+                                alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent i = getBaseContext().getPackageManager()
+                                                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        int mPendingIntentId = 3;
+                                        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
+                                        AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                                        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
+                                        System.exit(0);
+                                    }
+                                });
                                 alertDialog.show();
                             }
                         });
                     }
-
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -161,11 +168,9 @@ public class HomePage extends AppCompatActivity {
             // check if it's run in main thread, or background thread
             if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
                 //in main thread
-
             } else {
                 //in background thread
                 runOnUiThread(new Runnable() {
-
                     @Override
                     public void run() {
 
@@ -191,10 +196,7 @@ public class HomePage extends AppCompatActivity {
                 ArrayList<Device> devicelist = event.getdeviceList();
                 Calendar starttime = event.getStartTime();
                 Calendar finishtime = event.getEndTime();
-                if (calendar.after(finishtime))
-                {
-                    events.remove(i);
-                }
+
                 if (calendar.before(finishtime)&&calendar.after(starttime))
                 {
                     for (int j = 0; j <devicelist.size(); j++)
@@ -304,10 +306,14 @@ public class HomePage extends AppCompatActivity {
                         startNewActivityIntent = new Intent(HomePage.this, TabViewAdmin.class);
                         startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         clearPinCode();
+                        code = "";
+                        jump = false;
                         startActivity(startNewActivityIntent);
                     } else if (nameset != null) {
                         String Caccount = nameset.get(0);
                         String color = nameset.get(1);
+                        code = "";
+                        jump = false;
                         startNewActivityIntent = new Intent(HomePage.this, TabiewForUser.class);
                         startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         DataManager.getInstance().setUsername(Caccount);
@@ -317,8 +323,8 @@ public class HomePage extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), "Password does not match any account", Toast.LENGTH_LONG).show();
                         clearPinCode();
+                        code = "";
                         jump = false;
-
                     }
                 }
             }, 300);
@@ -346,10 +352,10 @@ public class HomePage extends AppCompatActivity {
         if (events!=null) {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
             for (int i = 0; i < events.size(); i++) {
                 WeekViewEvent event = events.get(i);
-                if (year == event.getStartTime().get(Calendar.YEAR) && month == event.getStartTime().get(Calendar.MONTH)) {
+                int diffdate = Math.abs(calendar.get(Calendar.DAY_OF_YEAR) - event.getStartTime().get(Calendar.DAY_OF_YEAR));
+                if (year == event.getStartTime().get(Calendar.YEAR) && diffdate < 15) {
                     newevents.add(event);
                     events.remove(event);
                 }
@@ -359,14 +365,4 @@ public class HomePage extends AppCompatActivity {
         }
     }
 
-    public void Restart(){
-        Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage(getBaseContext().getPackageName());
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-        int mPendingIntentId = 3;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
-        System.exit(0);
-    }
 }

@@ -14,7 +14,7 @@ import java.util.Stack;
  */
 public class ActivityStack extends ActivityGroup {
 
-    private Stack<String> stack;
+    public Stack<String> stack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +53,11 @@ public class ActivityStack extends ActivityGroup {
             Window newWindow = manager.startActivity(stack.peek(), lastIntent);
             setContentView(newWindow.getDecorView());
         }
+    }
+
+    public String popid(){
+        String manager = getLocalActivityManager().getActivity(stack.peek()).getComponentName().getClassName();
+        return manager;
     }
 
 }

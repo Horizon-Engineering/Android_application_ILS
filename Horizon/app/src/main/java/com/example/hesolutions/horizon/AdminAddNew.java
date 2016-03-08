@@ -364,21 +364,7 @@ public class AdminAddNew extends Activity {
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
                             }
                         } else {
-
-                            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this);
-                            alertDialog.setTitle("Error");
-                            alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
-                            alertDialog.setCancelable(false);
-                            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Restart();
-                                }
-                            });
-                            runOnUiThread(new Runnable() {
-                                public void run() {
-                                    alertDialog.show();
-                                }
-                            });
+                            Restart();
                         }
                     }
 
@@ -443,7 +429,7 @@ public class AdminAddNew extends Activity {
                             if (sectordetail.get(SectorName)!=null)
                             {
                                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this.getParent());
-                                alertDialog.setTitle("Warnning");
+                                alertDialog.setTitle("Warning");
                                 alertDialog.setMessage("Do you want to overwrite the sector?");
                                 alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
@@ -576,14 +562,7 @@ public class AdminAddNew extends Activity {
         alertDialog.setCancelable(false);
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                Intent i = getBaseContext().getPackageManager()
-                        .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                int mPendingIntentId = 3;
-                PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
-                AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
-                System.exit(0);
+                dialog.cancel();
             }
         });
         runOnUiThread(new Runnable() {

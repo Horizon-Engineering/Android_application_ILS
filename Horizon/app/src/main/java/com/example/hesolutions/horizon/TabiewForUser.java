@@ -1,8 +1,14 @@
 package com.example.hesolutions.horizon;
 
+import android.app.AlertDialog;
+import android.app.LocalActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TabHost;
@@ -11,7 +17,6 @@ import android.widget.TabWidget;
 import android.widget.TextView;
 
 public class TabiewForUser extends TabActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -54,13 +59,48 @@ public class TabiewForUser extends TabActivity {
         getTabHost().setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
             public void onTabChanged(String tabId) {
-                if (tabId == "Logout") {finish();}
+                if (tabId == "Logout") {
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    finish();
+                }
             }
         });
         for (int i = 0; i < tabHost.getTabWidget().getTabCount(); i++) {
             tabHost.getTabWidget().getChildAt(i).getLayoutParams().height = 100;
             tabHost.getTabWidget().getChildAt(i).getLayoutParams().width= 150;
+
         }
+
+        tabHost.getTabWidget().getChildTabViewAt(2).setOnTouchListener(onClickListener);
+        tabHost.getTabWidget().getChildTabViewAt(1).setOnTouchListener(onClickListener);
+
     }
+
+    private View.OnTouchListener onClickListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            int action = event.getAction();
+            if (action == MotionEvent.ACTION_DOWN) {
+                String s = DataManager.getInstance().getactivity();
+                if (s != null) {
+                    if (s.equals("com.example.hesolutions.horizon.CalendarTask")) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(TabiewForUser.this);
+                        builder.setTitle("Warning");
+                        builder.setMessage("Save first!");
+                        builder.setCancelable(false);
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        builder.show();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    };
+
 
 }

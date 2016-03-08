@@ -9,18 +9,21 @@
         android:id="@+id/relativeblur"
         android:layout_width="820dp"
         android:layout_height="wrap_content">
+
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/imageView"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"/>
+
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toEndOf="@+id/relativeblur"
         android:layout_marginLeft="20dp"
+        android:background="@color/backgroundcolor"
         >
 
         <TextView

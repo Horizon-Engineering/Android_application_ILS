@@ -47,7 +47,10 @@ public class TabViewAdmin extends TabActivity {
         tabHost.setCurrentTab(0);
         getTabHost().setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             public void onTabChanged(String tabId) {
-                if (tabId == "Logout") {finish();}
+                if (tabId == "Logout") {
+                    overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+                    finish();
+                }
             }
         });
         for (int i = 0; i < tabHost.getTabWidget().getTabCount(); i++) {

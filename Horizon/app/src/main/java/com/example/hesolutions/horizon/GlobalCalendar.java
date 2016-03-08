@@ -23,8 +23,10 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.allin.activity.action.SysApplication;
 import com.homa.hls.database.DatabaseManager;
 import com.homa.hls.database.Device;
+import com.homa.hls.database.Gateway;
 import com.homa.hls.datadeal.DevicePacket;
 import com.homa.hls.datadeal.Message;
 import com.homa.hls.socketconn.DeviceSocket;
@@ -90,20 +92,25 @@ public class GlobalCalendar extends Activity{
 
                 if (event.getName().equals(DataManager.getInstance().getUsername()))
                 {
-
+                    final Gateway gateways = SysApplication.getInstance().getCurrGateway(GlobalCalendar.this);
                     final List<WeekViewEvent> listevent = DataManager.getInstance().getnewevents();
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(GlobalCalendar.this.getParent());
                     alertDialog.setTitle("Warnning");
                     alertDialog.setMessage("Do you want to remove this event?");
                     alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            CheckCurrent(event);
-                            listevent.remove(event);
-                            DataManager.getInstance().setnewevents(listevent);
-                            dialog.cancel();
-                            Intent startNewActivityIntent = new Intent(getIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-                            ActivityStack activityStack = (ActivityStack) getParent();
-                            activityStack.push("AdminAddNew", startNewActivityIntent);
+                            if (gateways!=null) {
+                                CheckCurrent(event);
+                                listevent.remove(event);
+                                DataManager.getInstance().setnewevents(listevent);
+                                dialog.cancel();
+                                Intent startNewActivityIntent = new Intent(getIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                                ActivityStack activityStack = (ActivityStack) getParent();
+                                activityStack.push("RemoveEvent", startNewActivityIntent);
+                            }else
+                            {
+                                Toast.makeText(GlobalCalendar.this, "Gateway Error, please check the gateway and then try again!", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
                     alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -156,10 +163,18 @@ public class GlobalCalendar extends Activity{
                 View rootView = getWindow().getDecorView().findViewById(android.R.id.content);
                 Bitmap bitmap = getScreenShot(rootView);
                 DataManager.getInstance().setBitmap(bitmap);
+
                 Intent startNewActivityIntent = new Intent(GlobalCalendar.this, CalendarTask.class);
+                startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 ActivityStack activityStack = (ActivityStack) getParent();
                 activityStack.push("SecondActivity", startNewActivityIntent);
+                DataManager.getInstance().setactivity(activityStack.popid());
 
+                /*
+                Intent startNewActivityIntent = new Intent(GlobalCalendar.this, CalendarTask.class);
+                startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(startNewActivityIntent);
+                */
             }
         });
 

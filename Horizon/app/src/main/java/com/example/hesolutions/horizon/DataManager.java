@@ -173,6 +173,16 @@ public class DataManager {
         return event;
     }
 
+    public String popactivity;
+    public String getactivity()
+    {
+        return popactivity;
+    }
+    public String setactivity(String s)
+    {
+        this.popactivity = s;
+        return popactivity;
+    }
     //==================================Arraylist for calendar events====================
 
     public List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();

@@ -89,7 +89,7 @@ public class WeekView extends View {
     private int mDefaultEventColor;
 
     // Attributes and their default values.
-    private int mHourHeight = 50;
+    private int mHourHeight = 24;
     private int mNewHourHeight = -1;
     private int mMinHourHeight = 0; //no minimum specified (will be dynamic, based on screen)
     private int mEffectiveMinHourHeight = mMinHourHeight; //compensates for the fact that you can't keep zooming out.
@@ -475,6 +475,10 @@ public class WeekView extends View {
         mWidthPerDay = mWidthPerDay/mNumberOfVisibleDays;
 
         Calendar today = today();
+        if (mNumberOfVisibleDays ==7) {
+            int diff = today.get(Calendar.DAY_OF_WEEK);
+            today.add(Calendar.DAY_OF_WEEK, -diff +1);
+        }
 
         if (mAreDimensionsInvalid) {
             mEffectiveMinHourHeight= Math.max(mMinHourHeight, (int) ((getHeight() - mHeaderTextHeight - mHeaderRowPadding * 2 - mHeaderMarginBottom) / 24));
@@ -532,6 +536,11 @@ public class WeekView extends View {
         // Prepare to iterate for each day.
         Calendar day = (Calendar) today.clone();
         day.add(Calendar.HOUR, 6);
+        if (mNumberOfVisibleDays ==7) {
+            int diff = day.get(Calendar.DAY_OF_WEEK);
+            day.add(Calendar.DAY_OF_WEEK, -diff +1);
+        }
+
 
         // Prepare to iterate for each hour to draw the hour lines.
         int lineCount = (int) ((getHeight() - mHeaderTextHeight - mHeaderRowPadding * 2 -
@@ -1193,7 +1202,7 @@ public class WeekView extends View {
                     calendar.set(Calendar.MINUTE, 0);
 
                     try {
-                        SimpleDateFormat sdf = DateFormat.is24HourFormat(getContext()) ? new SimpleDateFormat("HH:mm", Locale.getDefault()) : new SimpleDateFormat("hh a", Locale.getDefault());
+                        SimpleDateFormat sdf = DateFormat.is24HourFormat(getContext()) ? new SimpleDateFormat("HH:mm", Locale.getDefault()) : new SimpleDateFormat("HH:mm", Locale.getDefault());
                         return sdf.format(calendar.getTime());
                     } catch (Exception e) {
                         e.printStackTrace();

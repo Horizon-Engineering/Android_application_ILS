@@ -32,9 +32,9 @@ public class LogoActivity extends Activity {
         DataStorage.getInstance(this).putInt("scene_gridview_item", -1);
 
         try {
-
             SysApplication.getInstance().openwifi(this);
             SysApplication.getInstance();
+
             if (SysApplication.mDatagramSocket != null)
             {
                 SysApplication.getInstance();
@@ -42,31 +42,27 @@ public class LogoActivity extends Activity {
                     System.out.println("**** mDatagramSocket is connected");
                 }
             }
-            else
-            {
+            else {
                 SysApplication.getInstance();
                 if (SysApplication.mDatagramSocket == null) {
                     SysApplication.mDatagramSocket = new DatagramSocket();
                 }
-
                 DatabaseManager.getInstance().DatabaseInit(this);
                 UserSession.getInstance().init(this);
                 DeviceSocket.getInstance().init(this);
 
                 byte[] i = SysApplication._getTimeFromCurrentTo();
                 byte[] arrayOfByte1 = new byte[6];
-                arrayOfByte1[0] = ((byte)(i[0] >> 24));
-                arrayOfByte1[1] = ((byte)(i[1] >> 16));
-                arrayOfByte1[2] = ((byte)(i[2] >> 8));
-                arrayOfByte1[3] = ((byte)(i[3] & 0xFF));
+                arrayOfByte1[0] = ((byte) (i[0] >> 24));
+                arrayOfByte1[1] = ((byte) (i[1] >> 16));
+                arrayOfByte1[2] = ((byte) (i[2] >> 8));
+                arrayOfByte1[3] = ((byte) (i[3] & 0xFF));
                 int rowOffset = TimeZone.getDefault().getRawOffset() / 60000;
-                arrayOfByte1[4] = ((byte)(rowOffset / 60));
-                arrayOfByte1[5] = ((byte)(rowOffset % 60));
+                arrayOfByte1[4] = ((byte) (rowOffset / 60));
+                arrayOfByte1[5] = ((byte) (rowOffset % 60));
                 byte[] arrayOfByte2 = SysApplication.getInstance().getWifiSSID(this);
-                if ((arrayOfByte2 != null) || (SysApplication.getInstance().isNetworkConnected(this)))
-                {
+                if ((arrayOfByte2 != null) || (SysApplication.getInstance().isNetworkConnected(this))) {
                     if (arrayOfByte2 != null) {
-                        System.out.println("*** about to start sendFindZigbeeThread");
                         new sendFindZigbeeThread().start();
                     }
                 }
@@ -81,9 +77,6 @@ public class LogoActivity extends Activity {
 
     }
     class sendFindZigbeeThread extends Thread {
-        sendFindZigbeeThread() {
-        }
-
         public void run() {
             super.run();
             LogoActivity logoActivity = LogoActivity.this;
@@ -110,23 +103,13 @@ public class LogoActivity extends Activity {
         }
     }
     class SleepThread extends Thread {
-        SleepThread() {
-        }
-
         public void run() {
             super.run();
             try {
                 sleep(1000);
-                if (DataStorage.getInstance(LogoActivity.this).getBoolean("GUIDE_INIT")) {
-                    System.out.println("*** call main activity");
-
-                    Intent intent = new Intent(LogoActivity.this, HomePage.class);
-                    intent.putExtra("mainactivity", 0);
-                    LogoActivity.this.startActivity(intent);
-
-                } else {
-                    LogoActivity.this.startActivity(new Intent(LogoActivity.this, HomePage.class));
-                }
+                Intent intent = new Intent(LogoActivity.this, HomePage.class);
+                intent.putExtra("mainactivity", 0);
+                LogoActivity.this.startActivity(intent);
                 LogoActivity.this.overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
                 LogoActivity.this.finish();
             } catch (InterruptedException e) {

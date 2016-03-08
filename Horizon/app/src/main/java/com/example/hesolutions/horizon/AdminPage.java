@@ -245,7 +245,7 @@ public class AdminPage extends Activity {
         if (menuItemIndex == 1)
         {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminPage.this.getParent());
-            alertDialog.setTitle("Warnning");
+            alertDialog.setTitle("Warning");
             alertDialog.setMessage("Do you want to remove the sector?");
             alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
@@ -279,7 +279,7 @@ public class AdminPage extends Activity {
         {
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminPage.this.getParent());
-            alertDialog.setTitle("Warnning");
+            alertDialog.setTitle("Warning");
             alertDialog.setMessage("Do you want to delete the user?");
             alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
