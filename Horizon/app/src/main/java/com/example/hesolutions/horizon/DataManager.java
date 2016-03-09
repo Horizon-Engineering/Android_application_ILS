@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -237,12 +239,52 @@ public class DataManager {
     }
     public List setGroupID(List<List<Long>> list)
     {
-        System.out.println(list.toString() + "************************************ group list");
         this.groupID = list;
         writedata2(groupID,"group");
         return groupID;
     }
 
+    public int usernum;
+    public int getUsernum()
+    {
+        usernum = dataupdateint("use");
+        return usernum;
+    }
+
+    public int setUsernum(int number)
+    {
+        this.usernum = number;
+        writedataint(usernum, "user");
+        return usernum;
+    }
+    public int sectornum;
+
+
+    public int getSectornum()
+    {
+        sectornum = dataupdateint("sector");
+        return sectornum;
+    }
+
+    public int setSectornum(int number)
+    {
+        this.sectornum = number;
+        writedataint(sectornum, "sector");
+        return sectornum;
+    }
+    public int devicenum;
+    public int getDevicenum()
+    {
+        devicenum = dataupdateint("device");
+        return devicenum;
+    }
+
+    public int setDevicenum(int number)
+    {
+        this.devicenum = number;
+        writedataint(devicenum, "device");
+        return devicenum;
+    }
     //====================read data from arraylist===============================
 /*
     public ArrayList getGrid()
@@ -530,6 +572,55 @@ public class DataManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void writedataint(int number, String filename) {
+        String state;
+        state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+
+            File root = Environment.getExternalStorageDirectory();
+            File dir = new File(root.getAbsolutePath() + "/Horizon/Data");
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+            File file = new File(dir, filename);
+
+            try {
+                FileOutputStream fis = new FileOutputStream(file);
+                DataOutputStream dos = new DataOutputStream(fis);
+                dos.writeInt(number);
+                dos.flush();
+            } catch (FileNotFoundException e) {
+
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    //==========================read data from hashmap=======================
+
+    public static int dataupdateint(String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon/Data");
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                DataInputStream dos = new DataInputStream(fis);
+                int numbers = dos.readInt();
+                return numbers;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0;
     }
 
 }

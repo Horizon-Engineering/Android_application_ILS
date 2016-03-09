@@ -84,6 +84,56 @@
             android:layout_alignParentRight="true" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/devicelistlayout"
+        android:background="@drawable/backrec"
+        android:id="@+id/infor"
+        android:layout_marginBottom="100dp"
+        android:layout_marginLeft="100dp"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/inforsum"
+            android:text="Summary Information"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/inforsumuser"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@+id/inforsum"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/inforsumsector"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@+id/inforsumuser"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/inforsumdevice"
+            android:layout_below="@+id/inforsumsector"
+            />
+    </RelativeLayout>
 
 
 </RelativeLayout>

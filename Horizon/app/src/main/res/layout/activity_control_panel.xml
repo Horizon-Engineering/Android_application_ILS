@@ -35,29 +35,139 @@
     android:layout_alignParentStart="true" />
    -->
 
+    <RelativeLayout
+        android:layout_width="200dp"
+        android:layout_marginTop="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/inforrelative"
+        android:background="@drawable/backrec"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/sectorListViewId">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/ownertag"
+            android:text="OWNER NAME:"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/owner"
+            android:textColor="@color/wordscolor"
+            android:gravity="center"
+            android:layout_below="@+id/ownertag"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sectortag"
+            android:text="SECTOR NAME:"
+            android:visibility="invisible"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/owner"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sectornameT"
+            android:visibility="invisible"
+            android:gravity="center"
+            android:textColor="@color/wordscolor"
+            android:layout_below="@+id/sectortag"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/devicetag"
+            android:text="DEVICE NAME:"
+            android:visibility="invisible"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/sectornameT"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/devicenameT"
+            android:visibility="invisible"
+            android:gravity="center"
+            android:textColor="@color/wordscolor"
+            android:layout_below="@+id/devicetag"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Intensity"
+            android:text="INTENSITY:"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/devicenameT"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:visibility="invisible"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Intensitynum"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textColor="@color/wordscolor"
+            android:layout_below="@+id/Intensity"
+            android:layout_alignParentLeft="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:visibility="invisible"
+            />
+
+        <com.example.hesolutions.horizon.EnhancedSeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekBar"
+            android:progressDrawable="@color/wordscolor"
+            android:thumb="@drawable/repswitch"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/Intensitynum"
+            android:layout_centerVertical="true"
+            android:visibility="invisible"
+            android:layout_marginBottom="20dp"
+            />
+    </RelativeLayout>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="50dp"
         android:id="@+id/imageViewroomlayout"
-        android:layout_toEndOf="@+id/sectorListViewId"
+        android:layout_toEndOf="@+id/inforrelative"
         />
-
-    <com.example.hesolutions.horizon.EnhancedSeekBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/seekBar"
-        android:progressDrawable="@color/wordscolor"
-        android:thumb="@drawable/repswitch"
-        android:layout_toEndOf="@+id/sectorListViewId"
-        android:layout_alignLeft="@+id/imageViewroomlayout"
-        android:layout_alignRight="@id/imageViewroomlayout"
-        android:layout_alignParentBottom="true"
-        android:layout_centerVertical="true"
-        android:visibility="invisible"
-        />
-
-
-
 
 </RelativeLayout>

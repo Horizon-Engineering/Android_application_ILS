@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="START TIME    "
+            android:text=" START TIME    "
             android:id="@+id/textView2"
             android:layout_alignParentTop="true"
             android:layout_marginTop="20dp"
@@ -49,7 +49,7 @@
             android:layout_below="@+id/textView2"
             android:layout_marginTop="10dp"
             android:layout_alignParentLeft="true"
-            android:layout_alignRight="@+id/textView2"
+            android:layout_alignRight="@+id/newrepeat"
             android:layout_alignParentStart="true" />
 
         <TextView
@@ -59,7 +59,7 @@
             android:text="Start Time"
             android:gravity="center"
             android:layout_marginTop="8dp"
-            android:layout_alignRight="@+id/textView2"
+            android:layout_alignRight="@+id/newrepeat"
             android:background="@drawable/backrec"
             android:id="@+id/starttime"
             android:textColor="@color/wordscolor"
@@ -73,12 +73,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="FINISH TIME    "
+            android:text=" FINISH TIME    "
             android:id="@+id/textView3"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="20dp"
             android:layout_above="@+id/startdate"
-            android:layout_toEndOf="@+id/layout1" />
+            android:layout_toEndOf="@+id/newrepeat" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -126,20 +126,28 @@
             android:layout_marginBottom="30dp"
             android:layout_alignParentBottom="true"/>
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/backrec"
+            android:id="@+id/newrepeat"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/finishtime">
+
         <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="REPEAT"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_marginTop="20dp"
             android:thumb="@drawable/repswitch"
             android:track="@drawable/repbg"
             android:id="@+id/switch1"
+            android:layout_marginLeft="5dp"
             android:checked="false"
+            android:layout_marginTop="5dp"
             android:switchMinWidth="30dp"
             android:textOn=""
-            android:textOff=""
-            android:layout_below="@+id/finishtime" />
+            android:textOff=""/>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -147,8 +155,8 @@
             android:layout_below="@+id/switch1"
             android:id="@+id/layout1"
             android:enabled="false"
-
             android:layout_alignParentLeft="true"
+            android:layout_marginLeft="5dp"
             android:layout_alignParentStart="true">
 
             <TextView
@@ -274,31 +282,42 @@
                 android:checked="false"
                 android:enabled="false"
                 android:layout_below="@+id/Friday"
+                android:layout_marginBottom="10dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"  />
 
 
         </RelativeLayout>
-
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/finishtime"
+            android:background="@drawable/backrec"
+            android:layout_alignTop="@+id/newrepeat"
+            android:layout_toRightOf="@+id/newrepeat"
+            android:layout_alignParentRight="true"
+            android:layout_alignLeft="@+id/finishtime"
+            android:layout_marginRight="30dp"
+            android:layout_above="@+id/Intensity" >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/sectorlistname"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="SECTOR"
-            android:layout_below="@id/finishtime"
-            android:layout_alignTop="@+id/switch1"
-            android:layout_toRightOf="@+id/switch1"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
             android:layout_alignStart="@+id/sectorlistView" />
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/sectorlistView"
             android:layout_below="@+id/sectorlistname"
-            android:layout_alignLeft="@+id/finishtime"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="30dp"
-            android:layout_above="@+id/Intensity" />
+            android:layout_alignParentLeft="true"
+             />
+        </RelativeLayout>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -306,8 +325,17 @@
             android:text="INTENSITY"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_marginTop="20dp"
-            android:layout_below="@id/layout1"
+            android:layout_below="@id/newrepeat"
             android:layout_alignParentLeft="true"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/Intensitynum"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_toRightOf="@+id/Intensity"
+            android:layout_marginLeft="20dp"
+            android:layout_alignTop="@+id/Intensity"
             />
         <SeekBar
             android:layout_width="wrap_content"

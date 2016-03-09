@@ -108,12 +108,19 @@ public class HomePage extends AppCompatActivity {
             @Override
             public void run()
             {
-                Calendar calendar = Calendar.getInstance();
-                while (calendar.get(Calendar.DAY_OF_MONTH)==1 && calendar.get(Calendar.HOUR_OF_DAY)==0
-                        && calendar.get(Calendar.MINUTE)==0 && calendar.get(Calendar.SECOND)==0 )
-                {
-                    GetNewEvent();
-                }
+                try {
+                    while (true) {
+                        Calendar calendar = Calendar.getInstance();
+                        if (calendar.get(Calendar.HOUR_OF_DAY) == 0 && calendar.get(Calendar.MINUTE) == 0)
+
+                            System.out.println("****************L");
+                        GetNewEvent();
+                        Thread.sleep(60 * 1000);
+
+                    }
+                } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             }
         }.start();
 
@@ -355,7 +362,7 @@ public class HomePage extends AppCompatActivity {
             for (int i = 0; i < events.size(); i++) {
                 WeekViewEvent event = events.get(i);
                 int diffdate = Math.abs(calendar.get(Calendar.DAY_OF_YEAR) - event.getStartTime().get(Calendar.DAY_OF_YEAR));
-                if (year == event.getStartTime().get(Calendar.YEAR) && diffdate < 15) {
+                if (year == event.getStartTime().get(Calendar.YEAR) && diffdate < 30) {
                     newevents.add(event);
                     events.remove(event);
                 }

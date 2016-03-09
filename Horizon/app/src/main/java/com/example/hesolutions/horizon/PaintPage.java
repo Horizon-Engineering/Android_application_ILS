@@ -39,7 +39,7 @@ import android.widget.LinearLayout;
 
 public class PaintPage extends Activity{
     private float smallBrush, mediumBrush, largeBrush;
-    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, loadBtn, modeBtn;
+    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, loadBtn, pen_mode, rec_mode, cir_mode;
     private DrawingView drawView;
     private LinearLayout drawingpart;
     private static int RESULT_LOAD_IMG = 1;
@@ -106,7 +106,7 @@ public class PaintPage extends Activity{
                 final Dialog brushDialog = new Dialog(PaintPage.this);
                 brushDialog.setTitle("Brush size:");
                 brushDialog.setContentView(R.layout.brush_chooser);
-                ImageButton smallBtn = (ImageButton)brushDialog.findViewById(R.id.small_brush);
+                ImageButton smallBtn = (ImageButton) brushDialog.findViewById(R.id.small_brush);
                 smallBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -116,7 +116,7 @@ public class PaintPage extends Activity{
                         brushDialog.dismiss();
                     }
                 });
-                ImageButton mediumBtn = (ImageButton)brushDialog.findViewById(R.id.medium_brush);
+                ImageButton mediumBtn = (ImageButton) brushDialog.findViewById(R.id.medium_brush);
                 mediumBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -127,8 +127,8 @@ public class PaintPage extends Activity{
                     }
                 });
 
-                ImageButton largeBtn = (ImageButton)brushDialog.findViewById(R.id.large_brush);
-                largeBtn.setOnClickListener(new OnClickListener(){
+                ImageButton largeBtn = (ImageButton) brushDialog.findViewById(R.id.large_brush);
+                largeBtn.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         drawView.setBrushSize(largeBrush);
@@ -149,14 +149,14 @@ public class PaintPage extends Activity{
                 AlertDialog.Builder newDialog = new AlertDialog.Builder(PaintPage.this);
                 newDialog.setTitle("New drawing");
                 newDialog.setMessage("Start new drawing (you will lose the current drawing)?");
-                newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int which){
+                newDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
                         drawView.startNew();
                         dialog.dismiss();
                     }
                 });
-                newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int which){
+                newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
                 });
@@ -205,41 +205,29 @@ public class PaintPage extends Activity{
             }
         });
 
-        modeBtn = (ImageButton)findViewById(R.id.mode_btn);
-        modeBtn.setOnClickListener(new OnClickListener() {
+
+        ImageButton penmode = (ImageButton)findViewById(R.id.pen_mode);
+        penmode.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Dialog modeDialog = new Dialog(PaintPage.this);
-                modeDialog.setTitle("Brush mode:");
-                modeDialog.setContentView(R.layout.modes_chooser);
-                ImageButton penmode = (ImageButton)modeDialog.findViewById(R.id.pen_mode);
-                penmode.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        drawView.setErase(false);
-                        drawView.setMode(1);
-                        modeDialog.dismiss();
-                    }
-                });
-                ImageButton recmode = (ImageButton)modeDialog.findViewById(R.id.rec_mode);
-                recmode.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        drawView.setErase(false);
-                        drawView.setMode(2);
-                        modeDialog.dismiss();
-                    }
-                });
-                ImageButton cirmode = (ImageButton)modeDialog.findViewById(R.id.cir_mode);
-                cirmode.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        drawView.setErase(false);
-                        drawView.setMode(3);
-                        modeDialog.dismiss();
-                    }
-                });
-                modeDialog.show();
+                drawView.setErase(false);
+                drawView.setMode(1);
+            }
+        });
+        ImageButton recmode = (ImageButton)findViewById(R.id.rec_mode);
+        recmode.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawView.setErase(false);
+                drawView.setMode(2);
+            }
+        });
+        ImageButton cirmode = (ImageButton)findViewById(R.id.cir_mode);
+        cirmode.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawView.setErase(false);
+                drawView.setMode(3);
             }
         });
 

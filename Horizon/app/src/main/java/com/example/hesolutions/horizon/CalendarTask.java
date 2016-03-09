@@ -68,7 +68,7 @@ public class CalendarTask extends Activity {
     TextView startdate;
     TextView starttime;
     TextView finishdate;
-    TextView finishtime;
+    TextView finishtime,Intensitynum;
     Button Apply;
     Button cancelTOcalendar;
     Button delete;
@@ -112,7 +112,7 @@ public class CalendarTask extends Activity {
         Saturday = (CheckBox)findViewById(R.id.Saturday);
         sectorlistView = (ListView)findViewById(R.id.sectorlistView);
         seekBar = (SeekBar)findViewById(R.id.seekBar);
-
+        Intensitynum = (TextView)findViewById(R.id.Intensitynum);
         final SimpleDateFormat ddf = new SimpleDateFormat("MMM dd, yyyy");
         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
@@ -163,7 +163,7 @@ public class CalendarTask extends Activity {
             arrayList.add(selected);
 
 
-            deviceAdapter = new MyCustomAdapter(this, R.layout.devicelist, arrayList);
+            deviceAdapter = new MyCustomAdapter(this, R.layout.sectorlistaddevent, arrayList);
             sectorlistView.setAdapter(deviceAdapter);
         }
 
@@ -572,9 +572,7 @@ public class CalendarTask extends Activity {
                                         DataManager.getInstance().setEventID(IDlist);
                                         DataManager.getInstance().setevents(list);
                                         DataManager.getInstance().setnewevents(newlist);
-                                        System.out.println("old" + list.size() + "*********************");
-                                        System.out.println("new" + newlist.size() + "***********************");
-
+                                        System.out.println(newlist + "********************************** data saved");
                                         ActivityStack activityStack = (ActivityStack) getParent();
                                         activityStack.pop();
                                         DataManager.getInstance().setactivity("nothing");
@@ -735,6 +733,7 @@ public class CalendarTask extends Activity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 SetParams[1] = (byte) progress;
+                Intensitynum.setText(Integer.toString(progress)+"%");
             }
 
             @Override

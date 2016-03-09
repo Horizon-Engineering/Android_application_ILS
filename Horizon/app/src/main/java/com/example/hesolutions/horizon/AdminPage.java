@@ -55,15 +55,14 @@ public class AdminPage extends Activity {
     BiMap<String, ArrayList> nameset;
     HashMap<String, ArrayList<Device>>sectordetail;
     ArrayList<Device> mDeviceList;
-    Device mDevice;
+    TextView inforsumuser,inforsumsector,inforsumdevice;
     Button adduser, addsector, adddevice;
-    RelativeLayout userlistlayout, sectorlistlayout, devicelistlayout;
+    RelativeLayout userlistlayout, sectorlistlayout, devicelistlayout, infor;
     String userName = "";
     String sectorName = "";
     UserCustomListAdapter useradapter;
     MyCustomListAdapter sectoradapter;
     MyCustomListAdapterfordevice deviceadapter;
-    Boolean goahead = false;
     ArrayList<String> sectorArray = new ArrayList<>();
     final ArrayList<String> names = new ArrayList<>();
     @Override
@@ -79,6 +78,10 @@ public class AdminPage extends Activity {
         adduser = (Button)findViewById(R.id.adduser);
         addsector= (Button)findViewById(R.id.addsector);
         adddevice= (Button)findViewById(R.id.adddevice);
+        infor = (RelativeLayout)findViewById(R.id.infor);
+        inforsumuser = (TextView)findViewById(R.id.inforsumuser);
+        inforsumsector = (TextView)findViewById(R.id.inforsumsector);
+        inforsumdevice = (TextView)findViewById(R.id.inforsumdevice);
         LoadUserList();
         adduser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,12 +118,13 @@ public class AdminPage extends Activity {
                 DataManager.getInstance().setBitmap(bitmap);
                 Intent startNewActivityIntent = new Intent(AdminPage.this, CaptureActivity.class);
                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
-                startNewActivityIntent.putExtra("userName",userName);
+                startNewActivityIntent.putExtra("userName", userName);
                 startNewActivityIntent.putExtra("sectorName", sectorName);
                 activityadminStack.push("Scanner", startNewActivityIntent);
             }
         });
 
+        GetSummary();
     }
 
     public void LoadUserList()
@@ -255,7 +259,12 @@ public class AdminPage extends Activity {
                     sectorArray.remove(info.position);
                     sectoradapter.notifyDataSetChanged();
                     ListView deviceList = (ListView) findViewById(R.id.devicelist);
+                    int sectornum = DataManager.getInstance().getSectornum();
+                    sectornum --;
+                    DataManager.getInstance().setSectornum(sectornum);
                     deviceList.setAdapter(null);
+                    int sectornumber = DataManager.getInstance().getSectornum();
+                    inforsumsector.setText("Total number of sectors is: " + sectornumber + " .");
                 }
             });
             alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -294,9 +303,14 @@ public class AdminPage extends Activity {
                         }
                     }
                     sector.remove(userName);
+                    int usernum = DataManager.getInstance().getUsernum();
+                    usernum --;
+                    DataManager.getInstance().setUsernum(usernum);
                     DataManager.getInstance().setsector(sector);
                     names.remove(info.position);
                     useradapter.notifyDataSetChanged();
+                    int usernumber = DataManager.getInstance().getUsernum();
+                    inforsumuser.setText("Total number of users is: " + usernumber + " .");
                 }
             });
             alertDialog.setNegativeButton("NO", new DialogInterface.OnClickListener() {
@@ -733,6 +747,14 @@ public class AdminPage extends Activity {
         screenView.setDrawingCacheEnabled(false);
 
         return bitmap;
+    }
+    public void GetSummary(){
+        int usernumber = DataManager.getInstance().getUsernum();
+        int sectornumber = DataManager.getInstance().getSectornum();
+        int devicenumber = DataManager.getInstance().getDevicenum();
+        inforsumuser.setText("Total number of users is: " + usernumber + " .");
+        inforsumsector.setText("Total number of sectors is: " + sectornumber + " .");
+        inforsumdevice.setText("Total number of devices is: " + devicenumber + " .");
     }
 }
 

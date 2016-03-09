@@ -40,7 +40,6 @@ public class AdminAddNew extends Activity {
     EditText MSG,CODE,sectorname,devicename;
     Button SAVE, savedevice, savesector, cancel, Apply;
     RelativeLayout addNewUser, addnewsector, addnewdevice, assignuser;
-    Boolean uniquesectorname = true;
     HashMap<String, HashMap> sector = DataManager.getInstance().getsector();
     HashMap<String, ArrayList<Device>>sectordetail;
     String userName = "";
@@ -154,6 +153,7 @@ public class AdminAddNew extends Activity {
                                 Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
                                 activityadminStack.push("Adr", startNewActivityIntent);
+
                             }
                         });
                         alertDialog.show();
@@ -185,7 +185,6 @@ public class AdminAddNew extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                         ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
-
                         activityadminStack.push("Admin", startNewActivityIntent);
                     }
                 });
@@ -246,7 +245,11 @@ public class AdminAddNew extends Activity {
                     CODE.setText("");
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    finish();
+                    int usernumber = DataManager.getInstance().getUsernum();
+                    usernumber ++;
+                    DataManager.getInstance().setUsernum(usernumber);
+                    ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
+                    activityAdminStack.pop();
                     Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                 }
 
@@ -260,6 +263,7 @@ public class AdminAddNew extends Activity {
             public void onClick(View v) {
                 HashMap<String, ArrayList> sectordetail1 = new HashMap<String, ArrayList>();
                 String name = sectorname.getText().toString();
+                boolean uniquesectorname = true;
                 if (!name.equals("")) {
                     for (Map.Entry<String, HashMap> entry : sector.entrySet()) {
                         HashMap<String, ArrayList> value = entry.getValue();
@@ -284,7 +288,11 @@ public class AdminAddNew extends Activity {
                                 DataManager.getInstance().setsector(sector);
                                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                                finish();
+                                int sectornum = DataManager.getInstance().getSectornum();
+                                sectornum ++;
+                                DataManager.getInstance().setSectornum(sectornum);
+                                ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
+                                activityAdminStack.pop();
                                 Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                             } else {
                                 sectordetail1 = sector.get(userName);
@@ -294,7 +302,11 @@ public class AdminAddNew extends Activity {
                                 DataManager.getInstance().setsector(sector);
                                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                                finish();
+                                int sectornum = DataManager.getInstance().getSectornum();
+                                sectornum ++;
+                                DataManager.getInstance().setSectornum(sectornum);
+                                ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
+                                activityAdminStack.pop();
                                 Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                             }
                         } else {
@@ -304,7 +316,11 @@ public class AdminAddNew extends Activity {
                             DataManager.getInstance().setsector(sector);
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                            finish();
+                            int sectornum = DataManager.getInstance().getSectornum();
+                            sectornum ++;
+                            DataManager.getInstance().setSectornum(sectornum);
+                            ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
+                            activityAdminStack.pop();
                             Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
                         }
                     }
@@ -345,6 +361,9 @@ public class AdminAddNew extends Activity {
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
                                 startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
+                                int devicenum = DataManager.getInstance().getDevicenum();
+                                devicenum ++;
+                                DataManager.getInstance().setDevicenum(devicenum);
                             } else {
                                 mDevice.setDeviceName(name);
                                 ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
@@ -362,6 +381,9 @@ public class AdminAddNew extends Activity {
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
                                 startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
+                                int devicenum = DataManager.getInstance().getDevicenum();
+                                devicenum ++;
+                                DataManager.getInstance().setDevicenum(devicenum);
                             }
                         } else {
                             Restart();
@@ -449,14 +471,23 @@ public class AdminAddNew extends Activity {
                                 sectordetail.put(SectorName, list);
                                 sector.put(sectorname, sectordetail);
                                 DataManager.getInstance().setsector(sector);
+                                int sectornumber = DataManager.getInstance().getSectornum();
+                                sectornumber ++;
+                                DataManager.getInstance().setSectornum(sectornumber);
                             }
                         }else
                         {
                             sector.put(choosedevice.get(k).getName(), newassignsector);
                             DataManager.getInstance().setsector(sector);
+                            int sectornumber = DataManager.getInstance().getSectornum();
+                            sectornumber ++;
+                            DataManager.getInstance().setSectornum(sectornumber);
                         }
                     }
-                    finish();
+                    Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
+                    ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
+                    startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    activityadminStack.push("AdminPage", startNewActivityIntent);
                 }
             }
         });

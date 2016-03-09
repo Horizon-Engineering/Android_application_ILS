@@ -72,6 +72,7 @@ public class ControlPanel extends Activity {
     byte intensity;
     ImageView imageViewroomlayout;
     ExpandListAdapter adapter;
+    TextView Intensity, ownertag, owner, sectortag, sectornameT, devicetag, devicenameT, Intensitynum;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -80,7 +81,14 @@ public class ControlPanel extends Activity {
         seekBar = (EnhancedSeekBar)findViewById(R.id.seekBar);
         imageViewroomlayout = (ImageView)findViewById(R.id.imageViewroomlayout);
         //DatabaseManager.getInstance().addDevice(null, null);
-
+        ownertag = (TextView)findViewById(R.id.ownertag);
+        owner = (TextView)findViewById(R.id.owner);
+        sectortag = (TextView)findViewById(R.id.sectortag);
+        sectornameT = (TextView)findViewById(R.id.sectornameT);
+        devicetag = (TextView)findViewById(R.id.devicetag);
+        devicenameT = (TextView)findViewById(R.id.devicenameT);
+        Intensity = (TextView)findViewById(R.id.Intensity);
+        Intensitynum = (TextView)findViewById(R.id.Intensitynum);
         if (sector.get(username) == null) {
         } else {
             for (Map.Entry<String, ArrayList> entry : sectordetail.entrySet()) {
@@ -94,6 +102,8 @@ public class ControlPanel extends Activity {
                 sectorListView.setAdapter(adapter);
             }
         }
+        owner.setText(username);
+
     }
 
     public class ExpandListAdapter extends BaseExpandableListAdapter {
@@ -153,12 +163,19 @@ public class ControlPanel extends Activity {
                     Device deviceA = (Device) v.getTag();
                     intensity = DatabaseManager.getInstance().getlightingofDevice(deviceA)[1];
                     seekBar.setVisibility(View.VISIBLE);
+                    Intensitynum.setVisibility(View.VISIBLE);
+                    Intensity.setVisibility(View.VISIBLE);
                     DataManager.getInstance().setthedevice(deviceA);
                     if (switchid.isChecked() == true) {
                         seekBar.setProgressProgrammatically(intensity);
+                        Intensitynum.setText(Integer.toString(intensity)+"%");
                     } else {
                         seekBar.setProgressProgrammatically(0);
+                        Intensitynum.setText("0%");
                     }
+                    devicetag.setVisibility(View.VISIBLE);
+                    devicenameT.setVisibility(View.VISIBLE);
+                    devicenameT.setText(((TextView) v).getText().toString());
                 }
             });
 
@@ -168,6 +185,7 @@ public class ControlPanel extends Activity {
                     Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
                     if (gateway!=null) {
                         seekBar.setEnabled(true);
+                        Intensitynum.setText(Integer.toString(progress)+"%");
                         Calendar calendar = Calendar.getInstance();
                         List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
                         Device devicea = DataManager.getInstance().getthedevice();
@@ -246,6 +264,8 @@ public class ControlPanel extends Activity {
                     Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
                     if (gateway!=null) {
                         seekBar.setVisibility(View.INVISIBLE);
+                        Intensitynum.setVisibility(View.INVISIBLE);
+                        Intensity.setVisibility(View.INVISIBLE);
                         Calendar calendar = Calendar.getInstance();
                         List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
                         if (events.size() != 0) {
@@ -364,6 +384,8 @@ public class ControlPanel extends Activity {
                 @Override
                 public void onClick(View v) {
                     seekBar.setVisibility(View.INVISIBLE);
+                    Intensitynum.setVisibility(View.INVISIBLE);
+                    Intensity.setVisibility(View.INVISIBLE);
                     if (isExpanded) ((ExpandableListView) parent).collapseGroup(groupPosition);
                     else ((ExpandableListView) parent).expandGroup(groupPosition, true);
                     Bitmap bitmap = null;
@@ -376,7 +398,11 @@ public class ControlPanel extends Activity {
                     {
                         imageViewroomlayout.setBackground(null);
                     }
-
+                    sectortag.setVisibility(View.VISIBLE);
+                    sectornameT.setVisibility(View.VISIBLE);
+                    sectornameT.setText(((TextView) v).getText().toString());
+                    devicetag.setVisibility(View.INVISIBLE);
+                    devicenameT.setVisibility(View.INVISIBLE);
                 }
             });
             switchid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -385,6 +411,8 @@ public class ControlPanel extends Activity {
                     Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
                     if (gateway!=null) {
                         seekBar.setVisibility(View.INVISIBLE);
+                        Intensitynum.setVisibility(View.INVISIBLE);
+                        Intensity.setVisibility(View.INVISIBLE);
                         Calendar calendar = Calendar.getInstance();
                         List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
                         if (events.size() != 0) {
@@ -424,7 +452,6 @@ public class ControlPanel extends Activity {
                                     for (int i = 0; i < devicelist.size(); i++) {
                                         Device thedevice = devicelist.get(i);
                                         byte[] data;
-                                        System.out.println(thedevice.getDeviceName() + "************************ON");
                                         data = new byte[]{(byte) 17, (byte) 100, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
                                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                                         thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
@@ -435,7 +462,6 @@ public class ControlPanel extends Activity {
                                 } else {
                                     for (int i = 0; i < devicelist.size(); i++) {
                                         Device thedevice = devicelist.get(i);
-                                        System.out.println(thedevice.getDeviceName() + "************************OFF");
                                         byte[] data;
                                         data = new byte[]{(byte) 17, (byte) 0, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
                                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
