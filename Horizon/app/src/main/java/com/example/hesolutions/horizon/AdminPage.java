@@ -156,6 +156,8 @@ public class AdminPage extends Activity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     clickEvent(view);
                     Selected_User = position;
+                    Selected_Sector = -1;
+                    Selected_Device = -1;
                     useradapter.notifyDataSetChanged();
                 }
             });
@@ -202,6 +204,7 @@ public class AdminPage extends Activity {
         userName = ((TextView) v).getText().toString();
         sectordetail= sector.get(userName);
         sectorlistlayout.setVisibility(View.VISIBLE);
+        addsector.setVisibility(View.VISIBLE);
         devicelistlayout.setVisibility(View.INVISIBLE);
         ListView sectorlist = (ListView) findViewById(R.id.sectorlist);
         if (sectordetail!=null)
@@ -219,6 +222,7 @@ public class AdminPage extends Activity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     showDevice(view);
                     Selected_Sector = position;
+                    Selected_Device = -1;
                     sectoradapter.notifyDataSetChanged();
                 }
             });
@@ -576,6 +580,7 @@ public class AdminPage extends Activity {
         devicename = new ArrayList<>();
         sectorName = ((TextView) v).getText().toString();
         devicelistlayout.setVisibility(View.VISIBLE);
+        adddevice.setVisibility(View.VISIBLE);
         ListView deviceList = (ListView) findViewById(R.id.devicelist);
         if  (sectordetail!=null)
         {

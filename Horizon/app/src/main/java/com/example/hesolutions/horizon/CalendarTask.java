@@ -138,11 +138,8 @@ public class CalendarTask extends Activity {
         homescreenBgImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                ActivityStack activityStack = (ActivityStack) getParent();
-                activityStack.pop();
-                DataManager.getInstance().setactivity("nothing");
-
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
         });
 
