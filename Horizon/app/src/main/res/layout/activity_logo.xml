@@ -2,10 +2,18 @@
 <RelativeLayout
     android:orientation="vertical"
     android:id="@+id/logo"
-    android:background="@drawable/logo_horizon1"
+    android:background="@color/backgroundcolor"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView7"
+        android:background="@drawable/horizonwhite"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
 
 

@@ -186,12 +186,14 @@ public class DatabaseManager {
     public boolean deleteDevice(Device mdevice) {
         try {
             if (this.mDataBase != null) {
-                this.mDataBase.execSQL("DELETE FROM DeviceInfoTable WHERE DeviceIndex = ?", new Object[]{Short.valueOf(mdevice.getDeviceIndex())});
+                this.mDataBase.execSQL("DELETE FROM DeviceInfoTable WHERE DeviceName = ?", new Object[]{String.valueOf(mdevice.getDeviceName())});
+                /*
                 deleteAreaDevice(mdevice.getDeviceIndex());
                 deleteSceneDeviceToDevice(mdevice.getDeviceIndex());
                 deleteDeviceOfCurrKnob(mdevice);
                 deleteDeviceOfCurrGateway(mdevice.getDeviceIndex());
                 DeleteGroupDeviceData(mdevice.getDeviceIndex());
+                */
                 return true;
             }
         } catch (Exception e) {

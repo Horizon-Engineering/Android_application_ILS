@@ -80,8 +80,8 @@ public class CalendarTask extends Activity {
     CheckBox Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday;
     Integer day;
     ListView sectorlistView;
-    byte[] SetParams;
     MyCustomAdapter deviceAdapter = null;
+    int intensity = 100;
     SeekBar seekBar;
 
     @Override
@@ -147,19 +147,19 @@ public class CalendarTask extends Activity {
         });
 
 //========================================Loading the sector info
-        HashMap<String, HashMap> sector = DataManager.getInstance().getsector();
-        String username = DataManager.getInstance().getUsername();
+        final HashMap<String, HashMap> sector = DataManager.getInstance().getsector();
+        final String username = DataManager.getInstance().getUsername();
         ArrayList<Group> arrayList = new ArrayList<Group>();
         if (sector.get(username)==null) {}
         else {
             HashMap<String, ArrayList> sectordetails = sector.get(username);
             for (Map.Entry<String, ArrayList> entry : sectordetails.entrySet()) {
                 String key = entry.getKey();
-                ArrayList<Device> value = entry.getValue();
-                Group group = new Group(key, value, false);
+                //ArrayList<Device> value = entry.getValue();
+                Group group = new Group(key, false);
                 arrayList.add(group);
             }
-            Group selected = new Group("Select All", null, false);
+            Group selected = new Group("Select All", false);
             arrayList.add(selected);
 
 
@@ -179,7 +179,7 @@ public class CalendarTask extends Activity {
                     startTime.set(Calendar.MONTH, monthOfYear);
                     startTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     startdate.setText(ddf.format(startTime.getTime()));
-                    day =startTime.get(Calendar.DAY_OF_WEEK)-1;
+                    day = startTime.get(Calendar.DAY_OF_WEEK) - 1;
 
                     finishTime.set(Calendar.YEAR, year);
                     finishTime.set(Calendar.MONTH, monthOfYear);
@@ -206,12 +206,12 @@ public class CalendarTask extends Activity {
                 public void onTimeSet(TimePicker view, int Hour, int Minute) {
                     startTime.set(Calendar.HOUR_OF_DAY, Hour);
                     startTime.set(Calendar.MINUTE, Minute);
-                    startTime.set(Calendar.SECOND,0);
+                    startTime.set(Calendar.SECOND, 0);
                     starttime.setText(sdf.format(startTime.getTime()));
 
                     finishTime.set(Calendar.HOUR_OF_DAY, Hour);
                     finishTime.set(Calendar.MINUTE, Minute);
-                    finishTime.set(Calendar.SECOND,0);
+                    finishTime.set(Calendar.SECOND, 0);
                     finishtime.setText(sdf.format(startTime.getTime()));
                 }
             };
@@ -294,23 +294,31 @@ public class CalendarTask extends Activity {
             final List<WeekViewEvent> newlist = DataManager.getInstance().getnewevents();
             @Override
             public void onClick(final View v) {
-                final ArrayList<Device> choosedevice = new ArrayList<Device>();
-                if (choosedevice.isEmpty()) {
+                final ArrayList<String> sectors = new ArrayList<String>();
+                if (deviceAdapter!=null) {
                     ArrayList<Group> choosegrouplist = deviceAdapter.arrayList;
                     for (int i = 0; i < choosegrouplist.size(); i++) {
                         Group group = choosegrouplist.get(i);
-                        if (group.getSelected() == true && group.getList()!=null) {
-                            ArrayList<Device> devicelist = group.getList();
-                            for (int j = 0; j < devicelist.size(); j++) {
-                                Device device = devicelist.get(j);
-                                device.setCurrentParams(SetParams);
-                                choosedevice.add(device);
-                            }
+                        if (group.getSelected() == true) {
+                            sectors.add(group.getName());
+                        }
+                        if (sectors.contains("Select All")) sectors.remove("Select All");
+                    }
+                }
+                for (String sectorname : sectors) {
+                    ArrayList<Device> deviceArrayList = (ArrayList<Device>)sector.get(username).get(sectorname);
+                    if (deviceArrayList != null) {
+                        for (Device device : deviceArrayList) {
+                            byte[] data;
+                            data = new byte[]{(byte) 17, (byte) intensity, (byte) 0, (byte) 0, (byte) 0};
+                            device.setCurrentParams(data);
+                            DatabaseManager.getInstance().updateDevice(device);
                         }
                     }
                 }
+
                 if (gateway!=null) {
-                    if (choosedevice.isEmpty() || choosedevice == null) {
+                    if (sectors.isEmpty()) {
                         Toast.makeText(CalendarTask.this, "At least one group should be selected", Toast.LENGTH_SHORT).show();
                     } else {
                         // Repetition
@@ -319,7 +327,6 @@ public class CalendarTask extends Activity {
                                 weeks = Integer.parseInt(weeknumber.getText().toString());
                                 if (weeks > 0) {
                                     if ((finishTime.after(startTime))) {
-
                                         if (!IDlist.isEmpty()) {
                                             oldid = IDlist.get((IDlist.size() - 1));
                                         }
@@ -347,10 +354,9 @@ public class CalendarTask extends Activity {
                                                         MonSt.add(Calendar.DAY_OF_MONTH, date);
                                                         MonFi.add(Calendar.DAY_OF_MONTH, date);
                                                         WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, MonSt, MonFi, colorName, choosedevice);
+                                                        event = new WeekViewEvent(id, cname, MonSt, MonFi, colorName, sectors, intensity);
                                                         if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
                                                                 && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
-                                                            System.out.println(newlist.size() + "***********MONDAY");
                                                             newlist.add(event);
                                                         } else {
                                                             list.add(event);
@@ -379,7 +385,7 @@ public class CalendarTask extends Activity {
                                                         TueSt.add(Calendar.DAY_OF_MONTH, date);
                                                         TusFi.add(Calendar.DAY_OF_MONTH, date);
                                                         WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, TueSt, TusFi, colorName, choosedevice);
+                                                        event = new WeekViewEvent(id, cname, TueSt, TusFi, colorName, sectors, intensity);
                                                         if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
                                                                 && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
                                                             newlist.add(event);
@@ -413,7 +419,7 @@ public class CalendarTask extends Activity {
                                                         WedSt.add(Calendar.DAY_OF_MONTH, date);
                                                         WedFi.add(Calendar.DAY_OF_MONTH, date);
                                                         WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, WedSt, WedFi, colorName, choosedevice);
+                                                        event = new WeekViewEvent(id, cname, WedSt, WedFi, colorName, sectors, intensity);
                                                         if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
                                                                 && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
                                                             newlist.add(event);
@@ -446,7 +452,7 @@ public class CalendarTask extends Activity {
                                                         ThuSt.add(Calendar.DAY_OF_MONTH, date);
                                                         ThuFi.add(Calendar.DAY_OF_MONTH, date);
                                                         WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, ThuSt, ThuFi, colorName, choosedevice);
+                                                        event = new WeekViewEvent(id, cname, ThuSt, ThuFi, colorName, sectors, intensity);
                                                         if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
                                                                 && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
                                                             newlist.add(event);
@@ -479,7 +485,7 @@ public class CalendarTask extends Activity {
                                                         FriSt.add(Calendar.DAY_OF_MONTH, date);
                                                         FriFi.add(Calendar.DAY_OF_MONTH, date);
                                                         WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, FriSt, FriFi, colorName, choosedevice);
+                                                        event = new WeekViewEvent(id, cname, FriSt, FriFi, colorName, sectors, intensity);
                                                         if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
                                                                 && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
                                                             newlist.add(event);
@@ -512,7 +518,7 @@ public class CalendarTask extends Activity {
                                                         SatSt.add(Calendar.DAY_OF_MONTH, date);
                                                         SatFi.add(Calendar.DAY_OF_MONTH, date);
                                                         WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, SatSt, SatFi, colorName, choosedevice);
+                                                        event = new WeekViewEvent(id, cname, SatSt, SatFi, colorName, sectors, intensity);
                                                         if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
                                                                 && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
                                                             newlist.add(event);
@@ -546,7 +552,7 @@ public class CalendarTask extends Activity {
                                                         SunSt.add(Calendar.DAY_OF_MONTH, date);
                                                         SunFi.add(Calendar.DAY_OF_MONTH, date);
                                                         WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, SunSt, SunFi, colorName, choosedevice);
+                                                        event = new WeekViewEvent(id, cname, SunSt, SunFi, colorName, sectors, intensity);
                                                         if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
                                                                 && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
                                                             newlist.add(event);
@@ -572,7 +578,6 @@ public class CalendarTask extends Activity {
                                         DataManager.getInstance().setEventID(IDlist);
                                         DataManager.getInstance().setevents(list);
                                         DataManager.getInstance().setnewevents(newlist);
-                                        System.out.println(newlist + "********************************** data saved");
                                         ActivityStack activityStack = (ActivityStack) getParent();
                                         activityStack.pop();
                                         DataManager.getInstance().setactivity("nothing");
@@ -609,7 +614,7 @@ public class CalendarTask extends Activity {
                                 if (!IDlist.isEmpty()) {
                                     id = IDlist.get((IDlist.size() - 1)) + 1;
                                 }
-                                WeekViewEvent event = new WeekViewEvent(id, cname, startTime, finishTime, colorName, choosedevice);
+                                WeekViewEvent event = new WeekViewEvent(id, cname, startTime, finishTime, colorName, sectors, intensity);
                                 int year = Calendar.getInstance().get(Calendar.YEAR);
                                 int month = Calendar.getInstance().get(Calendar.MONTH);
                                 if (year == event.getStartTime().get(Calendar.YEAR) && month == event.getStartTime().get(Calendar.MONTH)) {
@@ -722,18 +727,13 @@ public class CalendarTask extends Activity {
 
 
         seekBar.setProgress(100);
-        SetParams = new byte[5];
-        SetParams[0] = (byte) 17;
-        SetParams[1] = (byte) 100;
-        SetParams[2] = (byte) 0;
-        SetParams[3] = (byte) 0;
-        SetParams[4] = (byte) 0;
+        Intensitynum.setText("100%");
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                SetParams[1] = (byte) progress;
-                Intensitynum.setText(Integer.toString(progress)+"%");
+                intensity = progress;
+                Intensitynum.setText(Integer.toString(progress) + "%");
             }
 
             @Override
@@ -829,17 +829,24 @@ public class CalendarTask extends Activity {
 
     public class Group
     {
+
         String name;
-        ArrayList<Device> devicelist;
+        //ArrayList<Device> devicelist;
         boolean ischecked;
 
+        /*
         public Group(String name, ArrayList devicelist, boolean ischecked)
         {
             this.name = name;
             this.devicelist = devicelist;
             this.ischecked = ischecked;
         }
-
+        */
+        public Group(String name, boolean ischecked)
+        {
+            this.name = name;
+            this.ischecked = ischecked;
+        }
         public boolean getSelected()
         {
             return ischecked;
@@ -854,12 +861,14 @@ public class CalendarTask extends Activity {
         public void setName(String name) {
             this.name = name;
         }
+        /*
         public ArrayList getList() {
             return devicelist;
         }
         public void setList(ArrayList devicelist) {
             this.devicelist = devicelist;
         }
+        */
 
     }
 }

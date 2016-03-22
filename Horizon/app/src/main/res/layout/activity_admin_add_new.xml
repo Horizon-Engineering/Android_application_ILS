@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/parent"
     tools:context="com.example.hesolutions.horizon.AdminAddNew">
 
 
@@ -33,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/MSG"
-            android:hint="Enter the account"
+            android:hint="Enter User Name"
             android:singleLine="true"
             android:imeOptions="actionDone"
             />
@@ -74,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/sectorname"
-            android:hint="Enter the account"
+            android:hint="Enter Sector Name"
             android:singleLine="true"
             android:imeOptions="actionDone"
             android:layout_alignParentTop="true"
@@ -103,7 +104,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/devicename"
-            android:hint="Enter the account"
+            android:hint="Enter Device Name"
             android:singleLine="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"

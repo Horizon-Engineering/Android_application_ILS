@@ -1,5 +1,5 @@
 package com.example.hesolutions.horizon;
-
+/*
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -442,3 +442,4 @@ public class EditEvent extends Activity {
         }
     }
 }
+*/

@@ -42,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 public class GlobalCalendar extends Activity{
@@ -95,7 +96,7 @@ public class GlobalCalendar extends Activity{
                     final Gateway gateways = SysApplication.getInstance().getCurrGateway(GlobalCalendar.this);
                     final List<WeekViewEvent> listevent = DataManager.getInstance().getnewevents();
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(GlobalCalendar.this.getParent());
-                    alertDialog.setTitle("Warnning");
+                    alertDialog.setTitle("Warning");
                     alertDialog.setMessage("Do you want to remove this event?");
                     alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -227,19 +228,26 @@ public class GlobalCalendar extends Activity{
     public void CheckCurrent(WeekViewEvent event)
     {
         Calendar cur = Calendar.getInstance();
-        ArrayList<Device> devices = event.getdeviceList();
         if (cur.before(event.getEndTime())&&cur.after(event.getStartTime()))
         {
-            for (int p=0; p <devices.size(); p++)
+            ArrayList<String> sectorlist = event.getdeviceList();
+            String username = event.getName();
+            HashMap<String, HashMap<String, ArrayList<Device>>> sector = DataManager.getInstance().getsector();
+            HashMap<String, ArrayList<Device>> sectorinformation = sector.get(username);
+            for (String sectorname:sectorlist)
             {
-                Device devicep = devices.get(p);
-                byte[]data;
-                data = new byte[]{(byte) 17, (byte) 0, devicep.getCurrentParams()[2], (byte) 0, (byte) 0};
-                DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                devicep.getDeviceAddress(), (short) 0, data), devicep.getGatewayMacAddr(), devicep.getGatewayPassword(),
-                        devicep.getGatewaySSID(), GlobalCalendar.this));
-                devicep.setCurrentParams(data);
-                DatabaseManager.getInstance().updateDevice(devicep);
+                ArrayList<Device> deviceArrayList = sectorinformation.get(sectorname);
+                if (deviceArrayList!=null) {
+                    for (Device device : deviceArrayList) {
+                        byte[] data;
+                        data = new byte[]{(byte) 17, (byte) 0, (byte)0, (byte) 0, (byte) 0};
+                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                        device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
+                                device.getGatewaySSID(), GlobalCalendar.this));
+                        device.setCurrentParams(data);
+                        DatabaseManager.getInstance().updateDevice(device);
+                    }
+                }
             }
         }
     }

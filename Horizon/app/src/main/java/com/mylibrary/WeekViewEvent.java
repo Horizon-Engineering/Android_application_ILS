@@ -27,7 +27,8 @@ public class WeekViewEvent implements Serializable{
     private String mName;
     private String mLocation;
     private int mColor;
-    private ArrayList<Device> mdevicelist;
+    private ArrayList<String> mdevicelist;
+    private int intensity;
 
     public WeekViewEvent(){
 
@@ -51,7 +52,7 @@ public class WeekViewEvent implements Serializable{
      * @param devicelist devicelist contains the devices
      */
     public WeekViewEvent(long id, String name, int startYear, int startMonth, int startDay, int startHour, int startMinute, int endYear,
-                         int endMonth, int endDay, int endHour, int endMinute, int color, ArrayList devicelist) {
+                         int endMonth, int endDay, int endHour, int endMinute, int color, ArrayList devicelist, int intensity) {
         this.mId = id;
 
         this.mStartTime = Calendar.getInstance();
@@ -72,6 +73,7 @@ public class WeekViewEvent implements Serializable{
 
         this.mName = name;
         this.mdevicelist = devicelist;
+        this.intensity = intensity;
     }
 
     /**
@@ -82,7 +84,7 @@ public class WeekViewEvent implements Serializable{
      * @param startTime The time when the event starts.
      * @param endTime The time when the event ends.
      */
-    public WeekViewEvent(long id, String name, String location, Calendar startTime, Calendar endTime, int color, ArrayList devicelist) {
+    public WeekViewEvent(long id, String name, String location, Calendar startTime, Calendar endTime, int color, ArrayList devicelist , int intensity) {
         this.mId = id;
         this.mName = name;
         this.mLocation = location;
@@ -90,6 +92,7 @@ public class WeekViewEvent implements Serializable{
         this.mEndTime = endTime;
         this.mColor = color;
         this.mdevicelist = devicelist;
+        this.intensity = intensity;
     }
 
     /**
@@ -99,8 +102,8 @@ public class WeekViewEvent implements Serializable{
      * @param startTime The time when the event starts.
      * @param endTime The time when the event ends.
      */
-    public WeekViewEvent(long id, String name, Calendar startTime, Calendar endTime, int color, ArrayList devicelist) {
-        this(id, name, null, startTime, endTime, color, devicelist);
+    public WeekViewEvent(long id, String name, Calendar startTime, Calendar endTime, int color, ArrayList devicelist, int intensity) {
+        this(id, name, null, startTime, endTime, color, devicelist, intensity);
     }
 
 
@@ -155,6 +158,10 @@ public class WeekViewEvent implements Serializable{
     public ArrayList getdeviceList(){return mdevicelist;}
 
     public void setdeviceList(ArrayList devicelist) {this.mdevicelist = devicelist;}
+
+    public int getIntensity(){return  intensity;}
+
+    public  void setIntensity(int intensity){this.intensity = intensity;}
 
     @Override
     public boolean equals(Object o) {

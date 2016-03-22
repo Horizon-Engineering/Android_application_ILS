@@ -22,6 +22,9 @@
             android:layout_alignParentLeft="true"
             android:minHeight="?android:attr/listPreferredItemHeight"
             android:layout_marginTop="2dp"
+            android:layout_marginBottom="20dp"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/adduser"
             />
         <Button
             android:layout_width="200dp"
@@ -44,8 +47,11 @@
         android:layout_marginLeft="30dp">
         <ListView
             android:id="@+id/sectorlist"
+            android:layout_marginBottom="20dp"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/addsector"
             android:minHeight="?android:attr/listPreferredItemHeight"
         />
         <Button
@@ -70,6 +76,9 @@
         <ListView
             android:id="@+id/devicelist"
             android:layout_width="200dp"
+            android:layout_marginBottom="20dp"
+            android:layout_above="@+id/adddevice"
+            android:layout_alignParentTop="true"
             android:layout_height="wrap_content"
             android:minHeight="?android:attr/listPreferredItemHeight" />
         <Button

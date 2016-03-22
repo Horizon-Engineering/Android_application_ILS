@@ -25,12 +25,14 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
@@ -50,6 +52,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,7 +62,9 @@ public class HomePage extends AppCompatActivity {
     GridView gridView;
     Button radioButton1, radioButton2, radioButton3, radioButton4;
     boolean jump = false;
-
+    boolean emergency = false;
+    Switch switch1;
+    ImageView emergencypic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -76,6 +81,8 @@ public class HomePage extends AppCompatActivity {
         radioButton2 = (Button) findViewById(R.id.radioButton2);
         radioButton3 = (Button) findViewById(R.id.radioButton3);
         radioButton4 = (Button) findViewById(R.id.radioButton4);
+        switch1 = (Switch)findViewById(R.id.switch1);
+        emergencypic = (ImageView)findViewById(R.id.emergencypic);
     /*
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -85,14 +92,14 @@ public class HomePage extends AppCompatActivity {
 
         getWindow().setLayout((int) (height * 0.35), (int) (width * 0.4));
 */
-        GridView gridView = (GridView) findViewById(R.id.gridView);
+        final GridView gridView = (GridView) findViewById(R.id.gridView);
 
         String[] numbers = new String[]{"1", "2", "3",
                 "4", "5", "6",
                 "7", "8", "9",
                 "", "0", ""};
 
-        ArrayAdapter adapter = new CustomPinCodeAdapter(this, R.layout.arrayadapter, numbers);
+        final ArrayAdapter adapter = new CustomPinCodeAdapter(this, R.layout.arrayadapter, numbers);
 
         gridView.setAdapter(adapter);
 
@@ -112,8 +119,6 @@ public class HomePage extends AppCompatActivity {
                     while (true) {
                         Calendar calendar = Calendar.getInstance();
                         if (calendar.get(Calendar.HOUR_OF_DAY) == 0 && calendar.get(Calendar.MINUTE) == 0)
-
-                            System.out.println("****************L");
                         GetNewEvent();
                         Thread.sleep(60 * 1000);
 
@@ -127,44 +132,71 @@ public class HomePage extends AppCompatActivity {
         new Thread(new MyRunnable() {
             @Override
             public void run() {
-                try {
-                    Gateway gateways = SysApplication.getInstance().getCurrGateway(HomePage.this);
-                    while(gateways!=null){
-                            MakeAlert();
-                            Thread.sleep(5 * 1000);
+                Gateway gateway = SysApplication.getInstance().getCurrGateway(HomePage.this);
+                while(gateway!=null && emergency==false){
+                    MakeAlert();
+                    try {
+                        Thread.sleep(20*1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-
-                    if (gateways==null)
-                    {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(HomePage.this);
-                                alertDialog.setTitle("Error");
-                                alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
-                                alertDialog.setCancelable(false);
-                                alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent i = getBaseContext().getPackageManager()
-                                                .getLaunchIntentForPackage(getBaseContext().getPackageName());
-                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        int mPendingIntentId = 3;
-                                        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
-                                        AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                                        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
-                                        System.exit(0);
-                                    }
-                                });
-                                alertDialog.show();
-                            }
-                        });
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+
+                if (gateway==null)
+                {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(HomePage.this);
+                            alertDialog.setTitle("Error");
+                            alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
+                            alertDialog.setCancelable(false);
+                            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent i = getBaseContext().getPackageManager()
+                                            .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    int mPendingIntentId = 3;
+                                    PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
+                                    AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                                    mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
+                                    System.exit(0);
+                                }
+                            });
+                            alertDialog.show();
+                        }
+                    });
+                    }
             }
         }).start();
 
+        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (switch1.isChecked()==true)
+                {
+                    emergency = true;
+                    emergencypic.setVisibility(View.VISIBLE);
+                    ArrayList<Device> deviceArrayList= DatabaseManager.getInstance().getDeviceList().getmDeviceList();
+                    switch1.setText("Emergency ON  ");
+                    gridView.setAdapter(null);
+                    for (Device device:deviceArrayList)
+                    {
+                        byte[] data;
+                        data = new byte[]{(byte) 17, (byte) 100, (byte) 0, (byte) 0, (byte) 0};
+                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                        device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
+                                device.getGatewaySSID(), HomePage.this));
+                    }
+                }else
+                {
+                    emergency = false;
+                    gridView.setAdapter(adapter);
+                    switch1.setText("Emergency OFF  ");
+                    emergencypic.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
 
@@ -193,85 +225,81 @@ public class HomePage extends AppCompatActivity {
     public void MakeAlert()
     {
         List<WeekViewEvent> events;
-        Calendar calendar = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         events = DataManager.getInstance().getnewevents();
-        if (events!=null)
-        {
-            for (int i = 0; i< events.size(); i++)
+        HashMap<String, HashMap<String, ArrayList<Device>>> sector = DataManager.getInstance().getsector();
+        ArrayList<Device> arrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
+        Iterator<Device> iterator = arrayList.iterator();
+        if (events != null) {
+            Iterator<WeekViewEvent> eventIterator = events.iterator();
+            while (eventIterator.hasNext())
             {
-                WeekViewEvent event = events.get(i);
-                ArrayList<Device> devicelist = event.getdeviceList();
-                Calendar starttime = event.getStartTime();
-                Calendar finishtime = event.getEndTime();
-
-                if (calendar.before(finishtime)&&calendar.after(starttime))
-                {
-                    for (int j = 0; j <devicelist.size(); j++)
-                    {
-                        Device device = devicelist.get(j);
-                        byte[]data;
-                        data = new byte[]{(byte) 17, device.getCurrentParams()[1], (byte) 0, (byte) 0, (byte) 0};
-                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                        device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
-                                device.getGatewaySSID(), HomePage.this));
-                        device.setCurrentParams(data);
-                        DatabaseManager.getInstance().updateDevice(device);
-                    }
-
-                }
-
-                String currenttime = sdf.format(calendar.getTime());
-                String thisendtime = sdf.format(finishtime.getTime());
-                if (currenttime.equals(thisendtime))
-                {
-
-                    for (int j =0 ; j<events.size(); j++)
-                    {
-                        WeekViewEvent compare = events.get(j);
-                        ArrayList<Device> devicelistcompare = new ArrayList<>();
-                        Calendar starttimecompare = compare.getStartTime();
-                        Calendar finishtimecompare = compare.getEndTime();
-                        if (calendar.before(finishtimecompare)&&calendar.after(starttimecompare)|| calendar.equals(starttimecompare))
-                        {
-                            devicelistcompare = compare.getdeviceList();
-                        }
-
-                        ArrayList<Device> sourcelist = new ArrayList<>(devicelist);
-                        //sourcelist.removeAll(devicelistcompare);
-
-                        Iterator<Device> firstIt = sourcelist.iterator();
-                        while (firstIt.hasNext()) {
-                            Device origin = firstIt.next();
-                            String str1 = origin.getDeviceName();
-                            // recreate iterator for second list
-                            Iterator<Device> secondIt = devicelistcompare.iterator();
-                            while (secondIt.hasNext()) {
-                                String str2 = secondIt.next().getDeviceName();
-                                if (str1.equals(str2)) {
-                                    if (firstIt.hasNext()) {
-                                        firstIt.remove();
+                WeekViewEvent event = eventIterator.next();
+                ArrayList<String> sectorsname = event.getdeviceList();
+                Calendar start = event.getStartTime();
+                Calendar finish = event.getEndTime();
+                String username = event.getName();
+                int intensity = event.getIntensity();
+                if (cal.before(finish) && cal.after(start)) {
+                    Iterator<String> stringIterator = sectorsname.iterator();
+                    while (stringIterator.hasNext()){
+                        String sectorname = stringIterator.next();
+                        if (sector.get(username).containsKey(sectorname)) {
+                            ArrayList<Device> deviceArrayList = sector.get(username).get(sectorname);
+                            if (deviceArrayList != null) {
+                                System.out.println("********************* not null");
+                                for (Device device : deviceArrayList) {
+                                    while (iterator.hasNext())
+                                    {
+                                        Device device1 = iterator.next();
+                                        if (device1.getDeviceName().equals(device.getDeviceName()))iterator.remove();
+                                    }
+                                    Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
+                                    if (thedevice.getChannelMark()!= 5)
+                                    // if controled by control page then dont use schedule
+                                    {
+                                        byte[] data;
+                                        data = new byte[]{(byte) 17, (byte) intensity, (byte) 0, (byte) 0, (byte) 0};
+                                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                                        thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                                thedevice.getGatewaySSID(), HomePage.this));
                                     }
                                 }
+                            }else
+                            {
+                                System.out.println("********************* null");
                             }
-                        }
-
-                        for (int k = 0; k<sourcelist.size() ; k++)
-                        {
-                            Device device = devicelist.get(k);
-                            byte[]data;
-                            data = new byte[]{(byte) 17, (byte) 0, (byte)0, (byte) 0, (byte) 0};
-                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                            device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
-                                    device.getGatewaySSID(), HomePage.this));
-                            device.setCurrentParams(data);
-                            DatabaseManager.getInstance().updateDevice(device);
+                        }else {
+                            stringIterator.remove();
                         }
                     }
                 }
 
+                if (sectorsname.size()==0)
+                {
+                    eventIterator.remove();
+                }
+            }
+
+            if (iterator != null) {
+                while (iterator.hasNext()) {
+                    Device device = iterator.next();
+                    Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
+                    if (thedevice.getChannelMark()!= 5) {
+                        byte[] data;
+                        data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                        thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                thedevice.getGatewaySSID(), HomePage.this));
+                        thedevice.setCurrentParams(data);
+                        DatabaseManager.getInstance().updateDevice(thedevice);
+                    }
+                }
             }
         }
+
         DataManager.getInstance().setnewevents(events);
+
     }
     public void clickHandler(View v) {
         if (!((Button) v).getText().toString().equals(" ")) {
@@ -359,8 +387,7 @@ public class HomePage extends AppCompatActivity {
         if (events!=null) {
             Calendar calendar = Calendar.getInstance();
             int year = calendar.get(Calendar.YEAR);
-            for (int i = 0; i < events.size(); i++) {
-                WeekViewEvent event = events.get(i);
+            for (WeekViewEvent event: events) {
                 int diffdate = Math.abs(calendar.get(Calendar.DAY_OF_YEAR) - event.getStartTime().get(Calendar.DAY_OF_YEAR));
                 if (year == event.getStartTime().get(Calendar.YEAR) && diffdate < 30) {
                     newevents.add(event);

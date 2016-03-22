@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,6 +16,7 @@ import android.view.View;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,7 +42,7 @@ import android.widget.LinearLayout;
 
 public class PaintPage extends Activity{
     private float smallBrush, mediumBrush, largeBrush;
-    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, loadBtn, pen_mode, rec_mode, cir_mode;
+    private ImageButton currPaint, drawBtn, eraseBtn, newBtn, saveBtn, loadBtn;
     private DrawingView drawView;
     private LinearLayout drawingpart;
     private static int RESULT_LOAD_IMG = 1;
@@ -318,14 +321,32 @@ public class PaintPage extends Activity{
             }
         }
         ListView sectorlistlayout = (ListView)findViewById(R.id.sectorlistlayout);
+        TextView blank = (TextView)findViewById(R.id.textView13);
         if (!sectorlist.isEmpty()) {
+            blank.setVisibility(View.GONE);
+            sectorlistlayout.setVisibility(View.VISIBLE);
             MyAdapter adapter = new MyAdapter(this, sectorlist);
             sectorlistlayout.setAdapter(adapter);
             sectorlistlayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     for (int i = 0; i < sectorlist.size(); i++) {
-                        showContent(view);
+                        Bitmap bitmap = null;
+                        bitmap = dataupdate(sectorlist.get(position)+".png");
+                        if (bitmap!=null)
+                        {
+                            Drawable d = new BitmapDrawable(getResources(), bitmap);
+                            drawingpart.setVisibility(View.VISIBLE);
+                            drawView.setBackground(d);
+                            drawView.setEnabletouch(false);
+                            LinearLayout toolpanel = (LinearLayout)findViewById(R.id.toolpanel);
+                            toolpanel.setVisibility(View.GONE);
+                        }else
+                        {
+                            showContent(view);
+                            LinearLayout toolpanel = (LinearLayout)findViewById(R.id.toolpanel);
+                            toolpanel.setVisibility(View.VISIBLE);
+                        }
                         if (position == i) {
                             parent.getChildAt(i).setBackground(getResources().getDrawable(R.drawable.buttonclicked));
                         } else {
@@ -334,6 +355,9 @@ public class PaintPage extends Activity{
                     }
                 }
             });
+        }else {
+            blank.setVisibility(View.VISIBLE);
+            sectorlistlayout.setVisibility(View.GONE);
         }
     }
     public class MyAdapter extends ArrayAdapter<String> {
@@ -362,6 +386,27 @@ public class PaintPage extends Activity{
         sectorsave = ((TextView) view).getText().toString();
         drawingpart.setVisibility(View.VISIBLE);
         drawView.startNew();
+        drawView.setEnabletouch(true);
         drawView.setBackground(null);
+    }
+
+    public static Bitmap dataupdate(String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon/Bitmap");
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            try {
+                FileInputStream streamIn = new FileInputStream(file);
+                Bitmap bitmap = BitmapFactory.decodeStream(streamIn);
+                return bitmap;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
     }
 }

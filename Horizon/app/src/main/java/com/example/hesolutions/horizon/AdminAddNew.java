@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -50,6 +51,8 @@ public class AdminAddNew extends Activity {
     Device mDevice = new Device();
     ListView assignsector;
     MyCustomAdapter deviceAdapter =null;
+    int usecase;
+    String key , oldcolor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,12 +74,14 @@ public class AdminAddNew extends Activity {
 
         ImageView homescreenBgImage = (ImageView) findViewById(R.id.imageView);
         Bitmap cachedBitmap = DataManager.getInstance().getBitmap();
+
+        setupUI(findViewById(R.id.parent));
         if (cachedBitmap != null) {
             Bitmap blurredBitmap = BlurBuilder.blur(this, cachedBitmap);
             homescreenBgImage.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
         }
 
-        int usecase = getIntent().getIntExtra("Case", 0);
+        usecase = getIntent().getIntExtra("Case", 0);
         if (usecase == 1) {
             MSG.requestFocus();
             addNewUser.setVisibility(View.VISIBLE);
@@ -190,69 +195,130 @@ public class AdminAddNew extends Activity {
                 });
                 alertDialog.show();
             }
+        }else if (usecase == 6) {
+            UserName = getIntent().getStringExtra("UserName");
+            assignuser.setVisibility(View.GONE);
+            addNewUser.setVisibility(View.VISIBLE);
+            addnewsector.setVisibility(View.GONE);
+            addnewdevice.setVisibility(View.GONE);
+            MSG.setText(UserName);
+            MSG.setEnabled(false);
+            key = "";
+            BiMap<String, ArrayList> bimap = DataManager.getInstance().getaccount();
+            for (Map.Entry<String, ArrayList> entry : bimap.entrySet()) {
+                ArrayList<String>  account = entry.getValue();
+                if (account.get(0).equals(UserName)){
+                    key = entry.getKey();
+                    oldcolor = account.get(1);
+                }
+            }
+            if (!key.equals("")) CODE.setText(key);
         }
 
 
         SAVE.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View v) {
-
-                String Accounts = MSG.getText().toString();    //value
-                String Passwords = CODE.getText().toString();  //key
-                BiMap<String, ArrayList> bimap;
-                bimap = DataManager.getInstance().getaccount();
-                ArrayList<String> accout = new ArrayList<String>();
-
-                String[] arr = {"#59dbe0", "#f57f68", "#87d288", "#f8b552", "#39add1", "#3079ab", "#c25975", "#e15258",
-                        "#f9845b", "#838cc7", "#7d669e", "#53bbb4", "#51b46d", "#e0ab18", "#f092b0", "#b7c0c7"};
-                Random random = new Random();
-                int select = random.nextInt(arr.length);
-                String color = arr[select];
-                boolean duplicated = true;
-                for (Map.Entry<String, ArrayList> entry : bimap.entrySet()) {
-                    ArrayList<String>  account = entry.getValue();
-                    if (account.get(0).equals(Accounts)) duplicated = false;
-                }
-
-                if (Accounts.isEmpty() || Passwords.isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Missing Accounts or Passwords", Toast.LENGTH_LONG).show();
-                } else if (bimap.get(Passwords) != null) {
-                    accout = bimap.get(Passwords);
-                    String accoutname = accout.get(0);
-                    Toast.makeText(getApplicationContext(), "Existant accout: " + accoutname, Toast.LENGTH_LONG).show();
-                    MSG.setText("");
-                    CODE.setText("");
-                } else if (Passwords.length() != 4) {
-                    Toast.makeText(getApplicationContext(), "The Password must be 4 digits", Toast.LENGTH_LONG).show();
-                    CODE.setText("");
-                } else if (duplicated==false)
+            public void onClick(final View v) {
+                if (usecase == 6)
                 {
-                    Toast.makeText(getApplicationContext(), "Existant accout: " + Accounts, Toast.LENGTH_LONG).show();
-                    MSG.setText("");
-                    CODE.setText("");
-                }else if (Passwords.equals("0000"))
-                {
-                    Toast.makeText(AdminAddNew.this, "The password cannot be the same as for the Admin", Toast.LENGTH_SHORT).show();
-                    MSG.setText("");
-                    CODE.setText("");
-                } else {
-                    accout.add(Accounts);
-                    accout.add(color);
-                    bimap.put(Passwords, accout);
-                    DataManager.getInstance().setaccount(bimap);
-                    MSG.setText("");
-                    CODE.setText("");
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                    int usernumber = DataManager.getInstance().getUsernum();
-                    usernumber ++;
-                    DataManager.getInstance().setUsernum(usernumber);
-                    ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
-                    activityAdminStack.pop();
-                    Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
-                }
+                    final BiMap<String, ArrayList> bimap = DataManager.getInstance().getaccount();
+                    final String Passwords = CODE.getText().toString();
+                    if (Passwords.length() != 4 && bimap.get(Passwords) != null || Passwords.isEmpty())
+                    {
+                        Toast.makeText(AdminAddNew.this, "Missing Accounts or Passwords", Toast.LENGTH_SHORT).show();
+                    }else if(bimap.get(Passwords) != null) {
+                        Toast.makeText(AdminAddNew.this, "This password already exists" , Toast.LENGTH_SHORT).show();
+                    }else if (Passwords.equals("0000")){
+                        Toast.makeText(AdminAddNew.this, "The password cannot be the same as for the Admin", Toast.LENGTH_SHORT).show();
+                    } else {
+                        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this.getParent());
+                        alertDialog.setTitle("Warning");
+                        alertDialog.setCancelable(false);
+                        alertDialog.setMessage("Do you want to make the change?");
+                        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        bimap.remove(key);
+                                        ArrayList<String> accout = new ArrayList<String>();
+                                        accout.add(UserName);
+                                        accout.add(oldcolor);
+                                        bimap.put(Passwords, accout);
+                                        DataManager.getInstance().setaccount(bimap);
+                                        MSG.setText("");
+                                        CODE.setText("");
+                                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                                        usecase = 0;
+                                        dialog.cancel();
+                                        ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
+                                        activityAdminStack.pop();
+                                        Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                        );
+                        alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                        alertDialog.show();
+                        usecase = 0;
+                    }
 
+                }else {
+                    String Accounts = MSG.getText().toString();    //value
+                    String Passwords = CODE.getText().toString();  //key
+                    BiMap<String, ArrayList> bimap;
+                    bimap = DataManager.getInstance().getaccount();
+                    ArrayList<String> accout = new ArrayList<String>();
+
+                    String[] arr = {"#59dbe0", "#f57f68", "#87d288", "#f8b552", "#39add1", "#3079ab", "#c25975", "#e15258",
+                            "#f9845b", "#838cc7", "#7d669e", "#53bbb4", "#51b46d", "#e0ab18", "#f092b0", "#b7c0c7"};
+                    Random random = new Random();
+                    int select = random.nextInt(arr.length);
+                    String color = arr[select];
+                    boolean duplicated = true;
+                    for (Map.Entry<String, ArrayList> entry : bimap.entrySet()) {
+                        ArrayList<String> account = entry.getValue();
+                        if (account.get(0).equals(Accounts)) duplicated = false;
+                    }
+                    if (Accounts.isEmpty() || Passwords.isEmpty()) {
+                        Toast.makeText(getApplicationContext(), "Missing Accounts or Passwords", Toast.LENGTH_LONG).show();
+                    } else if (bimap.get(Passwords) != null) {
+                        Toast.makeText(getApplicationContext(), "This accout password already exists", Toast.LENGTH_LONG).show();
+                        MSG.setText("");
+                        CODE.setText("");
+                    } else if (Passwords.length() != 4) {
+                        Toast.makeText(getApplicationContext(), "The Password must be 4 digits", Toast.LENGTH_LONG).show();
+                        CODE.setText("");
+                    } else if (duplicated == false) {
+                        Toast.makeText(getApplicationContext(), "This accout name already exists", Toast.LENGTH_LONG).show();
+                        MSG.setText("");
+                        CODE.setText("");
+                    } else if (Passwords.equals("0000")) {
+                        Toast.makeText(AdminAddNew.this, "The password cannot be the same as for the Admin", Toast.LENGTH_SHORT).show();
+                        MSG.setText("");
+                        CODE.setText("");
+                    } else {
+
+                        accout.add(Accounts);
+                        accout.add(color);
+                        bimap.put(Passwords, accout);
+                        DataManager.getInstance().setaccount(bimap);
+                        MSG.setText("");
+                        CODE.setText("");
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                        int usernumber = DataManager.getInstance().getUsernum();
+                        usernumber++;
+                        DataManager.getInstance().setUsernum(usernumber);
+                        ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
+                        activityAdminStack.pop();
+                        Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+
+                    }
+                }
                 //addNewUser.setVisibility(View.INVISIBLE);
             }
         });
@@ -272,7 +338,7 @@ public class AdminAddNew extends Activity {
                                 if (entrys.getKey().equals(name)) {
                                     sectorname.setText("");
                                     uniquesectorname = false;
-                                    Toast.makeText(AdminAddNew.this, "Existant sector: " + name, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AdminAddNew.this, "This sector name already exists", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
@@ -339,7 +405,7 @@ public class AdminAddNew extends Activity {
                 ArrayList<Device> mDeviceList = sectordetail.get(sectorName);
                 if (!name.equals("")) {
                     if (findDeviceName(name)) {
-                        Toast.makeText(AdminAddNew.this, "Device has already been added", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AdminAddNew.this, "This device name already exists", Toast.LENGTH_SHORT).show();
                     } else {
                         Gateway gateways = SysApplication.getInstance().getCurrGateway(AdminAddNew.this);
                         if (gateways != null) {
@@ -357,13 +423,13 @@ public class AdminAddNew extends Activity {
                                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                                 Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+                                int devicenum = DataManager.getInstance().getDevicenum();
+                                devicenum ++;
+                                DataManager.getInstance().setDevicenum(devicenum);
                                 Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
                                 startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
-                                int devicenum = DataManager.getInstance().getDevicenum();
-                                devicenum ++;
-                                DataManager.getInstance().setDevicenum(devicenum);
                             } else {
                                 mDevice.setDeviceName(name);
                                 ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
@@ -377,13 +443,13 @@ public class AdminAddNew extends Activity {
                                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                                 Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+                                int devicenum = DataManager.getInstance().getDevicenum();
+                                devicenum ++;
+                                DataManager.getInstance().setDevicenum(devicenum);
                                 Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
                                 ActivityAdminStack activityadminStack = (ActivityAdminStack) getParent();
                                 startNewActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 activityadminStack.push("AdminPage", startNewActivityIntent);
-                                int devicenum = DataManager.getInstance().getDevicenum();
-                                devicenum ++;
-                                DataManager.getInstance().setDevicenum(devicenum);
                             }
                         } else {
                             Restart();
@@ -445,18 +511,20 @@ public class AdminAddNew extends Activity {
                     Toast.makeText(AdminAddNew.this, "At least one user should be selected", Toast.LENGTH_SHORT).show();
                 } else {
                     for (int k = 0; k < choosedevice.size(); k++) {
-                        sectordetail = sector.get(choosedevice.get(k).getName());
-                        final String sectorname = choosedevice.get(k).getName();
-                        if (sectordetail != null && !sectordetail.isEmpty()) {
-                            if (sectordetail.get(SectorName)!=null)
+                        final HashMap<String, ArrayList<Device>> selectedsectordetail = sector.get(choosedevice.get(k).getName());
+                        final String selectedusername = choosedevice.get(k).getName();
+                        // case 1: there has already been sectors assigned to the selected user
+                        if (selectedsectordetail != null && !selectedsectordetail.isEmpty()) {
+                            if (selectedsectordetail.containsKey(SectorName))
                             {
+                                // case1.1: if the sectors has included the sharing sector (override)
                                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this.getParent());
                                 alertDialog.setTitle("Warning");
                                 alertDialog.setMessage("Do you want to overwrite the sector?");
                                 alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        sectordetail.put(SectorName, list);
-                                        sector.put(sectorname, sectordetail);
+                                        selectedsectordetail.put(SectorName, list);
+                                        sector.put(selectedusername, selectedsectordetail);
                                         DataManager.getInstance().setsector(sector);
                                     }
                                 });
@@ -468,20 +536,16 @@ public class AdminAddNew extends Activity {
                                 alertDialog.show();
                                 break;
                             }else {
-                                sectordetail.put(SectorName, list);
-                                sector.put(sectorname, sectordetail);
+                                //case 1.2: the sectors do not include the sharing sector
+                                selectedsectordetail.put(SectorName, list);
+                                sector.put(selectedusername, selectedsectordetail);
                                 DataManager.getInstance().setsector(sector);
-                                int sectornumber = DataManager.getInstance().getSectornum();
-                                sectornumber ++;
-                                DataManager.getInstance().setSectornum(sectornumber);
                             }
                         }else
                         {
+                            //case 2: no sectors has been assigned to this sector
                             sector.put(choosedevice.get(k).getName(), newassignsector);
                             DataManager.getInstance().setsector(sector);
-                            int sectornumber = DataManager.getInstance().getSectornum();
-                            sectornumber ++;
-                            DataManager.getInstance().setSectornum(sectornumber);
                         }
                     }
                     Intent startNewActivityIntent = new Intent(AdminAddNew.this, AdminPage.class);
@@ -493,6 +557,24 @@ public class AdminAddNew extends Activity {
         });
 
 
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        userName = "";
+        UserName = "";
+        SectorName = "";
+        sectorName = "";
+        result = "";
+        mDevice = new Device();
+        deviceAdapter =null;
+        usecase = 0;
+        key = "";
+        oldcolor= "";
+        sectordetail = null;
+        sector = null;
     }
 
     private boolean findDeviceName(String deviceName) {
@@ -602,6 +684,31 @@ public class AdminAddNew extends Activity {
             }
         });
 
+    }
+
+    public void setupUI(View view) {
+        //Set up touch listener for non-text box views to hide keyboard.
+        if(!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(getCurrentFocus() != null) {
+                        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    }
+                    return false;
+                }
+
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
 
 }

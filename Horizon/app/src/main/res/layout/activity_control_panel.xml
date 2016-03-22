@@ -12,6 +12,7 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="10.0sp"
         android:layout_marginTop="10dp"
+        android:childDivider="#00000000"
         android:groupIndicator="@null"
         />
     <!--

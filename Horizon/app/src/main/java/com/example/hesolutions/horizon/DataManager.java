@@ -247,7 +247,7 @@ public class DataManager {
     public int usernum;
     public int getUsernum()
     {
-        usernum = dataupdateint("use");
+        usernum = dataupdateint("user");
         return usernum;
     }
 

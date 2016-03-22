@@ -35,6 +35,7 @@ public class DrawingView extends View {
     private float startX = 0F;
     private float startY = 0F;
 
+    private boolean enabletouch = true;
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setupDrawing();
@@ -73,71 +74,75 @@ public class DrawingView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 //detect user touch
-        float touchX = event.getX();
-        float touchY = event.getY();
-        switch (modeint) {
-            case 1:
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        drawPath.moveTo(touchX, touchY);
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        drawPaint.setStyle(Paint.Style.STROKE);
-                        drawPath.lineTo(touchX, touchY);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        drawCanvas.drawPath(drawPath, drawPaint);
-                        drawPath.reset();
-                        break;
-                    default:
-                        return false;
-                }
-                break;
-            case 2:
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        this.startX = event.getX();
-                        this.startY = event.getY();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        drawPath.reset();
-                        drawPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-                        drawPath.addRect(startX, startY, touchX, touchY, Path.Direction.CCW);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        drawCanvas.drawPath(drawPath, drawPaint);
-                        drawPath.reset();
-                        break;
-                    default:
-                        return false;
-                }
-                break;
-            case 3:
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        this.startX = event.getX();
-                        this.startY = event.getY();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        double distanceX = Math.abs((double)(startX-touchX));
-                        double distanceY = Math.abs((double)(startY-touchY));
-                        double radius =Math.sqrt(Math.pow(distanceX, 2.0)+ Math.pow(distanceY, 2.0));
-                        drawPath.reset();
-                        drawPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-                        drawPath.addCircle(startX, startY, (float) radius, Path.Direction.CCW);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        drawCanvas.drawPath(drawPath, drawPaint);
-                        drawPath.reset();
-                        break;
-                    default:
-                        return false;
-                }
-                break;
+        if (enabletouch == true) {
+            float touchX = event.getX();
+            float touchY = event.getY();
+            switch (modeint) {
+                case 1:
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            drawPath.moveTo(touchX, touchY);
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            drawPaint.setStyle(Paint.Style.STROKE);
+                            drawPath.lineTo(touchX, touchY);
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            drawCanvas.drawPath(drawPath, drawPaint);
+                            drawPath.reset();
+                            break;
+                        default:
+                            return false;
+                    }
+                    break;
+                case 2:
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            this.startX = event.getX();
+                            this.startY = event.getY();
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            drawPath.reset();
+                            drawPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                            drawPath.addRect(startX, startY, touchX, touchY, Path.Direction.CCW);
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            drawCanvas.drawPath(drawPath, drawPaint);
+                            drawPath.reset();
+                            break;
+                        default:
+                            return false;
+                    }
+                    break;
+                case 3:
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            this.startX = event.getX();
+                            this.startY = event.getY();
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            double distanceX = Math.abs((double) (startX - touchX));
+                            double distanceY = Math.abs((double) (startY - touchY));
+                            double radius = Math.sqrt(Math.pow(distanceX, 2.0) + Math.pow(distanceY, 2.0));
+                            drawPath.reset();
+                            drawPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                            drawPath.addCircle(startX, startY, (float) radius, Path.Direction.CCW);
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            drawCanvas.drawPath(drawPath, drawPaint);
+                            drawPath.reset();
+                            break;
+                        default:
+                            return false;
+                    }
+                    break;
+            }
+            invalidate();
+            return true;
+        }else
+        {
+            return true;
         }
-
-        invalidate();
-        return true;
     }
     public void setColor(String newColor){
 //set color
@@ -194,6 +199,11 @@ public class DrawingView extends View {
                 modeint = 3;
                 break;
         }
+    }
+
+    public void setEnabletouch(boolean bool)
+    {
+        this.enabletouch = bool;
     }
 
 }

@@ -186,35 +186,9 @@ public class ControlPanel extends Activity {
                     if (gateway!=null) {
                         seekBar.setEnabled(true);
                         Intensitynum.setText(Integer.toString(progress)+"%");
-                        Calendar calendar = Calendar.getInstance();
-                        List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
-                        Device devicea = DataManager.getInstance().getthedevice();
-                        if (events.size() != 0) {
 
-                            Iterator<WeekViewEvent> eventIterator = events.iterator();
-                            while (eventIterator.hasNext()) {
-                                WeekViewEvent event = eventIterator.next();
-                                Calendar starttime = event.getStartTime();
-                                Calendar finishtime = event.getEndTime();
-                                if (calendar.after(starttime) && calendar.before(finishtime)) {
-                                    ArrayList<Device> devicelist = event.getdeviceList();
-                                    if (devicelist != null) {
-                                        str2 = devicea.getDeviceName();
-                                        Iterator<Device> firstIt = devicelist.iterator();
-                                        while (firstIt.hasNext()) {
-                                            str1 = firstIt.next().getDeviceName();
-                                            if (str1.equals(str2)) {
-                                                firstIt.remove();
-                                            }
-                                            if (devicelist.isEmpty()) {
-                                                eventIterator.remove();
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        DataManager.getInstance().setnewevents(events);
+
+                        Device devicea = DataManager.getInstance().getthedevice();
 
                         byte[] SetParams = new byte[5];
                         if (fromUser) {
@@ -237,6 +211,11 @@ public class ControlPanel extends Activity {
                                 devicea.getGatewaySSID(), ControlPanel.this));
 
                         devicea.setCurrentParams(SetParams);
+                        if (progress>0) {
+                            devicea.setChannelMark((short) 5);
+                        }else{
+                            devicea.setChannelMark((short)0);
+                        }
                         DatabaseManager.getInstance().updateDevice(devicea);
                         notifyDataSetChanged();
                     }else
@@ -266,34 +245,6 @@ public class ControlPanel extends Activity {
                         seekBar.setVisibility(View.INVISIBLE);
                         Intensitynum.setVisibility(View.INVISIBLE);
                         Intensity.setVisibility(View.INVISIBLE);
-                        Calendar calendar = Calendar.getInstance();
-                        List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
-                        if (events.size() != 0) {
-
-                            Iterator<WeekViewEvent> eventIterator = events.iterator();
-                            while (eventIterator.hasNext()) {
-                                WeekViewEvent event = eventIterator.next();
-                                Calendar starttime = event.getStartTime();
-                                Calendar finishtime = event.getEndTime();
-                                if (calendar.after(starttime) && calendar.before(finishtime)) {
-                                    ArrayList<Device> devicelist = event.getdeviceList();
-                                    if (devicelist != null) {
-                                        str2 = device.getDeviceName();
-                                        Iterator<Device> firstIt = devicelist.iterator();
-                                        while (firstIt.hasNext()) {
-                                            str1 = firstIt.next().getDeviceName();
-                                            if (str1.equals(str2)) {
-                                                firstIt.remove();
-                                            }
-                                            if (devicelist.isEmpty()) {
-                                                eventIterator.remove();
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        DataManager.getInstance().setnewevents(events);
 
                         if (switchid.isChecked() == true) {
                             byte[] data;
@@ -302,6 +253,7 @@ public class ControlPanel extends Activity {
                                             device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                     device.getGatewaySSID(), ControlPanel.this));
                             device.setCurrentParams(data);
+                            device.setChannelMark((short) 5);
                             DatabaseManager.getInstance().updateDevice(device);
                         } else {
 
@@ -312,6 +264,7 @@ public class ControlPanel extends Activity {
                                     device.getGatewaySSID(), ControlPanel.this));
 
                             device.setCurrentParams(data);
+                            device.setChannelMark((short) 0);
                             DatabaseManager.getInstance().updateDevice(device);
                         }
                         notifyDataSetChanged();
@@ -361,8 +314,7 @@ public class ControlPanel extends Activity {
             txtTitle.setText(sectorname);
             final ArrayList<Device> devicelist = sectordetail.get(sectorname);
             if (devicelist!=null) {
-                for (int i = 0; i < devicelist.size(); i++) {
-                    Device device = devicelist.get(i);
+                for (Device device:devicelist) {
                     if (!devicelist.isEmpty()) {
                         if (DatabaseManager.getInstance().getlightingofDevice(device)[1] != 0) {
                             switchid.setCheckedProgrammatically(true);
@@ -413,6 +365,7 @@ public class ControlPanel extends Activity {
                         seekBar.setVisibility(View.INVISIBLE);
                         Intensitynum.setVisibility(View.INVISIBLE);
                         Intensity.setVisibility(View.INVISIBLE);
+
                         Calendar calendar = Calendar.getInstance();
                         List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
                         if (events.size() != 0) {
@@ -422,24 +375,9 @@ public class ControlPanel extends Activity {
                                 Calendar starttime = event.getStartTime();
                                 Calendar finishtime = event.getEndTime();
                                 if (calendar.after(starttime) && calendar.before(finishtime)) {
-                                    ArrayList<Device> devicelistevent = event.getdeviceList();
-                                    Iterator<Device> firstIt = devicelistevent.iterator();
-                                    if (devicelist != null) {
-                                        while (firstIt.hasNext()) {
-                                            str1 = firstIt.next().getDeviceName();
-                                            Iterator<Device> secondIt = devicelist.iterator();
-                                            while (secondIt.hasNext()) {
-                                                str2 = secondIt.next().getDeviceName();
-                                                if (str1.equals(str2)) {
-                                                    firstIt.remove();
-                                                }
-                                                if (devicelistevent.isEmpty()) {
-                                                    eventIterator.remove();
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
+                                    ArrayList<String> sectornamelist = event.getdeviceList();
+                                    sectornamelist.remove(sectorname);
+                                    if (sectornamelist.isEmpty())eventIterator.remove();
                                 }
                             }
                         }
@@ -449,25 +387,25 @@ public class ControlPanel extends Activity {
                         if (!sectorname.equals(" ")) {
                             if (devicelist != null) {
                                 if (switchid.isChecked() == true) {
-                                    for (int i = 0; i < devicelist.size(); i++) {
-                                        Device thedevice = devicelist.get(i);
+                                    for (Device thedevice:devicelist) {
                                         byte[] data;
                                         data = new byte[]{(byte) 17, (byte) 100, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
                                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                                         thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
                                                 thedevice.getGatewaySSID(), ControlPanel.this));
                                         thedevice.setCurrentParams(data);
+                                        thedevice.setChannelMark((short) 5);
                                         DatabaseManager.getInstance().updateDevice(thedevice);
                                     }
                                 } else {
-                                    for (int i = 0; i < devicelist.size(); i++) {
-                                        Device thedevice = devicelist.get(i);
+                                    for (Device thedevice:devicelist) {
                                         byte[] data;
                                         data = new byte[]{(byte) 17, (byte) 0, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
                                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                                         thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
                                                 thedevice.getGatewaySSID(), ControlPanel.this));
                                         thedevice.setCurrentParams(data);
+                                        thedevice.setChannelMark((short)0);
                                         DatabaseManager.getInstance().updateDevice(thedevice);
                                     }
                                 }
