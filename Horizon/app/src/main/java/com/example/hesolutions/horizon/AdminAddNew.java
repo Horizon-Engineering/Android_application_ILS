@@ -226,12 +226,12 @@ public class AdminAddNew extends Activity {
                     final String Passwords = CODE.getText().toString();
                     if (Passwords.length() != 4 && bimap.get(Passwords) != null || Passwords.isEmpty())
                     {
-                        Toast.makeText(AdminAddNew.this, "Missing Accounts or Passwords", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AdminAddNew.this, "Missing accounts= or password", Toast.LENGTH_SHORT).show();
                     }else if(bimap.get(Passwords) != null) {
                         Toast.makeText(AdminAddNew.this, "This password already exists" , Toast.LENGTH_SHORT).show();
                     }else if (Passwords.equals("0000")){
                         Toast.makeText(AdminAddNew.this, "The password cannot be the same as for the Admin", Toast.LENGTH_SHORT).show();
-                    } else {
+                    }else {
                         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this.getParent());
                         alertDialog.setTitle("Warning");
                         alertDialog.setCancelable(false);
@@ -252,7 +252,7 @@ public class AdminAddNew extends Activity {
                                         dialog.cancel();
                                         ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
                                         activityAdminStack.pop();
-                                        Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getApplicationContext(), "Data saved successfully!", Toast.LENGTH_LONG).show();
                                     }
                                 }
                         );
@@ -284,23 +284,26 @@ public class AdminAddNew extends Activity {
                         if (account.get(0).equals(Accounts)) duplicated = false;
                     }
                     if (Accounts.isEmpty() || Passwords.isEmpty()) {
-                        Toast.makeText(getApplicationContext(), "Missing Accounts or Passwords", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Missing account or password", Toast.LENGTH_LONG).show();
                     } else if (bimap.get(Passwords) != null) {
-                        Toast.makeText(getApplicationContext(), "This accout password already exists", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "This account password already exists", Toast.LENGTH_LONG).show();
                         MSG.setText("");
                         CODE.setText("");
                     } else if (Passwords.length() != 4) {
-                        Toast.makeText(getApplicationContext(), "The Password must be 4 digits", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "The password must be 4 digits", Toast.LENGTH_LONG).show();
                         CODE.setText("");
                     } else if (duplicated == false) {
-                        Toast.makeText(getApplicationContext(), "This accout name already exists", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "This account name already exists", Toast.LENGTH_LONG).show();
                         MSG.setText("");
                         CODE.setText("");
                     } else if (Passwords.equals("0000")) {
                         Toast.makeText(AdminAddNew.this, "The password cannot be the same as for the Admin", Toast.LENGTH_SHORT).show();
                         MSG.setText("");
                         CODE.setText("");
-                    } else {
+                    } else if (Accounts.contains(" ")){
+                        Toast.makeText(AdminAddNew.this, "No spaces allowed", Toast.LENGTH_SHORT).show();
+                        MSG.setText("");
+                    }else {
 
                         accout.add(Accounts);
                         accout.add(color);
@@ -315,7 +318,7 @@ public class AdminAddNew extends Activity {
                         DataManager.getInstance().setUsernum(usernumber);
                         ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
                         activityAdminStack.pop();
-                        Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Data saved successfully!", Toast.LENGTH_LONG).show();
 
                     }
                 }
@@ -330,7 +333,13 @@ public class AdminAddNew extends Activity {
                 HashMap<String, ArrayList> sectordetail1 = new HashMap<String, ArrayList>();
                 String name = sectorname.getText().toString();
                 boolean uniquesectorname = true;
-                if (!name.equals("")) {
+                if (name.equals("")) {
+                    Toast.makeText(AdminAddNew.this, "Sector name cannot be empty", Toast.LENGTH_SHORT).show();
+                }else if (name.contains(" ")){
+                    Toast.makeText(AdminAddNew.this, "No spaces allowed", Toast.LENGTH_SHORT).show();
+                    sectorname.setText("");
+                }else {
+
                     for (Map.Entry<String, HashMap> entry : sector.entrySet()) {
                         HashMap<String, ArrayList> value = entry.getValue();
                         if (value!=null) {
@@ -359,7 +368,7 @@ public class AdminAddNew extends Activity {
                                 DataManager.getInstance().setSectornum(sectornum);
                                 ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
                                 activityAdminStack.pop();
-                                Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Data saved successfully!", Toast.LENGTH_LONG).show();
                             } else {
                                 sectordetail1 = sector.get(userName);
                                 sectordetail1.put(name, null);
@@ -373,7 +382,7 @@ public class AdminAddNew extends Activity {
                                 DataManager.getInstance().setSectornum(sectornum);
                                 ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
                                 activityAdminStack.pop();
-                                Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Data saved successfully!", Toast.LENGTH_LONG).show();
                             }
                         } else {
                             HashMap<String, ArrayList<Device>> sectordetail2 = new HashMap<String, ArrayList<Device>>();
@@ -387,11 +396,9 @@ public class AdminAddNew extends Activity {
                             DataManager.getInstance().setSectornum(sectornum);
                             ActivityAdminStack activityAdminStack = (ActivityAdminStack) getParent();
                             activityAdminStack.pop();
-                            Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Data saved successfully!", Toast.LENGTH_LONG).show();
                         }
                     }
-                } else {
-                    Toast.makeText(AdminAddNew.this, "Sector Name cannot be empty", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -403,7 +410,12 @@ public class AdminAddNew extends Activity {
                 String name = devicename.getText().toString();
                 sectordetail = sector.get(userName);
                 ArrayList<Device> mDeviceList = sectordetail.get(sectorName);
-                if (!name.equals("")) {
+                if (name.equals("")) {
+                    Toast.makeText(AdminAddNew.this, "Device name cannot be empty", Toast.LENGTH_SHORT).show();
+                }else if (name.contains(" ")) {
+                    Toast.makeText(AdminAddNew.this, "No spaces allowed", Toast.LENGTH_SHORT).show();
+                    devicename.setText("");
+                }else{
                     if (findDeviceName(name)) {
                         Toast.makeText(AdminAddNew.this, "This device name already exists", Toast.LENGTH_SHORT).show();
                     } else {
@@ -422,7 +434,7 @@ public class AdminAddNew extends Activity {
                                 DataManager.getInstance().setsector(sector);
                                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                                Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Data saved successfully!", Toast.LENGTH_LONG).show();
                                 int devicenum = DataManager.getInstance().getDevicenum();
                                 devicenum ++;
                                 DataManager.getInstance().setDevicenum(devicenum);
@@ -442,7 +454,7 @@ public class AdminAddNew extends Activity {
                                 DataManager.getInstance().setsector(sector);
                                 InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                                Toast.makeText(getApplicationContext(), "Data Saved successfully!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Data saved successfully!", Toast.LENGTH_LONG).show();
                                 int devicenum = DataManager.getInstance().getDevicenum();
                                 devicenum ++;
                                 DataManager.getInstance().setDevicenum(devicenum);
@@ -455,9 +467,6 @@ public class AdminAddNew extends Activity {
                             Restart();
                         }
                     }
-
-                } else {
-                    Toast.makeText(AdminAddNew.this, "Device Name cannot be empty", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -669,9 +678,9 @@ public class AdminAddNew extends Activity {
 
     }
     public void Restart(){
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(AdminAddNew.this.getParent());
         alertDialog.setTitle("Error");
-        alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
+        alertDialog.setMessage("Gateway error, please check the gateway and then try again.");
         alertDialog.setCancelable(false);
         alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {

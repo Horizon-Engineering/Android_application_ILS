@@ -475,10 +475,6 @@ public class WeekView extends View {
         mWidthPerDay = mWidthPerDay/mNumberOfVisibleDays;
 
         Calendar today = today();
-        if (mNumberOfVisibleDays ==7) {
-            int diff = today.get(Calendar.DAY_OF_WEEK);
-            today.add(Calendar.DAY_OF_WEEK, -diff +1);
-        }
 
         if (mAreDimensionsInvalid) {
             mEffectiveMinHourHeight= Math.max(mMinHourHeight, (int) ((getHeight() - mHeaderTextHeight - mHeaderRowPadding * 2 - mHeaderMarginBottom) / 24));
@@ -536,11 +532,6 @@ public class WeekView extends View {
         // Prepare to iterate for each day.
         Calendar day = (Calendar) today.clone();
         day.add(Calendar.HOUR, 6);
-        if (mNumberOfVisibleDays ==7) {
-            int diff = day.get(Calendar.DAY_OF_WEEK);
-            day.add(Calendar.DAY_OF_WEEK, -diff +1);
-        }
-
 
         // Prepare to iterate for each hour to draw the hour lines.
         int lineCount = (int) ((getHeight() - mHeaderTextHeight - mHeaderRowPadding * 2 -
@@ -571,6 +562,12 @@ public class WeekView extends View {
 
             // Check if the day is today.
             day = (Calendar) today.clone();
+
+            if (mNumberOfVisibleDays ==7) {
+                int diff = day.get(Calendar.DAY_OF_WEEK);
+                day.add(Calendar.DAY_OF_WEEK, -diff +1);
+            }
+
             mLastVisibleDay = (Calendar) day.clone();
             day.add(Calendar.DATE, dayNumber - 1);
             mLastVisibleDay.add(Calendar.DATE, dayNumber - 2);
@@ -652,20 +649,39 @@ public class WeekView extends View {
 
         // Draw the header row texts.
         startPixel = startFromPixel;
-        for (int dayNumber=leftDaysWithGaps+1; dayNumber <= leftDaysWithGaps + mNumberOfVisibleDays + 1; dayNumber++) {
-            // Check if the day is today.
-            day = (Calendar) today.clone();
-            day.add(Calendar.DATE, dayNumber - 1);
-            boolean sameDay = isSameDay(day, today);
+        if (mNumberOfVisibleDays!=7) {
+            for (int dayNumber = leftDaysWithGaps + 1; dayNumber <= leftDaysWithGaps + mNumberOfVisibleDays + 1; dayNumber++) {
+                // Check if the day is today.
+                day = (Calendar) today.clone();
+                day.add(Calendar.DATE, dayNumber - 1);
+                boolean sameDay = isSameDay(day, today);
 
-            // Draw the day labels.
-            String dayLabel = getDateTimeInterpreter().interpretDate(day);
-            if (dayLabel == null)
-                throw new IllegalStateException("A DateTimeInterpreter must not return null date");
-            canvas.drawText(dayLabel, startPixel + mWidthPerDay / 2, mHeaderTextHeight + mHeaderRowPadding, sameDay ? mTodayHeaderTextPaint : mHeaderTextPaint);
-            startPixel += mWidthPerDay + mColumnGap;
+                // Draw the day labels.
+                String dayLabel = getDateTimeInterpreter().interpretDate(day);
+                if (dayLabel == null)
+                    throw new IllegalStateException("A DateTimeInterpreter must not return null date");
+                canvas.drawText(dayLabel, startPixel + mWidthPerDay / 2, mHeaderTextHeight + mHeaderRowPadding, sameDay ? mTodayHeaderTextPaint : mHeaderTextPaint);
+                startPixel += mWidthPerDay + mColumnGap;
+            }
+        }else {
+            Calendar newday = (Calendar) today.clone();
+            int diff = newday.get(Calendar.DAY_OF_WEEK);
+            newday.add(Calendar.DAY_OF_WEEK, -diff +1);
+
+            for (int dayNumber = leftDaysWithGaps + 1; dayNumber <= leftDaysWithGaps + mNumberOfVisibleDays + 1; dayNumber++) {
+                // Check if the day is today.
+                day = (Calendar) newday.clone();
+                day.add(Calendar.DATE, dayNumber - 1);
+                boolean sameDay = isSameDay(day, today);
+
+                // Draw the day labels.
+                String dayLabel = getDateTimeInterpreter().interpretDate(day);
+                if (dayLabel == null)
+                    throw new IllegalStateException("A DateTimeInterpreter must not return null date");
+                canvas.drawText(dayLabel, startPixel + mWidthPerDay / 2, mHeaderTextHeight + mHeaderRowPadding, sameDay ? mTodayHeaderTextPaint : mHeaderTextPaint);
+                startPixel += mWidthPerDay + mColumnGap;
+            }
         }
-
     }
 
     /**

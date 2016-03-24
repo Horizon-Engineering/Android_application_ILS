@@ -23,6 +23,7 @@ import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -135,13 +136,7 @@ public class CalendarTask extends Activity {
             homescreenBgImage.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
         }
 
-        homescreenBgImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-            }
-        });
+        setupUI(findViewById(R.id.parent));
 
 //========================================Loading the sector info
         final HashMap<String, HashMap> sector = DataManager.getInstance().getsector();
@@ -571,7 +566,7 @@ public class CalendarTask extends Activity {
                                             }
 
                                         }
-
+                                        System.out.println("new size " + list.size() + " old size " + newlist.size() + "**************");
                                         DataManager.getInstance().setEventID(IDlist);
                                         DataManager.getInstance().setevents(list);
                                         DataManager.getInstance().setnewevents(newlist);
@@ -641,7 +636,7 @@ public class CalendarTask extends Activity {
                     }
                 }else
                 {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(CalendarTask.this);
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(CalendarTask.this.getParent());
                     builder.setTitle("Error");
                     builder.setMessage("Gateway Error, please connect the wifi and press OK");
                     builder.setCancelable(false);
@@ -664,9 +659,13 @@ public class CalendarTask extends Activity {
                 if (isChecked == true) {
 
                     startdate.setEnabled(false);
+                    startdate.setTextColor(getResources().getColor(R.color.gray));
                     finishdate.setEnabled(false);
+                    finishdate.setTextColor(getResources().getColor(R.color.gray));
                     starttime.setEnabled(false);
+                    starttime.setTextColor(getResources().getColor(R.color.gray));
                     finishtime.setEnabled(false);
+                    finishtime.setTextColor(getResources().getColor(R.color.gray));
 
                     for (int i = 0; i < layout1.getChildCount(); i++) {
                         View child = layout1.getChildAt(i);
@@ -705,9 +704,13 @@ public class CalendarTask extends Activity {
                     }
 
                     startdate.setEnabled(true);
+                    startdate.setTextColor(getResources().getColor(R.color.wordscolor));
                     finishdate.setEnabled(true);
+                    finishdate.setTextColor(getResources().getColor(R.color.wordscolor));
                     starttime.setEnabled(true);
+                    starttime.setTextColor(getResources().getColor(R.color.wordscolor));
                     finishtime.setEnabled(true);
+                    finishtime.setTextColor(getResources().getColor(R.color.wordscolor));
 
                     Monday.setChecked(false);
                     Tuesday.setChecked(false);
@@ -866,6 +869,54 @@ public class CalendarTask extends Activity {
             this.devicelist = devicelist;
         }
         */
+        public void setupUI(View view) {
+            //Set up touch listener for non-text box views to hide keyboard.
+            if(!(view instanceof EditText)) {
+                view.setOnTouchListener(new View.OnTouchListener() {
 
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(getCurrentFocus() != null) {
+                            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                        }
+                        return false;
+                    }
+
+                });
+            }
+
+            //If a layout container, iterate over children and seed recursion.
+            if (view instanceof ViewGroup) {
+                for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                    View innerView = ((ViewGroup) view).getChildAt(i);
+                    setupUI(innerView);
+                }
+            }
+        }
+    }
+
+    public void setupUI(View view) {
+        //Set up touch listener for non-text box views to hide keyboard.
+        if(!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+
+                public boolean onTouch(View v, MotionEvent event) {
+                    if(getCurrentFocus() != null) {
+                        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    }
+                    return false;
+                }
+
+            });
+        }
+
+        //If a layout container, iterate over children and seed recursion.
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View innerView = ((ViewGroup) view).getChildAt(i);
+                setupUI(innerView);
+            }
+        }
     }
 }

@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.text.style.ClickableSpan;
@@ -44,6 +46,10 @@ import com.mylibrary.WeekView;
 import com.mylibrary.WeekViewEvent;
 import com.zxing.activity.CaptureActivity;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -329,6 +335,15 @@ public class AdminPage extends Activity {
                             DatabaseManager.getInstance().WriteDeviceList(check, "devicelist");
 
                         }
+
+                        Bitmap bitmap = dataupdate(sectorName+".png");
+                        if (bitmap!=null)
+                        {
+                            File root = Environment.getExternalStorageDirectory();
+                            File dir = new File(root.getAbsolutePath() + "/Horizon/Bitmap");
+                            File file = new File(dir, sectorName+".png");
+                            file.delete();
+                        }
                     }else
                     {
                         if (array!=null) {
@@ -377,7 +392,17 @@ public class AdminPage extends Activity {
                     if (sectorinformation!=null) {
                         for (Map.Entry<String, ArrayList<Device>> selfloop : sectorinformation.entrySet()) {
                             String deleteselfsectorname = selfloop.getKey();
-                            sectornumber--;
+
+                            Bitmap bitmap = dataupdate(deleteselfsectorname+".png");
+                            if (bitmap!=null)
+                            {
+                                File root = Environment.getExternalStorageDirectory();
+                                File dir = new File(root.getAbsolutePath() + "/Horizon/Bitmap");
+                                File file = new File(dir, deleteselfsectorname+".png");
+                                file.delete();
+                            }
+
+
                             for (Map.Entry<String, HashMap> entry : sector.entrySet()) {
                                 String name = (String) entry.getKey();
                                 if (!name.equals(userName)) {
@@ -392,6 +417,7 @@ public class AdminPage extends Activity {
                             }
 
                             if (deletedevice == true) {
+                                sectornumber--;
                                 ArrayList<Device> array = (ArrayList<Device>) sector.get(userName).get(deleteselfsectorname);
                                 int devicenum = DataManager.getInstance().getDevicenum();
                                 if (array != null) {
@@ -600,7 +626,6 @@ public class AdminPage extends Activity {
             deviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    showDevice(view);
                     Selected_Device = position;
                     deviceadapter.notifyDataSetChanged();
                 }
@@ -729,9 +754,6 @@ public class AdminPage extends Activity {
                 }
                 DatabaseManager.getInstance().WriteDeviceList(check, "devicelist");
             }
-
-
-
         }
     }
 
@@ -759,7 +781,25 @@ public class AdminPage extends Activity {
             DataManager.getInstance().setevents(comingevents);
         }
     }
-
+    public static Bitmap dataupdate(String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon/Bitmap");
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            try {
+                FileInputStream streamIn = new FileInputStream(file);
+                Bitmap bitmap = BitmapFactory.decodeStream(streamIn);
+                return bitmap;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
+    }
 }
 
 

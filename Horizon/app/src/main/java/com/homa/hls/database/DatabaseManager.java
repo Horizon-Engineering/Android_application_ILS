@@ -714,6 +714,9 @@ public class DatabaseManager {
             cursor.moveToFirst();
             device = getDeviceinfo(cursor);
             cursor.close();
+        }else
+        {
+            return null;
         }
         return device;
     }

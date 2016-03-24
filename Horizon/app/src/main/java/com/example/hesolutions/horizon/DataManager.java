@@ -135,34 +135,6 @@ public class DataManager {
         return manager;
     }
 
-    //==================================================LOAD THE GRID=========================
-/*
-    public Integer totalsum;
-    public Integer setGrid(Integer number)
-    {
-        this.totalsum = number;
-        writeGrid();
-        return totalsum;
-    }
-
-    public ArrayList<String> numberlist = new ArrayList<String>();
-    public ArrayList writeGrid ()
-    {
-        Integer number = 0;
-        numberlist.clear();
-        for (int i = 0; i < totalsum; i++)
-        {
-            number = number + 1;
-            numberlist.add(number.toString());
-        }
-        writedata(numberlist, "grid");
-        numberlist.clear();
-        return numberlist;
-    }
-
-
-*/
-
 
     public WeekViewEvent event;
     public WeekViewEvent getthisevent()

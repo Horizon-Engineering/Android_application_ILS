@@ -36,6 +36,7 @@
             android:id="@+id/MSG"
             android:hint="Enter User Name"
             android:singleLine="true"
+            android:maxLength="14"
             android:imeOptions="actionDone"
             />
 
@@ -51,7 +52,7 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="numberPassword"
+            android:inputType="number"
             android:ems="10"
             android:maxLength="4"
             android:id="@+id/CODE"
@@ -77,6 +78,7 @@
             android:id="@+id/sectorname"
             android:hint="Enter Sector Name"
             android:singleLine="true"
+            android:maxLength="14"
             android:imeOptions="actionDone"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"></EditText>
@@ -106,6 +108,7 @@
             android:id="@+id/devicename"
             android:hint="Enter Device Name"
             android:singleLine="true"
+            android:maxLength="14"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:imeOptions="actionDone"/>

@@ -276,6 +276,7 @@ public class PaintPage extends Activity{
                 // Set the Image in ImageView after decoding the String
                 drawView.setImageBitmap(BitmapFactory
                         .decodeFile(imgDecodableString));
+                drawView.setEnabletouch(true);
 
             } else {
                 Toast.makeText(this, "You haven't picked the blueprint",
@@ -344,6 +345,12 @@ public class PaintPage extends Activity{
                         }else
                         {
                             showContent(view);
+                            if (drawView.getBackground()!=null)
+                            {
+                                drawView.setEnabletouch(true);
+                            }else{
+                                drawView.setEnabletouch(false);
+                            }
                             LinearLayout toolpanel = (LinearLayout)findViewById(R.id.toolpanel);
                             toolpanel.setVisibility(View.VISIBLE);
                         }
@@ -386,7 +393,7 @@ public class PaintPage extends Activity{
         sectorsave = ((TextView) view).getText().toString();
         drawingpart.setVisibility(View.VISIBLE);
         drawView.startNew();
-        drawView.setEnabletouch(true);
+        drawView.setEnabletouch(false);
         drawView.setBackground(null);
     }
 

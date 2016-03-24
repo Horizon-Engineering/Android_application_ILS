@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class GlobalCalendar extends Activity{
@@ -101,8 +102,17 @@ public class GlobalCalendar extends Activity{
                     alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             if (gateways!=null) {
-                                CheckCurrent(event);
-                                listevent.remove(event);
+                                Iterator<WeekViewEvent> eventIterator = listevent.iterator();
+                                while(eventIterator.hasNext())
+                                {
+                                    WeekViewEvent event1 = eventIterator.next();
+                                    if (event.getId() == event1.getId())
+                                    {
+                                        eventIterator.remove();
+                                        CheckCurrent(event1);
+                                        break;
+                                    }
+                                }
                                 DataManager.getInstance().setnewevents(listevent);
                                 dialog.cancel();
                                 Intent startNewActivityIntent = new Intent(getIntent().addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
@@ -188,6 +198,9 @@ public class GlobalCalendar extends Activity{
         oneday.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                oneday.setBackground(getResources().getDrawable(R.drawable.buttonclicked));
+                threedays.setBackground(getResources().getDrawable(R.drawable.buttonunclick));
+                sevendays.setBackground(getResources().getDrawable(R.drawable.buttonunclick));
                 mWeekView.setNumberOfVisibleDays(1);
                 mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
                 mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15, getResources().getDisplayMetrics()));
@@ -197,6 +210,9 @@ public class GlobalCalendar extends Activity{
         threedays.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                threedays.setBackground(getResources().getDrawable(R.drawable.buttonclicked));
+                oneday.setBackground(getResources().getDrawable(R.drawable.buttonunclick));
+                sevendays.setBackground(getResources().getDrawable(R.drawable.buttonunclick));
                 mWeekView.setNumberOfVisibleDays(3);
                 mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics()));
                 mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15, getResources().getDisplayMetrics()));
@@ -206,6 +222,9 @@ public class GlobalCalendar extends Activity{
         sevendays.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sevendays.setBackground(getResources().getDrawable(R.drawable.buttonclicked));
+                oneday.setBackground(getResources().getDrawable(R.drawable.buttonunclick));
+                threedays.setBackground(getResources().getDrawable(R.drawable.buttonunclick));
                 mWeekView.setNumberOfVisibleDays(7);
                 mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
                 mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15, getResources().getDisplayMetrics()));

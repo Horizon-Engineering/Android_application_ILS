@@ -366,6 +366,7 @@ public class ControlPanel extends Activity {
                         Intensitynum.setVisibility(View.INVISIBLE);
                         Intensity.setVisibility(View.INVISIBLE);
 
+                        /*
                         Calendar calendar = Calendar.getInstance();
                         List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
                         if (events.size() != 0) {
@@ -383,6 +384,7 @@ public class ControlPanel extends Activity {
                         }
 
                         DataManager.getInstance().setnewevents(events);
+                        */
 
                         if (!sectorname.equals(" ")) {
                             if (devicelist != null) {
@@ -456,7 +458,7 @@ public class ControlPanel extends Activity {
         return null;
     }
     public void Restart(){
-        final AlertDialog.Builder builder = new AlertDialog.Builder(ControlPanel.this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(ControlPanel.this.getParent());
         builder.setTitle("Error");
         builder.setMessage("Gateway Error, please connect the wifi and press OK");
         builder.setCancelable(false);

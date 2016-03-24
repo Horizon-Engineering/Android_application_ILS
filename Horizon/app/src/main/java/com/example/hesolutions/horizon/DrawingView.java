@@ -35,7 +35,7 @@ public class DrawingView extends View {
     private float startX = 0F;
     private float startY = 0F;
 
-    private boolean enabletouch = true;
+    private boolean enabletouch = false;
     public DrawingView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setupDrawing();
@@ -139,7 +139,8 @@ public class DrawingView extends View {
             }
             invalidate();
             return true;
-        }else
+        }
+        else
         {
             return true;
         }
@@ -201,9 +202,9 @@ public class DrawingView extends View {
         }
     }
 
-    public void setEnabletouch(boolean bool)
+    public void setEnabletouch(boolean eachcase)
     {
-        this.enabletouch = bool;
+        this.enabletouch = eachcase;
     }
 
 }

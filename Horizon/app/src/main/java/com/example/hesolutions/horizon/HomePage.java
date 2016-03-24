@@ -22,6 +22,8 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -55,6 +57,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HomePage extends AppCompatActivity {
     final SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy HH mm");
@@ -65,6 +69,8 @@ public class HomePage extends AppCompatActivity {
     boolean emergency = false;
     Switch switch1;
     ImageView emergencypic;
+    AlertDialog.Builder builder = null;
+    AlertDialog alertDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -110,86 +116,112 @@ public class HomePage extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        new Thread(new MyRunnable())
-        {
-            @Override
-            public void run()
-            {
-                try {
-                    while (true) {
-                        Calendar calendar = Calendar.getInstance();
-                        if (calendar.get(Calendar.HOUR_OF_DAY) == 0 && calendar.get(Calendar.MINUTE) == 0)
-                        GetNewEvent();
-                        Thread.sleep(60 * 1000);
-
-                    }
-                } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            }
-        }.start();
-
-        new Thread(new MyRunnable() {
+        Calendar today = Calendar.getInstance();
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                Gateway gateway = SysApplication.getInstance().getCurrGateway(HomePage.this);
-                while(gateway!=null && emergency==false){
-                    MakeAlert();
-                    try {
-                        Thread.sleep(20*1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                System.out.println("*************running new thread");
+                GetNewEvent();
+            }
+        }, today.getTime(), 1000 * 60 * 60 * 24);
 
-                if (gateway==null)
-                {
+        final Timer maintimer = new Timer();
+        maintimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("*************running main thread");
+                Gateway gateway = SysApplication.getInstance().getCurrGateway(HomePage.this);
+                if (gateway!=null){
+                    if (alertDialog!=null && alertDialog.isShowing())alertDialog.dismiss();
+                    if (emergency == false) {
+                        MakeAlert();
+                    } else {
+                        ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().getDeviceList().getmDeviceList();
+                        for (Device device : deviceArrayList) {
+                            byte[] data;
+                            data = new byte[]{(byte) 17, (byte) 100, (byte) 0, (byte) 0, (byte) 0};
+                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                            device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
+                                    device.getGatewaySSID(), HomePage.this));
+                        }
+                    }
+                }else {
+                    System.out.println("*************will?");
+                    //maintimer.cancel();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(HomePage.this);
-                            alertDialog.setTitle("Error");
-                            alertDialog.setMessage("Gateway Error, please connect the wifi and press OK");
-                            alertDialog.setCancelable(false);
-                            alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            if (alertDialog!=null && alertDialog.isShowing()){}
+                            else{
+                                builder = new AlertDialog.Builder(HomePage.this);
+                                builder.setTitle("Error");
+                                builder.setMessage("Gateway Error, please connect the wifi and press OK");
+                                builder.setCancelable(false);
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent i = getBaseContext().getPackageManager()
+                                                .getLaunchIntentForPackage(getBaseContext().getPackageName());
+                                        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        int mPendingIntentId = 3;
+                                        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
+                                        AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                                        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
+                                        System.exit(0);
+                                    }
+                                });
+                                alertDialog = builder.create();
+                                alertDialog.show();
+                            }
+                        }
+                    });
+                }
+            }
+        }, today.getTime(), 1000 * 20);
+
+
+        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (switch1.isChecked() == true) {
+                    emergency = true;
+                    emergencypic.setVisibility(View.VISIBLE);
+                    ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().getDeviceList().getmDeviceList();
+                    switch1.setText("Emergency ON  ");
+                    gridView.setAdapter(null);
+                    Gateway gateway = SysApplication.getInstance().getCurrGateway(HomePage.this);
+                    if (gateway!=null) {
+                        for (Device device : deviceArrayList) {
+                            byte[] data;
+                            data = new byte[]{(byte) 17, (byte) 100, (byte) 0, (byte) 0, (byte) 0};
+                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                            device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
+                                    device.getGatewaySSID(), HomePage.this));
+                        }
+                    }else{
+                        if (alertDialog!=null && alertDialog.isShowing()){}
+                        else{
+                            builder = new AlertDialog.Builder(HomePage.this);
+                            builder.setTitle("Error");
+                            builder.setMessage("Gateway Error, please connect the wifi and press OK");
+                            builder.setCancelable(false);
+                            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent i = getBaseContext().getPackageManager()
                                             .getLaunchIntentForPackage(getBaseContext().getPackageName());
                                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     int mPendingIntentId = 3;
                                     PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, i, PendingIntent.FLAG_CANCEL_CURRENT);
-                                    AlarmManager mgr = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                                    AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
                                     mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, mPendingIntent);
                                     System.exit(0);
                                 }
                             });
+                            alertDialog = builder.create();
                             alertDialog.show();
                         }
-                    });
                     }
-            }
-        }).start();
-
-        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (switch1.isChecked()==true)
-                {
-                    emergency = true;
-                    emergencypic.setVisibility(View.VISIBLE);
-                    ArrayList<Device> deviceArrayList= DatabaseManager.getInstance().getDeviceList().getmDeviceList();
-                    switch1.setText("Emergency ON  ");
-                    gridView.setAdapter(null);
-                    for (Device device:deviceArrayList)
-                    {
-                        byte[] data;
-                        data = new byte[]{(byte) 17, (byte) 100, (byte) 0, (byte) 0, (byte) 0};
-                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                        device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
-                                device.getGatewaySSID(), HomePage.this));
-                    }
-                }else
-                {
+                } else {
                     emergency = false;
                     gridView.setAdapter(adapter);
                     switch1.setText("Emergency OFF  ");
@@ -199,7 +231,7 @@ public class HomePage extends AppCompatActivity {
         });
     }
 
-
+/*
     private class MyRunnable implements Runnable
     {
         @Override
@@ -217,10 +249,8 @@ public class HomePage extends AppCompatActivity {
                 });
             }
         }
-
-
     }
-
+*/
 
     public void MakeAlert()
     {
@@ -240,6 +270,10 @@ public class HomePage extends AppCompatActivity {
                 Calendar finish = event.getEndTime();
                 String username = event.getName();
                 int intensity = event.getIntensity();
+
+                long mills = cal.getTime().getTime()- start.getTime().getTime();
+                int days = (int) mills / (1000 * 60 * 60 * 24);
+
                 if (cal.before(finish) && cal.after(start)) {
                     Iterator<String> stringIterator = sectorsname.iterator();
                     while (stringIterator.hasNext()){
@@ -247,7 +281,6 @@ public class HomePage extends AppCompatActivity {
                         if (sector.get(username).containsKey(sectorname)) {
                             ArrayList<Device> deviceArrayList = sector.get(username).get(sectorname);
                             if (deviceArrayList != null) {
-                                System.out.println("********************* not null");
                                 for (Device device : deviceArrayList) {
                                     while (iterator.hasNext())
                                     {
@@ -255,27 +288,27 @@ public class HomePage extends AppCompatActivity {
                                         if (device1.getDeviceName().equals(device.getDeviceName()))iterator.remove();
                                     }
                                     Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
-                                    if (thedevice.getChannelMark()!= 5)
-                                    // if controled by control page then dont use schedule
-                                    {
-                                        byte[] data;
-                                        data = new byte[]{(byte) 17, (byte) intensity, (byte) 0, (byte) 0, (byte) 0};
-                                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                                        thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
-                                                thedevice.getGatewaySSID(), HomePage.this));
+                                    if (thedevice!=null) {
+                                        if (thedevice.getChannelMark() != 5)
+                                        // if controled by control page then dont use schedule
+                                        {
+                                            byte[] data;
+                                            data = new byte[]{(byte) 17, (byte) intensity, (byte) 0, (byte) 0, (byte) 0};
+                                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                                            thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                                    thedevice.getGatewaySSID(), HomePage.this));
+                                        }
                                     }
                                 }
                             }else
                             {
-                                System.out.println("********************* null");
                             }
                         }else {
                             stringIterator.remove();
                         }
                     }
                 }
-
-                if (sectorsname.size()==0)
+                if (sectorsname.size()== 0 || days > 30)
                 {
                     eventIterator.remove();
                 }
@@ -285,14 +318,21 @@ public class HomePage extends AppCompatActivity {
                 while (iterator.hasNext()) {
                     Device device = iterator.next();
                     Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
-                    if (thedevice.getChannelMark()!= 5) {
-                        byte[] data;
-                        data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
-                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                        thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
-                                thedevice.getGatewaySSID(), HomePage.this));
-                        thedevice.setCurrentParams(data);
-                        DatabaseManager.getInstance().updateDevice(thedevice);
+                    if (thedevice!=null) {
+                        if (thedevice.getChannelMark() != 5) {
+                            byte[] data;
+                            data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                            thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                    thedevice.getGatewaySSID(), HomePage.this));
+                            thedevice.setCurrentParams(data);
+                            DatabaseManager.getInstance().updateDevice(thedevice);
+                        }else {
+                            byte[] data = thedevice.getCurrentParams();
+                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                            thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                    thedevice.getGatewaySSID(), HomePage.this));
+                        }
                     }
                 }
             }
@@ -316,7 +356,6 @@ public class HomePage extends AppCompatActivity {
                 CODE4.setText(((Button) v).getText());
                 radioButton4.setBackground(getResources().getDrawable(R.drawable.circledotsclicked));
                 jump = true;
-
             }
         }
 
@@ -356,7 +395,11 @@ public class HomePage extends AppCompatActivity {
                         clearPinCode();
                         startActivity(startNewActivityIntent);
                     } else {
-                        Toast.makeText(getApplicationContext(), "Password does not match any account", Toast.LENGTH_LONG).show();
+                        Animation shake = AnimationUtils.loadAnimation(HomePage.this, R.anim.shake_animation);
+                        findViewById(R.id.radioButton1).startAnimation(shake);
+                        findViewById(R.id.radioButton2).startAnimation(shake);
+                        findViewById(R.id.radioButton3).startAnimation(shake);
+                        findViewById(R.id.radioButton4).startAnimation(shake);
                         clearPinCode();
                         code = "";
                         jump = false;
@@ -384,19 +427,23 @@ public class HomePage extends AppCompatActivity {
     {
         List<WeekViewEvent> events = DataManager.getInstance().getevents();
         List<WeekViewEvent> newevents = DataManager.getInstance().getnewevents();
+        long today = Calendar.getInstance().getTimeInMillis();
         if (events!=null) {
-            Calendar calendar = Calendar.getInstance();
-            int year = calendar.get(Calendar.YEAR);
-            for (WeekViewEvent event: events) {
-                int diffdate = Math.abs(calendar.get(Calendar.DAY_OF_YEAR) - event.getStartTime().get(Calendar.DAY_OF_YEAR));
-                if (year == event.getStartTime().get(Calendar.YEAR) && diffdate < 30) {
+            Iterator<WeekViewEvent> eventIterator = events.iterator();
+            while (eventIterator.hasNext())
+            {
+                WeekViewEvent event = eventIterator.next();
+                long eventday = event.getStartTime().getTimeInMillis();
+                long mills = eventday - today;
+                long days =  mills / (1000 * 60 * 60 * 24);
+                if (days <= 30)
+                {
                     newevents.add(event);
-                    events.remove(event);
+                    eventIterator.remove();
                 }
             }
             DataManager.getInstance().setnewevents(newevents);
             DataManager.getInstance().setevents(events);
         }
     }
-
 }
