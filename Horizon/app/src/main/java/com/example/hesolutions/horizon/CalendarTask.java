@@ -27,6 +27,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -36,6 +38,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SimpleAdapter;
@@ -77,14 +80,13 @@ public class CalendarTask extends Activity {
     EditText weeknumber;
     TextView textView4,textView5;
     Integer weeks;
-    RelativeLayout layout1, relativeblur;
+    RelativeLayout layout1, progresslayout;
     CheckBox Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday;
     Integer day;
     ListView sectorlistView;
     MyCustomAdapter deviceAdapter = null;
     int intensity = 100;
     SeekBar seekBar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -114,6 +116,7 @@ public class CalendarTask extends Activity {
         sectorlistView = (ListView)findViewById(R.id.sectorlistView);
         seekBar = (SeekBar)findViewById(R.id.seekBar);
         Intensitynum = (TextView)findViewById(R.id.Intensitynum);
+        progresslayout = (RelativeLayout)findViewById(R.id.progresslayout);
         final SimpleDateFormat ddf = new SimpleDateFormat("MMM dd, yyyy");
         final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
@@ -276,17 +279,17 @@ public class CalendarTask extends Activity {
         });
 
         Apply.setOnClickListener(new View.OnClickListener() {
-            Gateway gateway = SysApplication.getInstance().getCurrGateway(CalendarTask.this);
-            String cname = DataManager.getInstance().getUsername();
-            String colorname = DataManager.getInstance().getcolorname();
-            int colorName = Color.parseColor(colorname);
-            long oldid;
-            final List<WeekViewEvent> list = DataManager.getInstance().getevents();
-            final List<Long> IDlist = DataManager.getInstance().getEventID();
-            final List<WeekViewEvent> newlist = DataManager.getInstance().getnewevents();
             @Override
             public void onClick(final View v) {
                 final ArrayList<String> sectors = new ArrayList<String>();
+                Gateway gateway = SysApplication.getInstance().getCurrGateway(CalendarTask.this);
+                final String cname = DataManager.getInstance().getUsername();
+                final String colorname = DataManager.getInstance().getcolorname();
+                final int colorName = Color.parseColor(colorname);
+                final List<WeekViewEvent> list = new ArrayList<WeekViewEvent>();
+                final List<Long> IDlist = DataManager.getInstance().getEventID();
+                final List<WeekViewEvent> newlist = new ArrayList<WeekViewEvent>();
+
                 if (deviceAdapter!=null) {
                     ArrayList<Group> choosegrouplist = deviceAdapter.arrayList;
                     for (int i = 0; i < choosegrouplist.size(); i++) {
@@ -319,261 +322,288 @@ public class CalendarTask extends Activity {
                                 weeks = Integer.parseInt(weeknumber.getText().toString());
                                 if (weeks > 0) {
                                     if ((finishTime.after(startTime))) {
-                                        if (!IDlist.isEmpty()) {
-                                            oldid = IDlist.get((IDlist.size() - 1));
-                                        }
-                                        final AtomicLong counter = new AtomicLong(oldid);
-                                        Thread[] threads = new Thread[7];
 
-                                        for (int i = 0; i < weeks; i++) {
-                                            final int j = i;
-                                            threads[0] = new Thread() {
-                                                public void run() {
-                                                    if (Monday.isChecked()) {
-                                                        long id = counter.incrementAndGet();
-                                                        Calendar MonSt = Calendar.getInstance(), MonFi = Calendar.getInstance();
-                                                        MonSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                        MonSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                        MonSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        MonSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                        MonSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                        MonFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                        MonFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                        MonFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        MonFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                        MonFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                                        Integer date = 1 - day;
-                                                        MonSt.add(Calendar.DAY_OF_MONTH, date);
-                                                        MonFi.add(Calendar.DAY_OF_MONTH, date);
-                                                        WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, MonSt, MonFi, colorName, sectors, intensity);
-                                                        if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
-                                                                && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
-                                                            newlist.add(event);
-                                                        } else {
-                                                            list.add(event);
-                                                        }
-                                                        IDlist.add(id);
-                                                    }
-                                                }
-                                            };
-                                            threads[0].start();
-                                            threads[1] = new Thread() {
-                                                public void run() {
-                                                    if (Tuesday.isChecked()) {
-                                                        long id = counter.incrementAndGet();
-                                                        Calendar TueSt = Calendar.getInstance(), TusFi = Calendar.getInstance();
-                                                        TueSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                        TueSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                        TueSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        TueSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                        TueSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                        TusFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                        TusFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                        TusFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        TusFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                        TusFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                                        Integer date = 2 - day;
-                                                        TueSt.add(Calendar.DAY_OF_MONTH, date);
-                                                        TusFi.add(Calendar.DAY_OF_MONTH, date);
-                                                        WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, TueSt, TusFi, colorName, sectors, intensity);
-                                                        if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
-                                                                && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
-                                                            newlist.add(event);
-                                                        } else {
-                                                            list.add(event);
-                                                        }
-                                                        IDlist.add(id);
-
-                                                    }
-                                                }
-                                            };
-                                            threads[1].start();
-
-
-                                            threads[2] = new Thread() {
-                                                public void run() {
-                                                    if (Wednesday.isChecked()) {
-                                                        long id = counter.incrementAndGet();
-                                                        Calendar WedSt = Calendar.getInstance(), WedFi = Calendar.getInstance();
-                                                        WedSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                        WedSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                        WedSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        WedSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                        WedSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                        WedFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                        WedFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                        WedFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        WedFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                        WedFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                                        Integer date = 3 - day;
-                                                        WedSt.add(Calendar.DAY_OF_MONTH, date);
-                                                        WedFi.add(Calendar.DAY_OF_MONTH, date);
-                                                        WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, WedSt, WedFi, colorName, sectors, intensity);
-                                                        if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
-                                                                && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
-                                                            newlist.add(event);
-                                                        } else {
-                                                            list.add(event);
-                                                        }
-                                                        IDlist.add(id);
-
-                                                    }
-                                                }
-                                            };
-                                            threads[2].start();
-
-                                            threads[3] = new Thread() {
-                                                public void run() {
-                                                    if (Thursday.isChecked()) {
-                                                        long id = counter.incrementAndGet();
-                                                        Calendar ThuSt = Calendar.getInstance(), ThuFi = Calendar.getInstance();
-                                                        ThuSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                        ThuSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                        ThuSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        ThuSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                        ThuSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                        ThuFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                        ThuFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                        ThuFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        ThuFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                        ThuFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                                        Integer date = 4 - day;
-                                                        ThuSt.add(Calendar.DAY_OF_MONTH, date);
-                                                        ThuFi.add(Calendar.DAY_OF_MONTH, date);
-                                                        WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, ThuSt, ThuFi, colorName, sectors, intensity);
-                                                        if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
-                                                                && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
-                                                            newlist.add(event);
-                                                        } else {
-                                                            list.add(event);
-                                                        }
-                                                        IDlist.add(id);
-                                                    }
-                                                }
-                                            };
-                                            threads[3].start();
-
-
-                                            threads[4] = new Thread() {
-                                                public void run() {
-                                                    if (Friday.isChecked()) {
-                                                        long id = counter.incrementAndGet();
-                                                        Calendar FriSt = Calendar.getInstance(), FriFi = Calendar.getInstance();
-                                                        FriSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                        FriSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                        FriSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        FriSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                        FriSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                        FriFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                        FriFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                        FriFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        FriFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                        FriFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-                                                        Integer date = 5 - day;
-                                                        FriSt.add(Calendar.DAY_OF_MONTH, date);
-                                                        FriFi.add(Calendar.DAY_OF_MONTH, date);
-                                                        WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, FriSt, FriFi, colorName, sectors, intensity);
-                                                        if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
-                                                                && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
-                                                            newlist.add(event);
-                                                        } else {
-                                                            list.add(event);
-                                                        }
-                                                        IDlist.add(id);
-                                                    }
-                                                }
-                                            };
-                                            threads[4].start();
-
-                                            threads[5] = new Thread() {
-                                                public void run() {
-                                                    if (Saturday.isChecked()) {
-                                                        long id = counter.incrementAndGet();
-                                                        Calendar SatSt = Calendar.getInstance(), SatFi = Calendar.getInstance();
-                                                        SatSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                        SatSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                        SatSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        SatSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                        SatSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                        SatFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                        SatFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                        SatFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        SatFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                        SatFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-
-                                                        Integer date = 6 - day;
-                                                        SatSt.add(Calendar.DAY_OF_MONTH, date);
-                                                        SatFi.add(Calendar.DAY_OF_MONTH, date);
-                                                        WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, SatSt, SatFi, colorName, sectors, intensity);
-                                                        if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
-                                                                && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
-                                                            newlist.add(event);
-                                                        } else {
-                                                            list.add(event);
-                                                        }
-                                                        IDlist.add(id);
-                                                    }
-                                                }
-                                            };
-                                            threads[5].start();
-
-
-                                            threads[6] = new Thread() {
-                                                public void run() {
-                                                    if (Sunday.isChecked()) {
-                                                        long id = counter.incrementAndGet();
-                                                        Calendar SunSt = Calendar.getInstance(), SunFi = Calendar.getInstance();
-                                                        SunSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
-                                                        SunSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
-                                                        SunSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        SunSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
-                                                        SunSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
-                                                        SunFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
-                                                        SunFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
-                                                        SunFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
-                                                        SunFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
-                                                        SunFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-
-                                                        Integer date = 0 - day;
-                                                        SunSt.add(Calendar.DAY_OF_MONTH, date);
-                                                        SunFi.add(Calendar.DAY_OF_MONTH, date);
-                                                        WeekViewEvent event;
-                                                        event = new WeekViewEvent(id, cname, SunSt, SunFi, colorName, sectors, intensity);
-                                                        if (Calendar.getInstance().get(Calendar.YEAR) == event.getStartTime().get(Calendar.YEAR)
-                                                                && Calendar.getInstance().get(Calendar.MONTH) == event.getStartTime().get(Calendar.MONTH)) {
-                                                            newlist.add(event);
-                                                        } else {
-                                                            list.add(event);
-                                                        }
-                                                        IDlist.add(id);
-                                                    }
-                                                }
-                                            };
-                                            threads[6].start();
-                                        }
-
-                                        for (Thread thread : threads) {
-                                            try {
-                                                thread.join();
-                                            } catch (InterruptedException e) {
-                                                e.printStackTrace();
+                                        new AsyncTask<Void, Void, Void>()
+                                        {
+                                            @Override
+                                            protected void onPreExecute() {
+                                                ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+                                                progresslayout.setClickable(true);
+                                                progressBar.setVisibility(View.VISIBLE);
                                             }
+                                            @Override
+                                            protected Void doInBackground(Void... params) {
+                                                long oldid = 0;
+                                                if (!IDlist.isEmpty()) {
+                                                    oldid = IDlist.get((IDlist.size() - 1));
+                                                }
+                                                final AtomicLong counter = new AtomicLong(oldid);
+                                                Thread[] threads = new Thread[7];
+                                                for (int i = 0; i < weeks; i++) {
+                                                    final int j = i;
+                                                    final Calendar today = Calendar.getInstance();
+                                                    threads[0] = new Thread() {
+                                                        public void run() {
+                                                            if (Monday.isChecked()) {
+                                                                long id = counter.incrementAndGet();
+                                                                Calendar MonSt = Calendar.getInstance(), MonFi = Calendar.getInstance();
+                                                                MonSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                                MonSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                                MonSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                MonSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                                MonSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                MonFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                                MonFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                                MonFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                MonFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                                MonFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                                Integer date = 1 - day;
+                                                                MonSt.add(Calendar.DAY_OF_MONTH, date);
+                                                                MonFi.add(Calendar.DAY_OF_MONTH, date);
+                                                                WeekViewEvent event;
+                                                                event = new WeekViewEvent(id, cname, MonSt, MonFi, colorName, sectors, intensity);
+                                                                long mills = MonSt.getTimeInMillis() - today.getTimeInMillis() ;
+                                                                long days = mills / (1000 * 60 * 60 * 24);
+                                                                if (days <= 30) {
+                                                                    newlist.add(event);
+                                                                } else {
+                                                                    list.add(event);
+                                                                }
+                                                                IDlist.add(id);
+                                                            }
+                                                        }
+                                                    };
+                                                    threads[0].start();
+                                                    threads[1] = new Thread() {
+                                                        public void run() {
+                                                            if (Tuesday.isChecked()) {
+                                                                long id = counter.incrementAndGet();
+                                                                Calendar TueSt = Calendar.getInstance(), TusFi = Calendar.getInstance();
+                                                                TueSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                                TueSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                                TueSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                TueSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                                TueSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                TusFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                                TusFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                                TusFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                TusFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                                TusFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                                Integer date = 2 - day;
+                                                                TueSt.add(Calendar.DAY_OF_MONTH, date);
+                                                                TusFi.add(Calendar.DAY_OF_MONTH, date);
+                                                                WeekViewEvent event;
+                                                                event = new WeekViewEvent(id, cname, TueSt, TusFi, colorName, sectors, intensity);
+                                                                long mills = TueSt.getTimeInMillis() - today.getTimeInMillis() ;
+                                                                long days = mills / (1000 * 60 * 60 * 24);
+                                                                if (days <= 30) {
+                                                                    newlist.add(event);
+                                                                } else {
+                                                                    list.add(event);
+                                                                }
+                                                                IDlist.add(id);
 
-                                        }
-                                        System.out.println("new size " + list.size() + " old size " + newlist.size() + "**************");
-                                        DataManager.getInstance().setEventID(IDlist);
-                                        DataManager.getInstance().setevents(list);
-                                        DataManager.getInstance().setnewevents(newlist);
-                                        ActivityStack activityStack = (ActivityStack) getParent();
-                                        activityStack.pop();
-                                        DataManager.getInstance().setactivity("nothing");
+                                                            }
+                                                        }
+                                                    };
+                                                    threads[1].start();
 
+
+                                                    threads[2] = new Thread() {
+                                                        public void run() {
+                                                            if (Wednesday.isChecked()) {
+                                                                long id = counter.incrementAndGet();
+                                                                Calendar WedSt = Calendar.getInstance(), WedFi = Calendar.getInstance();
+                                                                WedSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                                WedSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                                WedSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                WedSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                                WedSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                WedFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                                WedFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                                WedFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                WedFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                                WedFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                                Integer date = 3 - day;
+                                                                WedSt.add(Calendar.DAY_OF_MONTH, date);
+                                                                WedFi.add(Calendar.DAY_OF_MONTH, date);
+                                                                WeekViewEvent event;
+                                                                event = new WeekViewEvent(id, cname, WedSt, WedFi, colorName, sectors, intensity);
+                                                                long mills = WedSt.getTimeInMillis() - today.getTimeInMillis() ;
+                                                                long days = mills / (1000 * 60 * 60 * 24);
+                                                                if (days <= 30) {
+                                                                    newlist.add(event);
+                                                                } else {
+                                                                    list.add(event);
+                                                                }
+                                                                IDlist.add(id);
+
+                                                            }
+                                                        }
+                                                    };
+                                                    threads[2].start();
+
+                                                    threads[3] = new Thread() {
+                                                        public void run() {
+                                                            if (Thursday.isChecked()) {
+                                                                long id = counter.incrementAndGet();
+                                                                Calendar ThuSt = Calendar.getInstance(), ThuFi = Calendar.getInstance();
+                                                                ThuSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                                ThuSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                                ThuSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                ThuSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                                ThuSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                ThuFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                                ThuFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                                ThuFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                ThuFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                                ThuFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                                Integer date = 4 - day;
+                                                                ThuSt.add(Calendar.DAY_OF_MONTH, date);
+                                                                ThuFi.add(Calendar.DAY_OF_MONTH, date);
+                                                                WeekViewEvent event;
+                                                                event = new WeekViewEvent(id, cname, ThuSt, ThuFi, colorName, sectors, intensity);
+                                                                long mills = ThuSt.getTimeInMillis() - today.getTimeInMillis() ;
+                                                                long days = mills / (1000 * 60 * 60 * 24);
+                                                                if (days <= 30) {
+                                                                    newlist.add(event);
+                                                                } else {
+                                                                    list.add(event);
+                                                                }
+                                                                IDlist.add(id);
+                                                            }
+                                                        }
+                                                    };
+                                                    threads[3].start();
+
+
+                                                    threads[4] = new Thread() {
+                                                        public void run() {
+                                                            if (Friday.isChecked()) {
+                                                                long id = counter.incrementAndGet();
+                                                                Calendar FriSt = Calendar.getInstance(), FriFi = Calendar.getInstance();
+                                                                FriSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                                FriSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                                FriSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                FriSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                                FriSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                FriFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                                FriFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                                FriFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                FriFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                                FriFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                                Integer date = 5 - day;
+                                                                FriSt.add(Calendar.DAY_OF_MONTH, date);
+                                                                FriFi.add(Calendar.DAY_OF_MONTH, date);
+                                                                WeekViewEvent event;
+                                                                event = new WeekViewEvent(id, cname, FriSt, FriFi, colorName, sectors, intensity);
+                                                                long mills = FriSt.getTimeInMillis() - today.getTimeInMillis() ;
+                                                                long days = mills / (1000 * 60 * 60 * 24);
+                                                                if (days <= 30) {
+                                                                    newlist.add(event);
+                                                                } else {
+                                                                    list.add(event);
+                                                                }
+                                                                IDlist.add(id);
+                                                            }
+                                                        }
+                                                    };
+                                                    threads[4].start();
+
+                                                    threads[5] = new Thread() {
+                                                        public void run() {
+                                                            if (Saturday.isChecked()) {
+                                                                long id = counter.incrementAndGet();
+                                                                Calendar SatSt = Calendar.getInstance(), SatFi = Calendar.getInstance();
+                                                                SatSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                                SatSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                                SatSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                SatSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                                SatSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                SatFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                                SatFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                                SatFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                SatFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                                SatFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+
+                                                                Integer date = 6 - day;
+                                                                SatSt.add(Calendar.DAY_OF_MONTH, date);
+                                                                SatFi.add(Calendar.DAY_OF_MONTH, date);
+                                                                WeekViewEvent event;
+                                                                event = new WeekViewEvent(id, cname, SatSt, SatFi, colorName, sectors, intensity);
+                                                                long mills = SatSt.getTimeInMillis() - today.getTimeInMillis() ;
+                                                                long days = mills / (1000 * 60 * 60 * 24);
+                                                                if (days <= 30) {
+                                                                    newlist.add(event);
+                                                                } else {
+                                                                    list.add(event);
+                                                                }
+                                                                IDlist.add(id);
+                                                            }
+                                                        }
+                                                    };
+                                                    threads[5].start();
+
+
+                                                    threads[6] = new Thread() {
+                                                        public void run() {
+                                                            if (Sunday.isChecked()) {
+                                                                long id = counter.incrementAndGet();
+                                                                Calendar SunSt = Calendar.getInstance(), SunFi = Calendar.getInstance();
+                                                                SunSt.set(Calendar.YEAR, startTime.get(Calendar.YEAR));
+                                                                SunSt.set(Calendar.MONTH, startTime.get(Calendar.MONTH));
+                                                                SunSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                SunSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
+                                                                SunSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                SunFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                                SunFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
+                                                                SunFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
+                                                                SunFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
+                                                                SunFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+
+                                                                Integer date = 0 - day;
+                                                                SunSt.add(Calendar.DAY_OF_MONTH, date);
+                                                                SunFi.add(Calendar.DAY_OF_MONTH, date);
+                                                                WeekViewEvent event;
+                                                                event = new WeekViewEvent(id, cname, SunSt, SunFi, colorName, sectors, intensity);
+                                                                long mills = SunSt.getTimeInMillis() - today.getTimeInMillis() ;
+                                                                long days = mills / (1000 * 60 * 60 * 24);
+                                                                if (days <= 30) {
+                                                                    newlist.add(event);
+                                                                } else {
+                                                                    list.add(event);
+                                                                }
+                                                                IDlist.add(id);
+                                                            }
+                                                        }
+                                                    };
+                                                    threads[6].start();
+                                                }
+
+                                                for (Thread thread : threads) {
+                                                    try {
+                                                        thread.join();
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+
+                                                }
+
+                                                System.out.println("old size " + list.size() + " new size " + newlist.size() + "**************2");
+                                                DataManager.getInstance().setEventID(IDlist);
+                                                DataManager.getInstance().addevents(list);
+                                                DataManager.getInstance().addnewevents(newlist);
+                                                System.out.println("old size " + list.size() + " new size " + newlist.size() + "**************");
+                                                return null;
+                                            }
+                                            @Override
+                                            protected void onPostExecute(Void res) {
+                                                progresslayout.setClickable(false);
+                                                ActivityStack activityStack = (ActivityStack) getParent();
+                                                activityStack.pop();
+                                                DataManager.getInstance().setactivity("nothing");
+                                            }
+                                        }.execute();
 
                                     } else {
                                         runOnUiThread(new Runnable() {
@@ -602,26 +632,46 @@ public class CalendarTask extends Activity {
                         // not repetition
                         if (switch1.isChecked() == false) {
                             if ((finishTime.after(startTime))) {
-                                long id = 0;
-                                if (!IDlist.isEmpty()) {
-                                    id = IDlist.get((IDlist.size() - 1)) + 1;
-                                }
-                                WeekViewEvent event = new WeekViewEvent(id, cname, startTime, finishTime, colorName, sectors, intensity);
-                                int year = Calendar.getInstance().get(Calendar.YEAR);
-                                int month = Calendar.getInstance().get(Calendar.MONTH);
-                                if (year == event.getStartTime().get(Calendar.YEAR) && month == event.getStartTime().get(Calendar.MONTH)) {
-                                    newlist.add(event);
-                                } else {
-                                    list.add(event);
-                                }
-                                IDlist.add(id);
-                                DataManager.getInstance().setevents(list);
-                                DataManager.getInstance().setEventID(IDlist);
-                                DataManager.getInstance().setnewevents(newlist);
 
-                                ActivityStack activityStack = (ActivityStack) getParent();
-                                activityStack.pop();
-                                DataManager.getInstance().setactivity("nothing");
+                                new AsyncTask<Void, Void ,Void>()
+                                {
+                                    @Override
+                                    protected void onPreExecute() {
+                                        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+                                        progresslayout.setClickable(true);
+                                        progressBar.setVisibility(View.VISIBLE);
+                                    }
+                                    @Override
+                                    protected Void doInBackground(Void... params) {
+
+                                        long id = 0;
+                                        if (!IDlist.isEmpty()) {
+                                            id = IDlist.get((IDlist.size() - 1)) + 1;
+                                        }
+                                        WeekViewEvent event = new WeekViewEvent(id, cname, startTime, finishTime, colorName, sectors, intensity);
+                                        int year = Calendar.getInstance().get(Calendar.YEAR);
+                                        int month = Calendar.getInstance().get(Calendar.MONTH);
+                                        if (year == event.getStartTime().get(Calendar.YEAR) && month == event.getStartTime().get(Calendar.MONTH)) {
+                                            newlist.add(event);
+                                        } else {
+                                            list.add(event);
+                                        }
+                                        IDlist.add(id);
+                                        DataManager.getInstance().addevents(list);
+                                        DataManager.getInstance().setEventID(IDlist);
+                                        DataManager.getInstance().addnewevents(newlist);
+
+                                        return null;
+                                    }
+                                    @Override
+                                    protected void onPostExecute(Void res) {
+                                        progresslayout.setClickable(false);
+                                        ActivityStack activityStack = (ActivityStack) getParent();
+                                        activityStack.pop();
+                                        DataManager.getInstance().setactivity("nothing");
+                                    }
+                                }.execute();
+
 
                             } else {
                                 runOnUiThread(new Runnable() {

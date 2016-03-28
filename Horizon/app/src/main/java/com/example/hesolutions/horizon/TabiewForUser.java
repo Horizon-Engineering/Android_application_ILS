@@ -32,18 +32,17 @@ public class TabiewForUser extends TabActivity {
         textview14.setText(DataManager.getInstance().getUsername());
         // Create an Intent to launch an Activity for the tab (to be reused)
 
+        intent = new Intent().setClass(this, ControlPanel.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        spec = tabHost.newTabSpec("Control")
+                .setIndicator("", getResources().getDrawable(R.drawable.zoneicon))
+                .setContent(intent);
+        tabHost.addTab(spec);
 
         intent = new Intent().setClass(this, ActivityStack.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         spec = tabHost.newTabSpec("Calendar")
                 .setIndicator("", getResources().getDrawable(R.drawable.scheduleicon))
-                .setContent(intent);
-        tabHost.addTab(spec);
-
-        intent = new Intent().setClass(this, ControlPanel.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        spec = tabHost.newTabSpec("Control")
-                .setIndicator("", getResources().getDrawable(R.drawable.zoneicon))
                 .setContent(intent);
         tabHost.addTab(spec);
 
@@ -72,7 +71,7 @@ public class TabiewForUser extends TabActivity {
         }
 
         tabHost.getTabWidget().getChildTabViewAt(2).setOnTouchListener(onClickListener);
-        tabHost.getTabWidget().getChildTabViewAt(1).setOnTouchListener(onClickListener);
+        tabHost.getTabWidget().getChildTabViewAt(0).setOnTouchListener(onClickListener);
 
     }
 

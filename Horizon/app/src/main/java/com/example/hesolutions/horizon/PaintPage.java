@@ -171,28 +171,40 @@ public class PaintPage extends Activity{
         saveBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder saveDialog = new AlertDialog.Builder(PaintPage.this);
-                saveDialog.setTitle("Save drawing");
-                saveDialog.setMessage("Save drawing to device Gallery?");
-                saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        drawView.setDrawingCacheEnabled(true);
-                        if (!sectorsave.equals("")) {
-                            writedata(drawView.getDrawingCache(), sectorsave + ".png");
-                            Toast savedToast = Toast.makeText(getApplicationContext(),
-                                    "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
-                            savedToast.show();
-                            drawView.destroyDrawingCache();
-                        }
+                if (drawView.getBackground()!=null) {
+                    AlertDialog.Builder saveDialog = new AlertDialog.Builder(PaintPage.this);
+                    saveDialog.setTitle("Warning");
+                    saveDialog.setMessage("Do you want to save the layout, which cannot be changed in the future.");
+                    saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            drawView.setDrawingCacheEnabled(true);
+                            if (!sectorsave.equals("")) {
+                                writedata(drawView.getDrawingCache(), sectorsave + ".png");
+                                Toast savedToast = Toast.makeText(getApplicationContext(),
+                                        "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
+                                savedToast.show();
+                                drawView.destroyDrawingCache();
+                            }
 
-                    }
-                });
-                saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                saveDialog.show();
+                        }
+                    });
+                    saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    saveDialog.show();
+                }else {
+                    AlertDialog.Builder saveDialog = new AlertDialog.Builder(PaintPage.this);
+                    saveDialog.setTitle("Warning");
+                    saveDialog.setMessage("Please load the blueprint first.");
+                    saveDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    saveDialog.show();
+                }
 
             }
         });

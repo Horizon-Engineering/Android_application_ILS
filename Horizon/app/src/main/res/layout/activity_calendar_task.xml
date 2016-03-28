@@ -5,7 +5,6 @@
     android:id="@+id/parent"
     android:layout_height="match_parent"
     tools:context="com.example.hesolutions.horizon.CalendarTask">
-
     <RelativeLayout
         android:id="@+id/relativeblur"
         android:layout_width="820dp"
@@ -19,11 +18,13 @@
             android:layout_alignParentLeft="true"/>
 
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toEndOf="@+id/relativeblur"
         android:layout_marginLeft="20dp"
+        android:id="@+id/mainUi"
         android:background="@color/backgroundcolor"
         >
 
@@ -357,7 +358,17 @@
         android:layout_centerVertical="true"
         />
 </RelativeLayout>
-
-
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/progresslayout">
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:visibility="invisible"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+    </RelativeLayout>
 </RelativeLayout>

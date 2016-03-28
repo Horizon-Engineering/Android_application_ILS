@@ -278,7 +278,7 @@ public class AdminPage extends Activity {
                 public void onClick(DialogInterface dialog, int which) {
                     ArrayList<Device> array = (ArrayList<Device>) sector.get(userName).get(sectorName);
                     //// delete the lights if this sector is the last one contains device information
-
+                    RemoveEvents(userName, sectorName);
                     boolean deletedevice = true;
                     HashMap<String, HashMap> sector = DataManager.getInstance().getsector();
                     if (!sector.isEmpty()) {
@@ -304,8 +304,8 @@ public class AdminPage extends Activity {
                         int sectornum = DataManager.getInstance().getSectornum();
                         sectornum--;
                         DataManager.getInstance().setSectornum(sectornum);
-                        inforsumsector.setText("Total number of sectors is: " + sectornum + " .");
-                        inforsumdevice.setText("Total number of devices is: " + devicenum + " .");
+                        inforsumsector.setText("Total number of sectors is: " + sectornum);
+                        inforsumdevice.setText("Total number of devices is: " + devicenum);
                         ArrayList<Device> check = DatabaseManager.getInstance().LoadDeviceList("devicelist");
                         if (array!=null) {
                             Iterator<Device> deviceIterator = array.iterator();
@@ -392,7 +392,6 @@ public class AdminPage extends Activity {
                     if (sectorinformation!=null) {
                         for (Map.Entry<String, ArrayList<Device>> selfloop : sectorinformation.entrySet()) {
                             String deleteselfsectorname = selfloop.getKey();
-
                             Bitmap bitmap = dataupdate(deleteselfsectorname+".png");
                             if (bitmap!=null)
                             {
@@ -424,7 +423,7 @@ public class AdminPage extends Activity {
                                     devicenum = devicenum - array.size();
                                 }
                                 DataManager.getInstance().setDevicenum(devicenum);
-                                inforsumdevice.setText("Total number of devices is: " + devicenum + " .");
+                                inforsumdevice.setText("Total number of devices is: " + devicenum);
                                 ArrayList<Device> check = DatabaseManager.getInstance().LoadDeviceList("devicelist");
                                 if (array != null) {
                                     Iterator<Device> deviceIterator = array.iterator();
@@ -479,8 +478,8 @@ public class AdminPage extends Activity {
                     DataManager.getInstance().setsector(sector);
                     names.remove(userName);
                     useradapter.notifyDataSetChanged();
-                    inforsumuser.setText("Total number of users is: " + usernum + " .");
-                    inforsumsector.setText("Total number of sectors is: " + sectornumber + " .");
+                    inforsumuser.setText("Total number of users is: " + usernum);
+                    inforsumsector.setText("Total number of sectors is: " + sectornumber);
                     ListView deviceList = (ListView) findViewById(R.id.devicelist);
                     deviceList.setAdapter(null);
                     ListView sectorlist = (ListView) findViewById(R.id.sectorlist);
@@ -544,7 +543,7 @@ public class AdminPage extends Activity {
                         int devicenum = DataManager.getInstance().getDevicenum();
                         devicenum--;
                         DataManager.getInstance().setDevicenum(devicenum);
-                        inforsumdevice.setText("Total number of devices is: " + devicenum + " .");
+                        inforsumdevice.setText("Total number of devices is: " + devicenum);
                     }
                 }
             });
@@ -675,86 +674,41 @@ public class AdminPage extends Activity {
         int usernumber = DataManager.getInstance().getUsernum();
         int sectornumber = DataManager.getInstance().getSectornum();
         int devicenumber = DataManager.getInstance().getDevicenum();
-        inforsumuser.setText("Total number of users is: " + usernumber + " .");
-        inforsumsector.setText("Total number of sectors is: " + sectornumber + " .");
-        inforsumdevice.setText("Total number of devices is: " + devicenumber + " .");
+        inforsumuser.setText("Total number of users is: " + usernumber);
+        inforsumsector.setText("Total number of sectors is: " + sectornumber);
+        inforsumdevice.setText("Total number of devices is: " + devicenumber);
     }
 
 
-    public void RemoveEvents(String deletethissector){
-        Gateway gateway = SysApplication.getInstance().getCurrGateway(AdminPage.this);
-        HashMap<String, HashMap<String, ArrayList<Device>>> sector = DataManager.getInstance().getsector();
-        if (gateway!=null) {
-            Calendar calendar = Calendar.getInstance();
-            List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
-            if (events.size() != 0) {
-                Iterator<WeekViewEvent> eventIterator = events.iterator();
-                while (eventIterator.hasNext()) {
-                    WeekViewEvent event = eventIterator.next();
-                    Calendar starttime = event.getStartTime();
-                    Calendar finishtime = event.getEndTime();
-                    if (calendar.after(starttime) && calendar.before(finishtime)) {
-                        ArrayList<String> sectornamelist = event.getdeviceList();
-                        sectornamelist.remove(deletethissector);
-                        if (sectornamelist.isEmpty())eventIterator.remove();
-                    }
+    public void RemoveEvents(String belongeduser, String deletethissector){
+        List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
+        if (events.size() != 0) {
+            Iterator<WeekViewEvent> eventIterator = events.iterator();
+            while (eventIterator.hasNext()) {
+                WeekViewEvent event = eventIterator.next();
+                ArrayList<String> sectorsname = event.getdeviceList();
+                if (event.getName().equals(belongeduser)&&sectorsname.contains(deletethissector)){
+                    sectorsname.remove(deletethissector);
                 }
-            }
-
-            DataManager.getInstance().setnewevents(events);
-
-
-            List<WeekViewEvent> futureevents = DataManager.getInstance().getnewevents();
-            if (events.size() != 0) {
-                Iterator<WeekViewEvent> eventIterator = futureevents.iterator();
-                while (eventIterator.hasNext()) {
-                    WeekViewEvent event = eventIterator.next();
-                    Calendar starttime = event.getStartTime();
-                    Calendar finishtime = event.getEndTime();
-                    if (calendar.after(starttime) && calendar.before(finishtime)) {
-                        ArrayList<String> sectornamelist = event.getdeviceList();
-                        sectornamelist.remove(deletethissector);
-                        if (sectornamelist.isEmpty())eventIterator.remove();
-
-                    }
-                }
-            }
-            DataManager.getInstance().setevents(futureevents);
-
-            if (events.size() != 0) {
-                ArrayList<Device> check = DatabaseManager.getInstance().LoadDeviceList("devicelist");
-                for (WeekViewEvent event: events)
-                {
-                    ArrayList<String> sectornames = event.getdeviceList();
-                    for (String sectorname:sectornames)
-                    {
-                        ArrayList<Device> arrayList = sector.get(userName).get(sectorname);
-                        if (arrayList!=null) {
-                            for (Device device : arrayList) {
-                                byte[] data;
-                                data = new byte[]{(byte) 17, (byte) 0, (byte)0, (byte) 0, (byte) 0};
-                                DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                                device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
-                                        device.getGatewaySSID(), AdminPage.this));
-                                device.setCurrentParams(data);
-                                DatabaseManager.getInstance().deleteDevice(device);
-                                System.out.println("*********************here 2");
-                                Iterator<Device> checkdevice = check.iterator();
-                                if (checkdevice != null) {
-                                    while (checkdevice.hasNext()) {
-                                        if (checkdevice.next().getDeviceName().equals(device.getDeviceName())) {
-                                            System.out.println("*********************here");
-                                            checkdevice.remove();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                DatabaseManager.getInstance().WriteDeviceList(check, "devicelist");
+                if (sectorsname.size()==0)eventIterator.remove();
             }
         }
+        DataManager.getInstance().setnewevents(events);
+        List<WeekViewEvent> futureevents = DataManager.getInstance().getevents();
+        if (events.size() != 0) {
+            Iterator<WeekViewEvent> eventIterator = futureevents.iterator();
+            while (eventIterator.hasNext()) {
+                WeekViewEvent event = eventIterator.next();
+                ArrayList<String> sectorsname = event.getdeviceList();
+                if (event.getName().equals(belongeduser) && sectorsname.contains(deletethissector)){
+                    sectorsname.remove(deletethissector);
+                }
+                if (sectorsname.size()==0)eventIterator.remove();
+            }
+        }
+        DataManager.getInstance().setevents(futureevents);
+
+
     }
 
     public void RemoveEventsUser() {

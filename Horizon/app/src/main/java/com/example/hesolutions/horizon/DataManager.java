@@ -162,7 +162,7 @@ public class DataManager {
     public List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
     public List getevents()
     {
-        dataupdateList(events, "calendar");
+        events = dataupdateList("calendar");
         return events;
     }
 
@@ -172,11 +172,15 @@ public class DataManager {
         writedata1(events, "calendar");
         return events;
     }
+    public void addevents(List<WeekViewEvent>list)
+    {
+        AppendWrite(list, "calendar");
+    }
 
     public List<WeekViewEvent> newevents = new ArrayList<WeekViewEvent>();
     public List getnewevents()
     {
-        dataupdateList(newevents, "schedule");
+        newevents = dataupdateList("schedule");
         return newevents;
     }
 
@@ -185,6 +189,11 @@ public class DataManager {
         this.newevents = list;
         writedata1(newevents, "schedule");
         return newevents;
+    }
+
+    public void addnewevents(List<WeekViewEvent>list)
+    {
+        AppendWrite(list, "schedule");
     }
 
     public List<Long> listID = new ArrayList<Long>();
@@ -201,19 +210,6 @@ public class DataManager {
     {
         this.listID= list;
         return listID;
-    }
-
-    public List<List<Long>> groupID = new ArrayList<List<Long>>();
-    public List getGroupID()
-    {
-        dataupdateList2(groupID,"group");
-        return groupID;
-    }
-    public List setGroupID(List<List<Long>> list)
-    {
-        this.groupID = list;
-        writedata2(groupID,"group");
-        return groupID;
     }
 
     public int usernum;
@@ -257,32 +253,7 @@ public class DataManager {
         writedataint(devicenum, "device");
         return devicenum;
     }
-    //====================read data from arraylist===============================
-/*
-    public ArrayList getGrid()
-    {
 
-        File root = Environment.getExternalStorageDirectory();
-        File dir = new File(root.getAbsolutePath() + "/Horizon");
-        File file = new File(dir, "grid");
-        if (file.exists()) {
-            try {
-                FileInputStream fis = new FileInputStream(file);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                numberlist = (ArrayList<String>) ois.readObject();
-         } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-    return numberlist;
-
-    }
-*/
     //===========================================Writedata for BiMap=============================================
 
     public static void writedata(BiMap bimap, String filename) {
@@ -330,32 +301,7 @@ public class DataManager {
             }
         }
     }
-/*
-    // ============================================Writedata for Arraylist=========================
-    public static void writedata(ArrayList arrayList, String filename) {
-        String state;
-        state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            File root = Environment.getExternalStorageDirectory();
-            File dir = new File(root.getAbsolutePath() + "/Horizon");
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            File file = new File(dir, filename);
-            try {
-                FileOutputStream fos = new FileOutputStream(file);
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(arrayList);
-                System.out.println(arrayList.isEmpty() + "++++++++++++++nothingwritten+++++++++++++++++++++++");
-                oos.flush();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-*/
+
     // ============================================Writedata for List=========================
     public static void writedata1(List<WeekViewEvent> list, String filename) {
         String state;
@@ -381,36 +327,30 @@ public class DataManager {
         }
     }
 
-    public static void writedata2(List<List<Long>> list, String filename) {
-        String state;
-        state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-
-            File root = Environment.getExternalStorageDirectory();
-            File dir = new File(root.getAbsolutePath() + "/Horizon");
-            if (!dir.exists()) {
-                dir.mkdir();
-            }
-            File file = new File(dir, filename);
-
+    public static void AppendWrite(List<WeekViewEvent> list, String filename) {
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Horizon");
+        File file = new File(dir, filename);
+        if (file.exists()) {
             try {
 
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                List<WeekViewEvent> listone = (List)ois.readObject();
 
+                list.addAll(listone);
                 FileOutputStream fos = new FileOutputStream(file);
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
                 oos.writeObject(list);
-
-                oos.flush();
             } catch (FileNotFoundException e) {
-
                 e.printStackTrace();
             } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
     }
-
-
 
     //==========================read data from hashmap=======================
 
@@ -489,7 +429,8 @@ public class DataManager {
         }
     }
 
-    public static void dataupdateList(List<WeekViewEvent> list, String filename) {
+    public static List<WeekViewEvent> dataupdateList(String filename) {
+        List<WeekViewEvent> list = new ArrayList<>();
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Horizon");
         File file = new File(dir, filename);
@@ -499,12 +440,7 @@ public class DataManager {
                 ObjectInputStream ois = new ObjectInputStream(fis);
 
                 List<WeekViewEvent> listone = (List)ois.readObject();
-                list.clear();
-                for (int i =0; i<listone.size();i++)
-                {
-                    list.add(listone.get(i));
-                }
-
+                list.addAll(listone);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -513,37 +449,7 @@ public class DataManager {
                 e.printStackTrace();
             }
         }
-    }
-
-
-    public static void dataupdateList2(List<List<Long>> list, String filename) {
-        File root = Environment.getExternalStorageDirectory();
-        File dir = new File(root.getAbsolutePath() + "/Horizon");
-        File file = new File(dir, filename);
-        if (file.exists()) {
-            try {
-                FileInputStream fis = new FileInputStream(file);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                List<List<Long>> listone = (List)ois.readObject();
-                list.clear();
-                for (int i =0; i<listone.size();i++)
-                {
-                    List<Long> list2 = listone.get(i);
-                    List<Long> list3 = new ArrayList<>();
-                    for (int j = 0; j < list2.size();j++)
-                    {
-                       list3.add(list2.get(j));
-                    }
-                    list.add(list3);
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
+        return list;
     }
 
     public static void writedataint(int number, String filename) {

@@ -79,6 +79,7 @@ public class GlobalCalendar extends Activity{
                 */
                 List<WeekViewEvent> events;
                 events = DataManager.getInstance().getnewevents();
+                System.out.println("*******global page show " + events.size());
                 return events;
             }
 
@@ -258,13 +259,16 @@ public class GlobalCalendar extends Activity{
                 ArrayList<Device> deviceArrayList = sectorinformation.get(sectorname);
                 if (deviceArrayList!=null) {
                     for (Device device : deviceArrayList) {
-                        byte[] data;
-                        data = new byte[]{(byte) 17, (byte) 0, (byte)0, (byte) 0, (byte) 0};
-                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                        device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
-                                device.getGatewaySSID(), GlobalCalendar.this));
-                        device.setCurrentParams(data);
-                        DatabaseManager.getInstance().updateDevice(device);
+                        Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
+                        if (thedevice.getChannelMark() != 5) {
+                            byte[] data;
+                            data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                            thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                    thedevice.getGatewaySSID(), GlobalCalendar.this));
+                            thedevice.setCurrentParams(data);
+                            DatabaseManager.getInstance().updateDevice(thedevice);
+                        }
                     }
                 }
             }

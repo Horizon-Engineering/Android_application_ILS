@@ -144,6 +144,7 @@ public class HomePage extends AppCompatActivity {
                             DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                             device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                     device.getGatewaySSID(), HomePage.this));
+
                         }
                     }
                 }else {
@@ -231,27 +232,6 @@ public class HomePage extends AppCompatActivity {
         });
     }
 
-/*
-    private class MyRunnable implements Runnable
-    {
-        @Override
-        public void run() {
-            // check if it's run in main thread, or background thread
-            if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
-                //in main thread
-            } else {
-                //in background thread
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-                });
-            }
-        }
-    }
-*/
-
     public void MakeAlert()
     {
         List<WeekViewEvent> events;
@@ -260,6 +240,7 @@ public class HomePage extends AppCompatActivity {
         HashMap<String, HashMap<String, ArrayList<Device>>> sector = DataManager.getInstance().getsector();
         ArrayList<Device> arrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
         Iterator<Device> iterator = arrayList.iterator();
+        System.out.println("read events*******************" + events.size());
         if (events != null) {
             Iterator<WeekViewEvent> eventIterator = events.iterator();
             while (eventIterator.hasNext())
@@ -271,7 +252,7 @@ public class HomePage extends AppCompatActivity {
                 String username = event.getName();
                 int intensity = event.getIntensity();
 
-                long mills = cal.getTime().getTime()- start.getTime().getTime();
+                long mills = cal.getTimeInMillis()- start.getTimeInMillis();
                 int days = (int) mills / (1000 * 60 * 60 * 24);
 
                 if (cal.before(finish) && cal.after(start)) {
@@ -297,6 +278,8 @@ public class HomePage extends AppCompatActivity {
                                             DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                                             thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
                                                     thedevice.getGatewaySSID(), HomePage.this));
+                                            thedevice.setCurrentParams(data);
+                                            DatabaseManager.getInstance().updateDevice(thedevice);
                                         }
                                     }
                                 }
@@ -435,7 +418,7 @@ public class HomePage extends AppCompatActivity {
                 WeekViewEvent event = eventIterator.next();
                 long eventday = event.getStartTime().getTimeInMillis();
                 long mills = eventday - today;
-                long days =  mills / (1000 * 60 * 60 * 24);
+                long days = mills / (1000 * 60 * 60 * 24);
                 if (days <= 30)
                 {
                     newevents.add(event);

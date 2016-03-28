@@ -211,11 +211,7 @@ public class ControlPanel extends Activity {
                                 devicea.getGatewaySSID(), ControlPanel.this));
 
                         devicea.setCurrentParams(SetParams);
-                        if (progress>0) {
-                            devicea.setChannelMark((short) 5);
-                        }else{
-                            devicea.setChannelMark((short)0);
-                        }
+                        devicea.setChannelMark((short) 5);
                         DatabaseManager.getInstance().updateDevice(devicea);
                         notifyDataSetChanged();
                     }else
@@ -264,7 +260,7 @@ public class ControlPanel extends Activity {
                                     device.getGatewaySSID(), ControlPanel.this));
 
                             device.setCurrentParams(data);
-                            device.setChannelMark((short) 0);
+                            device.setChannelMark((short) 5);
                             DatabaseManager.getInstance().updateDevice(device);
                         }
                         notifyDataSetChanged();
@@ -407,7 +403,7 @@ public class ControlPanel extends Activity {
                                                         thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
                                                 thedevice.getGatewaySSID(), ControlPanel.this));
                                         thedevice.setCurrentParams(data);
-                                        thedevice.setChannelMark((short)0);
+                                        thedevice.setChannelMark((short)5);
                                         DatabaseManager.getInstance().updateDevice(thedevice);
                                     }
                                 }
@@ -416,8 +412,7 @@ public class ControlPanel extends Activity {
                             }
                         }
                         notifyDataSetChanged();
-                    }else
-                    {
+                    }else {
                         Restart();
                     }
                 }
