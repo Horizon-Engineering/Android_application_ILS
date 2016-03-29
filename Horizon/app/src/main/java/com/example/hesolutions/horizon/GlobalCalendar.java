@@ -8,6 +8,7 @@ import android.graphics.RectF;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -53,12 +54,14 @@ public class GlobalCalendar extends Activity{
     Button threedays;
     Button sevendays;
     private WeekView mWeekView;
-
+    Handler myHandler;
+    Runnable myRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_global_calendar);
         addevent =(Button)findViewById(R.id.addevent);
@@ -68,6 +71,16 @@ public class GlobalCalendar extends Activity{
         sevendays = (Button)findViewById(R.id.sevendays);
         mWeekView = (WeekView) findViewById(R.id.weekView);
 
+        myHandler = new Handler();
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(GlobalCalendar.this, ScreenSaver.class);
+                myHandler.removeCallbacks(myRunnable);
+                startActivity(intent);
+            }
+        };
+        myHandler.postDelayed(myRunnable, 3*60*1000);
 
         MonthLoader.MonthChangeListener mMonthChangeListener = new MonthLoader.MonthChangeListener() {
             @Override
@@ -273,5 +286,27 @@ public class GlobalCalendar extends Activity{
                 }
             }
         }
+    }
+
+
+    @Override
+    public void onUserInteraction()
+    {
+        super.onUserInteraction();
+        myHandler.removeCallbacks(myRunnable);
+        myHandler.postDelayed(myRunnable,3*60*1000);
+
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        myHandler.postDelayed(myRunnable, 6*30*1000);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        myHandler.removeCallbacks(myRunnable);
     }
 }

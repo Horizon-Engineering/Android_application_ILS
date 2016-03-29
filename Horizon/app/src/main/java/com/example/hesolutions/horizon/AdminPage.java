@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.text.style.ClickableSpan;
@@ -80,10 +81,13 @@ public class AdminPage extends Activity {
     int Selected_User = -1;
     int Selected_Sector = -1;
     int Selected_Device = -1;
+    Handler myHandler;
+    Runnable myRunnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_page);
 
@@ -97,6 +101,16 @@ public class AdminPage extends Activity {
         inforsumuser = (TextView)findViewById(R.id.inforsumuser);
         inforsumsector = (TextView)findViewById(R.id.inforsumsector);
         inforsumdevice = (TextView)findViewById(R.id.inforsumdevice);
+        myHandler = new Handler();
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(AdminPage.this, ScreenSaver.class);
+                myHandler.removeCallbacks(myRunnable);
+                startActivity(intent);
+            }
+        };
+        myHandler.postDelayed(myRunnable, 3*60*1000);
         LoadUserList();
         adduser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -753,6 +767,28 @@ public class AdminPage extends Activity {
             }
         }
         return null;
+    }
+
+    @Override
+    public void onUserInteraction()
+    {
+        super.onUserInteraction();
+        myHandler.removeCallbacks(myRunnable);
+        myHandler.postDelayed(myRunnable,3*60*1000);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        myHandler.postDelayed(myRunnable, 6*30 * 1000);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        myHandler.removeCallbacks(myRunnable);
     }
 }
 

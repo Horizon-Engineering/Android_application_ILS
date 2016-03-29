@@ -10,10 +10,12 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.app.Activity;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -53,8 +55,13 @@ public class AdminAddNew extends Activity {
     MyCustomAdapter deviceAdapter =null;
     int usecase;
     String key , oldcolor;
+    Handler myHandler;
+    Runnable myRunnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_add_new);
         SAVE = (Button) findViewById(R.id.SAVE);
@@ -76,6 +83,18 @@ public class AdminAddNew extends Activity {
         Bitmap cachedBitmap = DataManager.getInstance().getBitmap();
 
         setupUI(findViewById(R.id.parent));
+
+        myHandler = new Handler();
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(AdminAddNew.this, ScreenSaver.class);
+                myHandler.removeCallbacks(myRunnable);
+                startActivity(intent);
+            }
+        };
+        myHandler.postDelayed(myRunnable, 5 * 1000);
+
         if (cachedBitmap != null) {
             Bitmap blurredBitmap = BlurBuilder.blur(this, cachedBitmap);
             homescreenBgImage.setBackground(new BitmapDrawable(getResources(), blurredBitmap));
@@ -720,4 +739,25 @@ public class AdminAddNew extends Activity {
         }
     }
 
+    @Override
+    public void onUserInteraction()
+    {
+        super.onUserInteraction();
+        myHandler.removeCallbacks(myRunnable);
+        myHandler.postDelayed(myRunnable,3*60*1000);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        myHandler.postDelayed(myRunnable, 6*30 * 1000);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        myHandler.removeCallbacks(myRunnable);
+    }
 }

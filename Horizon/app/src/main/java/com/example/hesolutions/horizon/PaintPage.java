@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -49,10 +50,13 @@ public class PaintPage extends Activity{
     String imgDecodableString;
     String sectorsave = "";
     ArrayList<String> sectorlist = new ArrayList<>();
+    Handler myHandler;
+    Runnable myRunnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paint_page);
         drawBtn = (ImageButton)findViewById(R.id.draw_btn);
@@ -61,6 +65,17 @@ public class PaintPage extends Activity{
         smallBrush = getResources().getInteger(R.integer.small_size);
         mediumBrush = getResources().getInteger(R.integer.medium_size);
         largeBrush = getResources().getInteger(R.integer.large_size);
+
+        myHandler = new Handler();
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(PaintPage.this, ScreenSaver.class);
+                myHandler.removeCallbacks(myRunnable);
+                startActivity(intent);
+            }
+        };
+        myHandler.postDelayed(myRunnable, 3 * 60 * 1000);
 
         eraseBtn = (ImageButton)findViewById(R.id.erase_btn);
         eraseBtn.setOnClickListener(new OnClickListener() {
@@ -427,5 +442,25 @@ public class PaintPage extends Activity{
             }
         }
         return null;
+    }
+    @Override
+    public void onUserInteraction()
+    {
+        super.onUserInteraction();
+        myHandler.removeCallbacks(myRunnable);
+        myHandler.postDelayed(myRunnable,3*60*1000);
+
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        myHandler.postDelayed(myRunnable, 6*30 * 1000);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        myHandler.removeCallbacks(myRunnable);
     }
 }

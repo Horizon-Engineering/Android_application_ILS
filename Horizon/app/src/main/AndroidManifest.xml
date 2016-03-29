@@ -154,7 +154,9 @@
             android:name=".DrawingView"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".EmptyActivity"></activity>
+        <activity android:name=".EmptyActivity" />
+        <activity android:name=".ScreenSaver"
+            android:launchMode="singleTask"></activity>
     </application>
 
 </manifest>

@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
 import android.util.AttributeSet;
@@ -73,14 +74,16 @@ public class ControlPanel extends Activity {
     ImageView imageViewroomlayout;
     ExpandListAdapter adapter;
     TextView Intensity, ownertag, owner, sectortag, sectornameT, devicetag, devicenameT, Intensitynum;
+    Handler myHandler;
+    Runnable myRunnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control_panel);
         seekBar = (EnhancedSeekBar)findViewById(R.id.seekBar);
         imageViewroomlayout = (ImageView)findViewById(R.id.imageViewroomlayout);
-        //DatabaseManager.getInstance().addDevice(null, null);
         ownertag = (TextView)findViewById(R.id.ownertag);
         owner = (TextView)findViewById(R.id.owner);
         sectortag = (TextView)findViewById(R.id.sectortag);
@@ -104,6 +107,16 @@ public class ControlPanel extends Activity {
         }
         owner.setText(username);
 
+        myHandler = new Handler();
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(ControlPanel.this, ScreenSaver.class);
+                myHandler.removeCallbacks(myRunnable);
+                startActivity(intent);
+            }
+        };
+        myHandler.postDelayed(myRunnable, 3*60*1000);
     }
 
     public class ExpandListAdapter extends BaseExpandableListAdapter {
@@ -216,7 +229,7 @@ public class ControlPanel extends Activity {
                         notifyDataSetChanged();
                     }else
                     {
-                        Restart();
+                        Showlog();
                         seekBar.setEnabled(false);
                     }
                 }
@@ -266,7 +279,8 @@ public class ControlPanel extends Activity {
                         notifyDataSetChanged();
                     }else
                     {
-                        Restart();
+                        Showlog();
+                        switchid.setCheckedProgrammatically(false);
                     }
                 }
             });
@@ -362,26 +376,6 @@ public class ControlPanel extends Activity {
                         Intensitynum.setVisibility(View.INVISIBLE);
                         Intensity.setVisibility(View.INVISIBLE);
 
-                        /*
-                        Calendar calendar = Calendar.getInstance();
-                        List<WeekViewEvent> events = DataManager.getInstance().getnewevents();
-                        if (events.size() != 0) {
-                            Iterator<WeekViewEvent> eventIterator = events.iterator();
-                            while (eventIterator.hasNext()) {
-                                WeekViewEvent event = eventIterator.next();
-                                Calendar starttime = event.getStartTime();
-                                Calendar finishtime = event.getEndTime();
-                                if (calendar.after(starttime) && calendar.before(finishtime)) {
-                                    ArrayList<String> sectornamelist = event.getdeviceList();
-                                    sectornamelist.remove(sectorname);
-                                    if (sectornamelist.isEmpty())eventIterator.remove();
-                                }
-                            }
-                        }
-
-                        DataManager.getInstance().setnewevents(events);
-                        */
-
                         if (!sectorname.equals(" ")) {
                             if (devicelist != null) {
                                 if (switchid.isChecked() == true) {
@@ -413,7 +407,8 @@ public class ControlPanel extends Activity {
                         }
                         notifyDataSetChanged();
                     }else {
-                        Restart();
+                        Showlog();
+                        switchid.setCheckedProgrammatically(false);
                     }
                 }
             });
@@ -452,7 +447,7 @@ public class ControlPanel extends Activity {
         }
         return null;
     }
-    public void Restart(){
+    public void Showlog(){
         final AlertDialog.Builder builder = new AlertDialog.Builder(ControlPanel.this.getParent());
         builder.setTitle("Error");
         builder.setMessage("Gateway Error, please connect the wifi and press OK");
@@ -469,5 +464,27 @@ public class ControlPanel extends Activity {
             myAlertDialog.show();
         }
 
+    }
+
+    @Override
+    public void onUserInteraction()
+    {
+        super.onUserInteraction();
+        myHandler.removeCallbacks(myRunnable);
+        myHandler.postDelayed(myRunnable,3*60*1000);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        myHandler.postDelayed(myRunnable, 3* 60 * 1000);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        myHandler.removeCallbacks(myRunnable);
     }
 }

@@ -172,10 +172,6 @@ public class DataManager {
         writedata1(events, "calendar");
         return events;
     }
-    public void addevents(List<WeekViewEvent>list)
-    {
-        AppendWrite(list, "calendar");
-    }
 
     public List<WeekViewEvent> newevents = new ArrayList<WeekViewEvent>();
     public List getnewevents()
@@ -191,10 +187,6 @@ public class DataManager {
         return newevents;
     }
 
-    public void addnewevents(List<WeekViewEvent>list)
-    {
-        AppendWrite(list, "schedule");
-    }
 
     public List<Long> listID = new ArrayList<Long>();
     public List getEventID()
@@ -326,7 +318,7 @@ public class DataManager {
             }
         }
     }
-
+/*
     public static void AppendWrite(List<WeekViewEvent> list, String filename) {
         File root = Environment.getExternalStorageDirectory();
         File dir = new File(root.getAbsolutePath() + "/Horizon");
@@ -351,7 +343,7 @@ public class DataManager {
             }
         }
     }
-
+*/
     //==========================read data from hashmap=======================
 
     public static void dataupdate(BiMap bimap, String filename) {

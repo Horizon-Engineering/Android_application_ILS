@@ -87,10 +87,15 @@ public class CalendarTask extends Activity {
     MyCustomAdapter deviceAdapter = null;
     int intensity = 100;
     SeekBar seekBar;
+    Handler myHandler;
+    Runnable myRunnable;
+    List<WeekViewEvent> list;
+    List<WeekViewEvent> newlist;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar_task);
 
@@ -140,6 +145,17 @@ public class CalendarTask extends Activity {
         }
 
         setupUI(findViewById(R.id.parent));
+
+        myHandler = new Handler();
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(CalendarTask.this, ScreenSaver.class);
+                myHandler.removeCallbacks(myRunnable);
+                startActivity(intent);
+            }
+        };
+        myHandler.postDelayed(myRunnable, 3 * 60 * 1000);
 
 //========================================Loading the sector info
         final HashMap<String, HashMap> sector = DataManager.getInstance().getsector();
@@ -286,10 +302,7 @@ public class CalendarTask extends Activity {
                 final String cname = DataManager.getInstance().getUsername();
                 final String colorname = DataManager.getInstance().getcolorname();
                 final int colorName = Color.parseColor(colorname);
-                final List<WeekViewEvent> list = new ArrayList<WeekViewEvent>();
                 final List<Long> IDlist = DataManager.getInstance().getEventID();
-                final List<WeekViewEvent> newlist = new ArrayList<WeekViewEvent>();
-
                 if (deviceAdapter!=null) {
                     ArrayList<Group> choosegrouplist = deviceAdapter.arrayList;
                     for (int i = 0; i < choosegrouplist.size(); i++) {
@@ -330,9 +343,12 @@ public class CalendarTask extends Activity {
                                                 ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
                                                 progresslayout.setClickable(true);
                                                 progressBar.setVisibility(View.VISIBLE);
+
                                             }
                                             @Override
                                             protected Void doInBackground(Void... params) {
+                                                list = DataManager.getInstance().getevents();
+                                                newlist = DataManager.getInstance().getnewevents();
                                                 long oldid = 0;
                                                 if (!IDlist.isEmpty()) {
                                                     oldid = IDlist.get((IDlist.size() - 1));
@@ -591,8 +607,8 @@ public class CalendarTask extends Activity {
 
                                                 System.out.println("old size " + list.size() + " new size " + newlist.size() + "**************2");
                                                 DataManager.getInstance().setEventID(IDlist);
-                                                DataManager.getInstance().addevents(list);
-                                                DataManager.getInstance().addnewevents(newlist);
+                                                DataManager.getInstance().setevents(list);
+                                                DataManager.getInstance().setnewevents(newlist);
                                                 System.out.println("old size " + list.size() + " new size " + newlist.size() + "**************");
                                                 return null;
                                             }
@@ -644,6 +660,8 @@ public class CalendarTask extends Activity {
                                     @Override
                                     protected Void doInBackground(Void... params) {
 
+                                        list = DataManager.getInstance().getevents();
+                                        newlist = DataManager.getInstance().getnewevents();
                                         long id = 0;
                                         if (!IDlist.isEmpty()) {
                                             id = IDlist.get((IDlist.size() - 1)) + 1;
@@ -657,9 +675,9 @@ public class CalendarTask extends Activity {
                                             list.add(event);
                                         }
                                         IDlist.add(id);
-                                        DataManager.getInstance().addevents(list);
+                                        DataManager.getInstance().setevents(list);
                                         DataManager.getInstance().setEventID(IDlist);
-                                        DataManager.getInstance().addnewevents(newlist);
+                                        DataManager.getInstance().setnewevents(newlist);
 
                                         return null;
                                     }
@@ -881,17 +899,8 @@ public class CalendarTask extends Activity {
     {
 
         String name;
-        //ArrayList<Device> devicelist;
         boolean ischecked;
 
-        /*
-        public Group(String name, ArrayList devicelist, boolean ischecked)
-        {
-            this.name = name;
-            this.devicelist = devicelist;
-            this.ischecked = ischecked;
-        }
-        */
         public Group(String name, boolean ischecked)
         {
             this.name = name;
@@ -910,38 +919,6 @@ public class CalendarTask extends Activity {
         }
         public void setName(String name) {
             this.name = name;
-        }
-        /*
-        public ArrayList getList() {
-            return devicelist;
-        }
-        public void setList(ArrayList devicelist) {
-            this.devicelist = devicelist;
-        }
-        */
-        public void setupUI(View view) {
-            //Set up touch listener for non-text box views to hide keyboard.
-            if(!(view instanceof EditText)) {
-                view.setOnTouchListener(new View.OnTouchListener() {
-
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if(getCurrentFocus() != null) {
-                            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                        }
-                        return false;
-                    }
-
-                });
-            }
-
-            //If a layout container, iterate over children and seed recursion.
-            if (view instanceof ViewGroup) {
-                for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                    View innerView = ((ViewGroup) view).getChildAt(i);
-                    setupUI(innerView);
-                }
-            }
         }
     }
 
@@ -968,5 +945,26 @@ public class CalendarTask extends Activity {
                 setupUI(innerView);
             }
         }
+    }
+
+    @Override
+    public void onUserInteraction()
+    {
+        super.onUserInteraction();
+        myHandler.removeCallbacks(myRunnable);
+        myHandler.postDelayed(myRunnable,3*60*1000);
+
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        myHandler.postDelayed(myRunnable, 6*30 * 1000);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        myHandler.removeCallbacks(myRunnable);
     }
 }

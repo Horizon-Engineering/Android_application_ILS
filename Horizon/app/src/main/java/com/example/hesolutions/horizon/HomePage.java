@@ -71,9 +71,12 @@ public class HomePage extends AppCompatActivity {
     ImageView emergencypic;
     AlertDialog.Builder builder = null;
     AlertDialog alertDialog;
+    Handler myHandler;
+    Runnable myRunnable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
         DatabaseManager.getInstance().addDevice(null, null);
@@ -87,17 +90,20 @@ public class HomePage extends AppCompatActivity {
         radioButton2 = (Button) findViewById(R.id.radioButton2);
         radioButton3 = (Button) findViewById(R.id.radioButton3);
         radioButton4 = (Button) findViewById(R.id.radioButton4);
-        switch1 = (Switch)findViewById(R.id.switch1);
-        emergencypic = (ImageView)findViewById(R.id.emergencypic);
-    /*
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        switch1 = (Switch) findViewById(R.id.switch1);
+        emergencypic = (ImageView) findViewById(R.id.emergencypic);
 
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
+        myHandler = new Handler();
+        myRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(HomePage.this, ScreenSaver.class);
+                myHandler.removeCallbacks(myRunnable);
+                startActivity(intent);
+            }
+        };
+        myHandler.postDelayed(myRunnable, 6* 30* 1000);
 
-        getWindow().setLayout((int) (height * 0.35), (int) (width * 0.4));
-*/
         final GridView gridView = (GridView) findViewById(R.id.gridView);
 
         String[] numbers = new String[]{"1", "2", "3",
@@ -116,6 +122,7 @@ public class HomePage extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
         Calendar today = Calendar.getInstance();
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -132,8 +139,8 @@ public class HomePage extends AppCompatActivity {
             public void run() {
                 System.out.println("*************running main thread");
                 Gateway gateway = SysApplication.getInstance().getCurrGateway(HomePage.this);
-                if (gateway!=null){
-                    if (alertDialog!=null && alertDialog.isShowing())alertDialog.dismiss();
+                if (gateway != null) {
+                    if (alertDialog != null && alertDialog.isShowing()) alertDialog.dismiss();
                     if (emergency == false) {
                         MakeAlert();
                     } else {
@@ -147,14 +154,14 @@ public class HomePage extends AppCompatActivity {
 
                         }
                     }
-                }else {
+                } else {
                     System.out.println("*************will?");
                     //maintimer.cancel();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (alertDialog!=null && alertDialog.isShowing()){}
-                            else{
+                            if (alertDialog != null && alertDialog.isShowing()) {
+                            } else {
                                 builder = new AlertDialog.Builder(HomePage.this);
                                 builder.setTitle("Error");
                                 builder.setMessage("Gateway Error, please connect the wifi and press OK");
@@ -191,7 +198,8 @@ public class HomePage extends AppCompatActivity {
                     switch1.setText("Emergency ON  ");
                     gridView.setAdapter(null);
                     Gateway gateway = SysApplication.getInstance().getCurrGateway(HomePage.this);
-                    if (gateway!=null) {
+                    if (gateway != null) {
+                        myHandler.removeCallbacks(myRunnable);
                         for (Device device : deviceArrayList) {
                             byte[] data;
                             data = new byte[]{(byte) 17, (byte) 100, (byte) 0, (byte) 0, (byte) 0};
@@ -199,9 +207,10 @@ public class HomePage extends AppCompatActivity {
                                             device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                     device.getGatewaySSID(), HomePage.this));
                         }
-                    }else{
-                        if (alertDialog!=null && alertDialog.isShowing()){}
-                        else{
+                    } else {
+                        myHandler.postDelayed(myRunnable, 60*3*1000);
+                        if (alertDialog != null && alertDialog.isShowing()) {
+                        } else {
                             builder = new AlertDialog.Builder(HomePage.this);
                             builder.setTitle("Error");
                             builder.setMessage("Gateway Error, please connect the wifi and press OK");
@@ -232,19 +241,16 @@ public class HomePage extends AppCompatActivity {
         });
     }
 
-    public void MakeAlert()
-    {
+    public void MakeAlert() {
         List<WeekViewEvent> events;
         Calendar cal = Calendar.getInstance();
         events = DataManager.getInstance().getnewevents();
         HashMap<String, HashMap<String, ArrayList<Device>>> sector = DataManager.getInstance().getsector();
         ArrayList<Device> arrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
         Iterator<Device> iterator = arrayList.iterator();
-        System.out.println("read events*******************" + events.size());
         if (events != null) {
             Iterator<WeekViewEvent> eventIterator = events.iterator();
-            while (eventIterator.hasNext())
-            {
+            while (eventIterator.hasNext()) {
                 WeekViewEvent event = eventIterator.next();
                 ArrayList<String> sectorsname = event.getdeviceList();
                 Calendar start = event.getStartTime();
@@ -252,24 +258,24 @@ public class HomePage extends AppCompatActivity {
                 String username = event.getName();
                 int intensity = event.getIntensity();
 
-                long mills = cal.getTimeInMillis()- start.getTimeInMillis();
+                long mills = cal.getTimeInMillis() - start.getTimeInMillis();
                 int days = (int) mills / (1000 * 60 * 60 * 24);
 
                 if (cal.before(finish) && cal.after(start)) {
                     Iterator<String> stringIterator = sectorsname.iterator();
-                    while (stringIterator.hasNext()){
+                    while (stringIterator.hasNext()) {
                         String sectorname = stringIterator.next();
                         if (sector.get(username).containsKey(sectorname)) {
                             ArrayList<Device> deviceArrayList = sector.get(username).get(sectorname);
                             if (deviceArrayList != null) {
                                 for (Device device : deviceArrayList) {
-                                    while (iterator.hasNext())
-                                    {
+                                    while (iterator.hasNext()) {
                                         Device device1 = iterator.next();
-                                        if (device1.getDeviceName().equals(device.getDeviceName()))iterator.remove();
+                                        if (device1.getDeviceName().equals(device.getDeviceName()))
+                                            iterator.remove();
                                     }
                                     Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
-                                    if (thedevice!=null) {
+                                    if (thedevice != null) {
                                         if (thedevice.getChannelMark() != 5)
                                         // if controled by control page then dont use schedule
                                         {
@@ -283,16 +289,14 @@ public class HomePage extends AppCompatActivity {
                                         }
                                     }
                                 }
-                            }else
-                            {
+                            } else {
                             }
-                        }else {
+                        } else {
                             stringIterator.remove();
                         }
                     }
                 }
-                if (sectorsname.size()== 0 || days > 30)
-                {
+                if (sectorsname.size() == 0 || days > 30) {
                     eventIterator.remove();
                 }
             }
@@ -301,7 +305,7 @@ public class HomePage extends AppCompatActivity {
                 while (iterator.hasNext()) {
                     Device device = iterator.next();
                     Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
-                    if (thedevice!=null) {
+                    if (thedevice != null) {
                         if (thedevice.getChannelMark() != 5) {
                             byte[] data;
                             data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
@@ -310,7 +314,7 @@ public class HomePage extends AppCompatActivity {
                                     thedevice.getGatewaySSID(), HomePage.this));
                             thedevice.setCurrentParams(data);
                             DatabaseManager.getInstance().updateDevice(thedevice);
-                        }else {
+                        } else {
                             byte[] data = thedevice.getCurrentParams();
                             DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                             thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
@@ -324,6 +328,7 @@ public class HomePage extends AppCompatActivity {
         DataManager.getInstance().setnewevents(events);
 
     }
+
     public void clickHandler(View v) {
         if (!((Button) v).getText().toString().equals(" ")) {
             if (CODE1.getText().length() == 0) {
@@ -394,7 +399,7 @@ public class HomePage extends AppCompatActivity {
 
     }
 
-    public void clearPinCode(){
+    public void clearPinCode() {
 
         CODE1.setText("");
         CODE2.setText("");
@@ -406,21 +411,18 @@ public class HomePage extends AppCompatActivity {
         radioButton4.setBackground(getResources().getDrawable(R.drawable.circledots));
     }
 
-    public void GetNewEvent()
-    {
+    public void GetNewEvent() {
         List<WeekViewEvent> events = DataManager.getInstance().getevents();
         List<WeekViewEvent> newevents = DataManager.getInstance().getnewevents();
         long today = Calendar.getInstance().getTimeInMillis();
-        if (events!=null) {
+        if (events != null) {
             Iterator<WeekViewEvent> eventIterator = events.iterator();
-            while (eventIterator.hasNext())
-            {
+            while (eventIterator.hasNext()) {
                 WeekViewEvent event = eventIterator.next();
                 long eventday = event.getStartTime().getTimeInMillis();
                 long mills = eventday - today;
                 long days = mills / (1000 * 60 * 60 * 24);
-                if (days <= 30)
-                {
+                if (days <= 30) {
                     newevents.add(event);
                     eventIterator.remove();
                 }
@@ -429,4 +431,28 @@ public class HomePage extends AppCompatActivity {
             DataManager.getInstance().setevents(events);
         }
     }
+    @Override
+    public void onUserInteraction()
+    {
+        super.onUserInteraction();
+        myHandler.removeCallbacks(myRunnable);
+        myHandler.postDelayed(myRunnable,3 * 60* 1000);
+
+    }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        myHandler.postDelayed(myRunnable, 3* 60 * 1000);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        myHandler.removeCallbacks(myRunnable);
+    }
+
 }
