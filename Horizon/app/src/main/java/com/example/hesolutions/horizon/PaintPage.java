@@ -52,6 +52,7 @@ public class PaintPage extends Activity{
     ArrayList<String> sectorlist = new ArrayList<>();
     Handler myHandler;
     Runnable myRunnable;
+    int Selected_Device = -1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -353,40 +354,35 @@ public class PaintPage extends Activity{
         if (!sectorlist.isEmpty()) {
             blank.setVisibility(View.GONE);
             sectorlistlayout.setVisibility(View.VISIBLE);
-            MyAdapter adapter = new MyAdapter(this, sectorlist);
+            final MyAdapter adapter = new MyAdapter(this, sectorlist);
             sectorlistlayout.setAdapter(adapter);
             sectorlistlayout.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    for (int i = 0; i < sectorlist.size(); i++) {
-                        Bitmap bitmap = null;
-                        bitmap = dataupdate(sectorlist.get(position)+".png");
-                        if (bitmap!=null)
+                    Bitmap bitmap = null;
+                    bitmap = dataupdate(sectorlist.get(position)+".png");
+                    if (bitmap!=null)
+                    {
+                        Drawable d = new BitmapDrawable(getResources(), bitmap);
+                        drawingpart.setVisibility(View.VISIBLE);
+                        drawView.setBackground(d);
+                        drawView.setEnabletouch(false);
+                        LinearLayout toolpanel = (LinearLayout)findViewById(R.id.toolpanel);
+                        toolpanel.setVisibility(View.GONE);
+                    }else
+                    {
+                        showContent(view);
+                        if (drawView.getBackground()!=null)
                         {
-                            Drawable d = new BitmapDrawable(getResources(), bitmap);
-                            drawingpart.setVisibility(View.VISIBLE);
-                            drawView.setBackground(d);
+                            drawView.setEnabletouch(true);
+                        }else{
                             drawView.setEnabletouch(false);
-                            LinearLayout toolpanel = (LinearLayout)findViewById(R.id.toolpanel);
-                            toolpanel.setVisibility(View.GONE);
-                        }else
-                        {
-                            showContent(view);
-                            if (drawView.getBackground()!=null)
-                            {
-                                drawView.setEnabletouch(true);
-                            }else{
-                                drawView.setEnabletouch(false);
-                            }
-                            LinearLayout toolpanel = (LinearLayout)findViewById(R.id.toolpanel);
-                            toolpanel.setVisibility(View.VISIBLE);
                         }
-                        if (position == i) {
-                            parent.getChildAt(i).setBackground(getResources().getDrawable(R.drawable.buttonclicked));
-                        } else {
-                            parent.getChildAt(i).setBackground(getResources().getDrawable(R.drawable.buttonunclick));
-                        }
+                        LinearLayout toolpanel = (LinearLayout)findViewById(R.id.toolpanel);
+                        toolpanel.setVisibility(View.VISIBLE);
                     }
+                    Selected_Device = position;
+                    adapter.notifyDataSetChanged();
                 }
             });
         }else {
@@ -411,6 +407,13 @@ public class PaintPage extends Activity{
             View rowView = inflater.inflate(R.layout.devicelistadmin, null);
             TextView txtTitle = (TextView) rowView.findViewById(R.id.textView);
             txtTitle.setText(devicelist.get(position));
+
+            if (position == Selected_Device) {
+                txtTitle.setBackground(getResources().getDrawable(R.drawable.buttonclicked));
+            } else {
+                txtTitle.setBackground(getResources().getDrawable(R.drawable.buttonunclick));
+            }
+
             return rowView;
         }
 

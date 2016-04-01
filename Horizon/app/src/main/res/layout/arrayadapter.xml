@@ -8,4 +8,4 @@
     android:textColor="@color/white"
     android:onClick="clickHandler"
     android:background="@drawable/round_button"
-    android:minHeight="80dp" />
+    android:minHeight="100dp" />

@@ -93,7 +93,7 @@ public class AdminAddNew extends Activity {
                 startActivity(intent);
             }
         };
-        myHandler.postDelayed(myRunnable, 5 * 1000);
+        myHandler.postDelayed(myRunnable, 60* 3 * 1000);
 
         if (cachedBitmap != null) {
             Bitmap blurredBitmap = BlurBuilder.blur(this, cachedBitmap);

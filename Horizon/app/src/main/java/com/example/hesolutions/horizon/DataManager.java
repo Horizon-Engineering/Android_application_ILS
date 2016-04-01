@@ -318,32 +318,7 @@ public class DataManager {
             }
         }
     }
-/*
-    public static void AppendWrite(List<WeekViewEvent> list, String filename) {
-        File root = Environment.getExternalStorageDirectory();
-        File dir = new File(root.getAbsolutePath() + "/Horizon");
-        File file = new File(dir, filename);
-        if (file.exists()) {
-            try {
 
-                FileInputStream fis = new FileInputStream(file);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                List<WeekViewEvent> listone = (List)ois.readObject();
-
-                list.addAll(listone);
-                FileOutputStream fos = new FileOutputStream(file);
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(list);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-*/
     //==========================read data from hashmap=======================
 
     public static void dataupdate(BiMap bimap, String filename) {

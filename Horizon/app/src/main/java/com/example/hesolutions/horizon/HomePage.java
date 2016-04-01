@@ -102,7 +102,7 @@ public class HomePage extends AppCompatActivity {
                 startActivity(intent);
             }
         };
-        myHandler.postDelayed(myRunnable, 6* 30* 1000);
+        myHandler.postDelayed(myRunnable, 60*3* 1000);
 
         final GridView gridView = (GridView) findViewById(R.id.gridView);
 
@@ -124,6 +124,7 @@ public class HomePage extends AppCompatActivity {
 
 
         Calendar today = Calendar.getInstance();
+/*
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -132,16 +133,17 @@ public class HomePage extends AppCompatActivity {
                 GetNewEvent();
             }
         }, today.getTime(), 1000 * 60 * 60 * 24);
+*/
 
         final Timer maintimer = new Timer();
         maintimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                System.out.println("*************running main thread");
                 Gateway gateway = SysApplication.getInstance().getCurrGateway(HomePage.this);
                 if (gateway != null) {
                     if (alertDialog != null && alertDialog.isShowing()) alertDialog.dismiss();
                     if (emergency == false) {
+                        System.out.println("*************running main thread");
                         MakeAlert();
                     } else {
                         ArrayList<Device> deviceArrayList = DatabaseManager.getInstance().getDeviceList().getmDeviceList();
@@ -248,7 +250,8 @@ public class HomePage extends AppCompatActivity {
         HashMap<String, HashMap<String, ArrayList<Device>>> sector = DataManager.getInstance().getsector();
         ArrayList<Device> arrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
         Iterator<Device> iterator = arrayList.iterator();
-        if (events != null) {
+        if (events != null && events.size()> 0) {
+            System.out.println("********************** event schedule");
             Iterator<WeekViewEvent> eventIterator = events.iterator();
             while (eventIterator.hasNext()) {
                 WeekViewEvent event = eventIterator.next();
@@ -271,8 +274,10 @@ public class HomePage extends AppCompatActivity {
                                 for (Device device : deviceArrayList) {
                                     while (iterator.hasNext()) {
                                         Device device1 = iterator.next();
-                                        if (device1.getDeviceName().equals(device.getDeviceName()))
+                                        if (device1.getDeviceName().equals(device.getDeviceName())) {
+                                            System.out.println(device1.getDeviceName() + " is turnning on ************************");
                                             iterator.remove();
+                                        }
                                     }
                                     Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
                                     if (thedevice != null) {
@@ -286,6 +291,13 @@ public class HomePage extends AppCompatActivity {
                                                     thedevice.getGatewaySSID(), HomePage.this));
                                             thedevice.setCurrentParams(data);
                                             DatabaseManager.getInstance().updateDevice(thedevice);
+                                        }else
+                                        {
+                                            byte[] data;
+                                            data = thedevice.getCurrentParams();
+                                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                                            thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                                    thedevice.getGatewaySSID(), HomePage.this));
                                         }
                                     }
                                 }
@@ -301,6 +313,29 @@ public class HomePage extends AppCompatActivity {
                 }
             }
 
+            if (iterator != null) {
+                while (iterator.hasNext()) {
+                    Device device = iterator.next();
+                    Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
+                    if (thedevice != null) {
+                        if (thedevice.getChannelMark() != 5) {
+                            byte[] data;
+                            data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                            thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                    thedevice.getGatewaySSID(), HomePage.this));
+                            thedevice.setCurrentParams(data);
+                            DatabaseManager.getInstance().updateDevice(thedevice);
+                        } else {
+                            byte[] data = thedevice.getCurrentParams();
+                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                            thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
+                                    thedevice.getGatewaySSID(), HomePage.this));
+                        }
+                    }
+                }
+            }
+        }else{
             if (iterator != null) {
                 while (iterator.hasNext()) {
                     Device device = iterator.next();
@@ -427,9 +462,9 @@ public class HomePage extends AppCompatActivity {
                     eventIterator.remove();
                 }
             }
-            DataManager.getInstance().setnewevents(newevents);
-            DataManager.getInstance().setevents(events);
         }
+        DataManager.getInstance().setnewevents(newevents);
+        DataManager.getInstance().setevents(events);
     }
     @Override
     public void onUserInteraction()

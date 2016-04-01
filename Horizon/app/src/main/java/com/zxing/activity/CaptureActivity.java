@@ -28,6 +28,7 @@ import com.example.hesolutions.horizon.AdminAddNew;
 import com.example.hesolutions.horizon.AdminPage;
 import com.example.hesolutions.horizon.CalendarTask;
 import com.example.hesolutions.horizon.R;
+import com.example.hesolutions.horizon.ScreenSaver;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.zxing.camera.CameraManager;
@@ -51,7 +52,6 @@ public class CaptureActivity extends Activity implements Callback {
     private static final float BEEP_VOLUME = 0.10f;
     private boolean vibrate;
     private Button cancelScanButton;
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {

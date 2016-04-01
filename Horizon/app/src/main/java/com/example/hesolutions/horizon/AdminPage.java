@@ -648,12 +648,12 @@ public class AdminPage extends Activity {
     public class MyCustomListAdapterfordevice extends ArrayAdapter<String> {
 
         private final Activity context;
-        private final ArrayList<String> devicelist;
+        private final ArrayList<String> devicenamelist;
 
         public MyCustomListAdapterfordevice(Activity context, ArrayList<String> zoneList) {
             super(context, R.layout.devicelistadmin, zoneList);
             this.context = context;
-            this.devicelist = zoneList;
+            this.devicenamelist = zoneList;
         }
 
         @Override
@@ -661,7 +661,7 @@ public class AdminPage extends Activity {
             LayoutInflater inflater = context.getLayoutInflater();
             View rowView = inflater.inflate(R.layout.devicelistadmin, null);
             TextView txtTitle = (TextView) rowView.findViewById(R.id.textView);
-            String devicename1 = devicelist.get(position);
+            String devicename1 = devicenamelist.get(position);
             txtTitle.setText(devicename1);
             if (position==Selected_Device)
             {
@@ -678,7 +678,7 @@ public class AdminPage extends Activity {
     public static Bitmap getScreenShot(View view) {
         View screenView = view.getRootView();
         screenView.setDrawingCacheEnabled(true);
-        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,100,1000,
+        Bitmap bitmap = Bitmap.createBitmap(screenView.getDrawingCache(),0,100,750,
                 screenView.getDrawingCache().getHeight()-100);
         screenView.setDrawingCacheEnabled(false);
 

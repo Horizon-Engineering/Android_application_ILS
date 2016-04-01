@@ -9,7 +9,7 @@
 
     <RelativeLayout
         android:id="@+id/relativeblur"
-        android:layout_width="1000dp"
+        android:layout_width="750dp"
         android:layout_height="wrap_content">
         <ImageView
             android:layout_width="match_parent"

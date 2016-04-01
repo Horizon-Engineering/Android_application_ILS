@@ -76,6 +76,8 @@ public class ControlPanel extends Activity {
     TextView Intensity, ownertag, owner, sectortag, sectornameT, devicetag, devicenameT, Intensitynum;
     Handler myHandler;
     Runnable myRunnable;
+    AlertDialog controlalertdialog;
+    AlertDialog.Builder controlbuilder = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -161,7 +163,7 @@ public class ControlPanel extends Activity {
 
             final Device device = DatabaseManager.getInstance().getDeviceInforName(devicename);
 
-            if (DatabaseManager.getInstance().getlightingofDevice(device)[1]!=0)
+            if (device.getCurrentParams()[1]!=0)
             {
                 switchid.setCheckedProgrammatically(true);
             } else
@@ -169,19 +171,29 @@ public class ControlPanel extends Activity {
                 switchid.setCheckedProgrammatically(false);
             }
 
+            if (device.getChannelMark()==5)
+            {
+                switchid.setTrackDrawable(getResources().getDrawable(R.drawable.locksector));
+            } else
+            {
+                switchid.setTrackDrawable(getResources().getDrawable(R.drawable.togglebgpress));
+            }
+
+
             tv.setTag(device);
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Device deviceA = (Device) v.getTag();
-                    intensity = DatabaseManager.getInstance().getlightingofDevice(deviceA)[1];
+                    Device device1 = DatabaseManager.getInstance().getDeviceInforName(deviceA.getDeviceName());
+                    intensity = device1.getCurrentParams()[1];
                     seekBar.setVisibility(View.VISIBLE);
                     Intensitynum.setVisibility(View.VISIBLE);
                     Intensity.setVisibility(View.VISIBLE);
                     DataManager.getInstance().setthedevice(deviceA);
                     if (switchid.isChecked() == true) {
                         seekBar.setProgressProgrammatically(intensity);
-                        Intensitynum.setText(Integer.toString(intensity)+"%");
+                        Intensitynum.setText(Integer.toString(intensity) + "%");
                     } else {
                         seekBar.setProgressProgrammatically(0);
                         Intensitynum.setText("0%");
@@ -193,42 +205,15 @@ public class ControlPanel extends Activity {
             });
 
             seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                int progressfinal;
+
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
-                    if (gateway!=null) {
-                        seekBar.setEnabled(true);
-                        Intensitynum.setText(Integer.toString(progress)+"%");
-
-
-                        Device devicea = DataManager.getInstance().getthedevice();
-
-                        byte[] SetParams = new byte[5];
-                        if (fromUser) {
-                            if (progress == 0) {
-                                SetParams[0] = (byte) 17;
-                                SetParams[1] = (byte) 0;
-                                SetParams[2] = (byte) 0;
-                                SetParams[3] = (byte) 0;
-                                SetParams[4] = (byte) 0;
-                            } else {
-                                SetParams[0] = (byte) 17;
-                                SetParams[1] = (byte) progress;
-                                SetParams[2] = (byte) 0;
-                                SetParams[3] = (byte) 0;
-                                SetParams[4] = (byte) 0;
-                            }
-                        }
-                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                        devicea.getDeviceAddress(), (short) 0, SetParams), devicea.getGatewayMacAddr(), devicea.getGatewayPassword(),
-                                devicea.getGatewaySSID(), ControlPanel.this));
-
-                        devicea.setCurrentParams(SetParams);
-                        devicea.setChannelMark((short) 5);
-                        DatabaseManager.getInstance().updateDevice(devicea);
-                        notifyDataSetChanged();
-                    }else
-                    {
+                    if (gateway != null) {
+                        progressfinal = progress;
+                        Intensitynum.setText(Integer.toString(progress) + "%");
+                    } else {
                         Showlog();
                         seekBar.setEnabled(false);
                     }
@@ -241,7 +226,72 @@ public class ControlPanel extends Activity {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
+                    Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
+                    if (gateway != null) {
+                        seekBar.setEnabled(true);
+                        Intensitynum.setText(Integer.toString(progressfinal) + "%");
+                        final Device devicea = DataManager.getInstance().getthedevice();
+                        final byte[] SetParams = new byte[5];
+                        if (progressfinal == 0) {
+                            SetParams[0] = (byte) 17;
+                            SetParams[1] = (byte) 0;
+                            SetParams[2] = (byte) 0;
+                            SetParams[3] = (byte) 0;
+                            SetParams[4] = (byte) 0;
+                        } else {
+                            SetParams[0] = (byte) 17;
+                            SetParams[1] = (byte) progressfinal;
+                            SetParams[2] = (byte) 0;
+                            SetParams[3] = (byte) 0;
+                            SetParams[4] = (byte) 0;
+                        }
 
+                        if (progressfinal == 0) {
+                            if (controlalertdialog != null && controlalertdialog.isShowing()) {
+                            } else {
+                                controlbuilder = new AlertDialog.Builder(ControlPanel.this.getParent());
+                                controlbuilder.setTitle("Warning");
+                                controlbuilder.setMessage("Do you want to remove the control of the device?");
+                                controlbuilder.setCancelable(false);
+                                controlbuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        byte[] data;
+                                        data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                                        devicea.setCurrentParams(data);
+                                        devicea.setChannelMark((short) 0);
+                                        DatabaseManager.getInstance().updateDevice(devicea);
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
+                                controlbuilder.setNegativeButton("No(keep control)", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        byte[] data;
+                                        data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                                        devicea.setCurrentParams(data);
+                                        devicea.setChannelMark((short) 5);
+                                        DatabaseManager.getInstance().updateDevice(devicea);
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
+                                controlalertdialog = controlbuilder.create();
+                                controlalertdialog.show();
+                            }
+                        }else
+                        {
+                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
+                                            devicea.getDeviceAddress(), (short) 0, SetParams), devicea.getGatewayMacAddr(), devicea.getGatewayPassword(),
+                                    devicea.getGatewaySSID(), ControlPanel.this));
+
+                            devicea.setCurrentParams(SetParams);
+                            devicea.setChannelMark((short) 5);
+                            DatabaseManager.getInstance().updateDevice(devicea);
+                            adapter.notifyDataSetChanged();
+                        }
+                    } else {
+                        Showlog();
+                        seekBar.setEnabled(false);
+                    }
                 }
             });
 
@@ -250,35 +300,55 @@ public class ControlPanel extends Activity {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
-                    if (gateway!=null) {
+                    if (gateway != null) {
                         seekBar.setVisibility(View.INVISIBLE);
                         Intensitynum.setVisibility(View.INVISIBLE);
                         Intensity.setVisibility(View.INVISIBLE);
 
                         if (switchid.isChecked() == true) {
                             byte[] data;
-                            data = new byte[]{(byte) 17, (byte) 100, device.getCurrentParams()[2], (byte) 0, (byte) 0};
+                            data = new byte[]{(byte) 17, (byte) 100, (byte) 0, (byte) 0, (byte) 0};
                             DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                             device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
                                     device.getGatewaySSID(), ControlPanel.this));
                             device.setCurrentParams(data);
                             device.setChannelMark((short) 5);
                             DatabaseManager.getInstance().updateDevice(device);
+                            adapter.notifyDataSetChanged();
                         } else {
+                            if (controlalertdialog != null && controlalertdialog.isShowing()) {
+                            } else {
+                                controlbuilder = new AlertDialog.Builder(ControlPanel.this.getParent());
+                                controlbuilder.setTitle("Warning");
+                                controlbuilder.setMessage("Do you want to remove the control of the device?");
+                                controlbuilder.setCancelable(false);
+                                controlbuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        byte[] data;
+                                        data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                                        device.setCurrentParams(data);
+                                        device.setChannelMark((short) 0);
+                                        DatabaseManager.getInstance().updateDevice(device);
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
+                                controlbuilder.setNegativeButton("No(keep control)", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
-                            byte[] data;
-                            data = new byte[]{(byte) 17, (byte) 0, device.getCurrentParams()[2], (byte) 0, (byte) 0};
-                            DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                            device.getDeviceAddress(), (short) 0, data), device.getGatewayMacAddr(), device.getGatewayPassword(),
-                                    device.getGatewaySSID(), ControlPanel.this));
-
-                            device.setCurrentParams(data);
-                            device.setChannelMark((short) 5);
-                            DatabaseManager.getInstance().updateDevice(device);
+                                        byte[] data;
+                                        data = new byte[]{(byte) 17, (byte) 0, (byte)0, (byte) 0, (byte) 0};
+                                        device.setCurrentParams(data);
+                                        device.setChannelMark((short) 5);
+                                        DatabaseManager.getInstance().updateDevice(device);
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
+                                controlalertdialog = controlbuilder.create();
+                                controlalertdialog.show();
+                            }
                         }
-                        notifyDataSetChanged();
-                    }else
-                    {
+                    } else {
                         Showlog();
                         switchid.setCheckedProgrammatically(false);
                     }
@@ -325,8 +395,9 @@ public class ControlPanel extends Activity {
             final ArrayList<Device> devicelist = sectordetail.get(sectorname);
             if (devicelist!=null) {
                 for (Device device:devicelist) {
+                    Device sampledevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
                     if (!devicelist.isEmpty()) {
-                        if (DatabaseManager.getInstance().getlightingofDevice(device)[1] != 0) {
+                        if (sampledevice.getCurrentParams()[1]!=0) {
                             switchid.setCheckedProgrammatically(true);
                             break;
                         } else {
@@ -351,13 +422,11 @@ public class ControlPanel extends Activity {
                     if (isExpanded) ((ExpandableListView) parent).collapseGroup(groupPosition);
                     else ((ExpandableListView) parent).expandGroup(groupPosition, true);
                     Bitmap bitmap = null;
-                    bitmap = dataupdate(sectorname+".png");
-                    if (bitmap!=null)
-                    {
+                    bitmap = dataupdate(sectorname + ".png");
+                    if (bitmap != null) {
                         Drawable d = new BitmapDrawable(getResources(), bitmap);
                         imageViewroomlayout.setBackground(d);
-                    }else
-                    {
+                    } else {
                         imageViewroomlayout.setBackground(null);
                     }
                     sectortag.setVisibility(View.VISIBLE);
@@ -371,7 +440,7 @@ public class ControlPanel extends Activity {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
-                    if (gateway!=null) {
+                    if (gateway != null) {
                         seekBar.setVisibility(View.INVISIBLE);
                         Intensitynum.setVisibility(View.INVISIBLE);
                         Intensity.setVisibility(View.INVISIBLE);
@@ -379,34 +448,58 @@ public class ControlPanel extends Activity {
                         if (!sectorname.equals(" ")) {
                             if (devicelist != null) {
                                 if (switchid.isChecked() == true) {
-                                    for (Device thedevice:devicelist) {
+                                    for (Device thedevice : devicelist) {
                                         byte[] data;
-                                        data = new byte[]{(byte) 17, (byte) 100, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
+                                        data = new byte[]{(byte) 17, (byte) 100, (byte)0, (byte) 0, (byte) 0};
                                         DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
                                                         thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
                                                 thedevice.getGatewaySSID(), ControlPanel.this));
                                         thedevice.setCurrentParams(data);
                                         thedevice.setChannelMark((short) 5);
                                         DatabaseManager.getInstance().updateDevice(thedevice);
+                                        adapter.notifyDataSetChanged();
                                     }
                                 } else {
-                                    for (Device thedevice:devicelist) {
-                                        byte[] data;
-                                        data = new byte[]{(byte) 17, (byte) 0, thedevice.getCurrentParams()[2], (byte) 0, (byte) 0};
-                                        DeviceSocket.getInstance().send(Message.createMessage((byte) 4, DevicePacket.createPacket((byte) 4,
-                                                        thedevice.getDeviceAddress(), (short) 0, data), thedevice.getGatewayMacAddr(), thedevice.getGatewayPassword(),
-                                                thedevice.getGatewaySSID(), ControlPanel.this));
-                                        thedevice.setCurrentParams(data);
-                                        thedevice.setChannelMark((short)5);
-                                        DatabaseManager.getInstance().updateDevice(thedevice);
+                                    if (controlalertdialog != null && controlalertdialog.isShowing()) {
+                                    } else {
+                                        controlbuilder = new AlertDialog.Builder(ControlPanel.this.getParent());
+                                        controlbuilder.setTitle("Warning");
+                                        controlbuilder.setMessage("Do you want to remove the control of the device?");
+                                        controlbuilder.setCancelable(false);
+                                        controlbuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                for (Device thedevice : devicelist) {
+                                                    byte[] data;
+                                                    data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                                                    thedevice.setCurrentParams(data);
+                                                    thedevice.setChannelMark((short)0);
+                                                    DatabaseManager.getInstance().updateDevice(thedevice);
+                                                    adapter.notifyDataSetChanged();
+                                                }
+                                            }
+                                        });
+                                        controlbuilder.setNegativeButton("No(keep control)", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                for (Device thedevice : devicelist) {
+                                                    byte[] data;
+                                                    data = new byte[]{(byte) 17, (byte) 0, (byte) 0, (byte) 0, (byte) 0};
+                                                    thedevice.setCurrentParams(data);
+                                                    thedevice.setChannelMark((short) 5);
+                                                    DatabaseManager.getInstance().updateDevice(thedevice);
+                                                    adapter.notifyDataSetChanged();
+                                                }
+                                            }
+                                        });
+                                        controlalertdialog = controlbuilder.create();
+                                        controlalertdialog.show();
                                     }
                                 }
                             } else {
                                 switchid.setCheckedProgrammatically(false);
                             }
                         }
-                        notifyDataSetChanged();
-                    }else {
+                    } else {
                         Showlog();
                         switchid.setCheckedProgrammatically(false);
                     }
@@ -456,7 +549,7 @@ public class ControlPanel extends Activity {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
                 Gateway gateway = SysApplication.getInstance().getCurrGateway(ControlPanel.this);
-                if (gateway!=null) seekBar.setEnabled(true);
+                if (gateway != null) seekBar.setEnabled(true);
             }
         });
         AlertDialog myAlertDialog = builder.create();
@@ -478,7 +571,7 @@ public class ControlPanel extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        myHandler.postDelayed(myRunnable, 3* 60 * 1000);
+        myHandler.postDelayed(myRunnable, 3 * 60 * 1000);
     }
 
     @Override

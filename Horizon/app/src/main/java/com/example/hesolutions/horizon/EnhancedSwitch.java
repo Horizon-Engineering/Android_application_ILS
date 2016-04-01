@@ -1,6 +1,7 @@
 package com.example.hesolutions.horizon;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -37,4 +38,5 @@ public class EnhancedSwitch extends Switch implements ProgrammaticallyCheckable 
         super.setChecked(checked);
         super.setOnCheckedChangeListener(mListener);
     }
+
 }

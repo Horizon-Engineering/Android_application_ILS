@@ -6,7 +6,7 @@
     android:fitsSystemWindows="true">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/tabbarcolor">
 
@@ -14,6 +14,7 @@
         <ImageView
             android:id="@+id/imageView68"
             android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -34,8 +35,8 @@
             android:id="@+id/companyName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:text="Horizon Engineering solutions"
+            android:text="Monkey Wrench"
+            android:layout_marginRight="16dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white"
             android:layout_alignParentEnd="true"
@@ -46,7 +47,6 @@
             android:id="@+id/textView14"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:text="Admin"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/white"

@@ -174,7 +174,7 @@ public class CalendarTask extends Activity {
             arrayList.add(selected);
 
 
-            deviceAdapter = new MyCustomAdapter(this, R.layout.sectorlistaddevent, arrayList);
+            deviceAdapter = new MyCustomAdapter(this, arrayList);
             sectorlistView.setAdapter(deviceAdapter);
         }
 
@@ -313,6 +313,7 @@ public class CalendarTask extends Activity {
                         if (sectors.contains("Select All")) sectors.remove("Select All");
                     }
                 }
+                /*
                 for (String sectorname : sectors) {
                     ArrayList<Device> deviceArrayList = (ArrayList<Device>)sector.get(username).get(sectorname);
                     if (deviceArrayList != null) {
@@ -324,6 +325,7 @@ public class CalendarTask extends Activity {
                         }
                     }
                 }
+                */
 
                 if (gateway!=null) {
                     if (sectors.isEmpty()) {
@@ -368,11 +370,13 @@ public class CalendarTask extends Activity {
                                                                 MonSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 MonSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
                                                                 MonSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                MonSt.set(Calendar.SECOND, 0);
                                                                 MonFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
                                                                 MonFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
                                                                 MonFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 MonFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
                                                                 MonFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                                MonFi.set(Calendar.SECOND, 0);
                                                                 Integer date = 1 - day;
                                                                 MonSt.add(Calendar.DAY_OF_MONTH, date);
                                                                 MonFi.add(Calendar.DAY_OF_MONTH, date);
@@ -400,11 +404,13 @@ public class CalendarTask extends Activity {
                                                                 TueSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 TueSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
                                                                 TueSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                TueSt.set(Calendar.SECOND, 0);
                                                                 TusFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
                                                                 TusFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
                                                                 TusFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 TusFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
                                                                 TusFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                                TusFi.set(Calendar.SECOND, 0);
                                                                 Integer date = 2 - day;
                                                                 TueSt.add(Calendar.DAY_OF_MONTH, date);
                                                                 TusFi.add(Calendar.DAY_OF_MONTH, date);
@@ -435,7 +441,9 @@ public class CalendarTask extends Activity {
                                                                 WedSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 WedSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
                                                                 WedSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                WedSt.set(Calendar.SECOND, 0);
                                                                 WedFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
+                                                                WedFi.set(Calendar.SECOND, 0);
                                                                 WedFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
                                                                 WedFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 WedFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
@@ -469,11 +477,13 @@ public class CalendarTask extends Activity {
                                                                 ThuSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 ThuSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
                                                                 ThuSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                ThuSt.set(Calendar.SECOND, 0);
                                                                 ThuFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
                                                                 ThuFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
                                                                 ThuFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 ThuFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
                                                                 ThuFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                                ThuFi.set(Calendar.SECOND, 0);
                                                                 Integer date = 4 - day;
                                                                 ThuSt.add(Calendar.DAY_OF_MONTH, date);
                                                                 ThuFi.add(Calendar.DAY_OF_MONTH, date);
@@ -503,11 +513,13 @@ public class CalendarTask extends Activity {
                                                                 FriSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 FriSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
                                                                 FriSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                FriSt.set(Calendar.SECOND, 0);
                                                                 FriFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
                                                                 FriFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
                                                                 FriFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 FriFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
                                                                 FriFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
+                                                                FriFi.set(Calendar.SECOND, 0);
                                                                 Integer date = 5 - day;
                                                                 FriSt.add(Calendar.DAY_OF_MONTH, date);
                                                                 FriFi.add(Calendar.DAY_OF_MONTH, date);
@@ -536,12 +548,13 @@ public class CalendarTask extends Activity {
                                                                 SatSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 SatSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
                                                                 SatSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                SatSt.set(Calendar.SECOND, 0);
                                                                 SatFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
                                                                 SatFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
                                                                 SatFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 SatFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
                                                                 SatFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-
+                                                                SatFi.set(Calendar.SECOND, 0);
                                                                 Integer date = 6 - day;
                                                                 SatSt.add(Calendar.DAY_OF_MONTH, date);
                                                                 SatFi.add(Calendar.DAY_OF_MONTH, date);
@@ -571,12 +584,13 @@ public class CalendarTask extends Activity {
                                                                 SunSt.set(Calendar.DAY_OF_MONTH, startTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 SunSt.set(Calendar.HOUR_OF_DAY, startTime.get(Calendar.HOUR_OF_DAY));
                                                                 SunSt.set(Calendar.MINUTE, startTime.get(Calendar.MINUTE));
+                                                                SunSt.set(Calendar.SECOND, 0);
                                                                 SunFi.set(Calendar.YEAR, finishTime.get(Calendar.YEAR));
                                                                 SunFi.set(Calendar.MONTH, finishTime.get(Calendar.MONTH));
                                                                 SunFi.set(Calendar.DAY_OF_MONTH, finishTime.get(Calendar.DAY_OF_MONTH) + 7 * j);
                                                                 SunFi.set(Calendar.HOUR_OF_DAY, finishTime.get(Calendar.HOUR_OF_DAY));
                                                                 SunFi.set(Calendar.MINUTE, finishTime.get(Calendar.MINUTE));
-
+                                                                SunFi.set(Calendar.SECOND, 0);
                                                                 Integer date = 0 - day;
                                                                 SunSt.add(Calendar.DAY_OF_MONTH, date);
                                                                 SunFi.add(Calendar.DAY_OF_MONTH, date);
@@ -659,21 +673,24 @@ public class CalendarTask extends Activity {
                                     }
                                     @Override
                                     protected Void doInBackground(Void... params) {
-
+                                        Calendar today = Calendar.getInstance();
                                         list = DataManager.getInstance().getevents();
                                         newlist = DataManager.getInstance().getnewevents();
                                         long id = 0;
                                         if (!IDlist.isEmpty()) {
                                             id = IDlist.get((IDlist.size() - 1)) + 1;
                                         }
+                                        startTime.set(Calendar.SECOND,0);
+                                        finishTime.set(Calendar.SECOND,0);
                                         WeekViewEvent event = new WeekViewEvent(id, cname, startTime, finishTime, colorName, sectors, intensity);
-                                        int year = Calendar.getInstance().get(Calendar.YEAR);
-                                        int month = Calendar.getInstance().get(Calendar.MONTH);
-                                        if (year == event.getStartTime().get(Calendar.YEAR) && month == event.getStartTime().get(Calendar.MONTH)) {
+                                        long mills = startTime.getTimeInMillis() - today.getTimeInMillis() ;
+                                        long days = mills / (1000 * 60 * 60 * 24);
+                                        if (days <= 30) {
                                             newlist.add(event);
                                         } else {
                                             list.add(event);
                                         }
+
                                         IDlist.add(id);
                                         DataManager.getInstance().setevents(list);
                                         DataManager.getInstance().setEventID(IDlist);
@@ -819,11 +836,13 @@ public class CalendarTask extends Activity {
 
 
     private class MyCustomAdapter extends ArrayAdapter<Group> {
+        private final Activity context;
         ArrayList<Group> arrayList;
 
-        public MyCustomAdapter(Context context, int textViewResourceId,
+        public MyCustomAdapter(Activity context,
                                ArrayList<Group> arrayList) {
-            super(context, textViewResourceId, arrayList);
+            super(context,R.layout.sectorlistaddevent,arrayList);
+            this.context = context;
             this.arrayList = arrayList;
         }
 
@@ -833,7 +852,7 @@ public class CalendarTask extends Activity {
             if (convertView == null) {
                 LayoutInflater vi = (LayoutInflater) getSystemService(
                         Context.LAYOUT_INFLATER_SERVICE);
-                convertView = vi.inflate(R.layout.devicelist, null);
+                convertView = vi.inflate(R.layout.sectorlistaddevent, null);
 
             }
 
