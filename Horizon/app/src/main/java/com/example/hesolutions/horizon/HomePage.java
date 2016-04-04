@@ -132,7 +132,7 @@ public class HomePage extends AppCompatActivity {
                 System.out.println("*************running new thread");
                 GetNewEvent();
             }
-        }, today.getTime(), 1000 * 60*60*24);
+        }, today.getTime(), 1000 * 60 * 60 * 24);
 
 
         final Timer maintimer = new Timer();
@@ -249,7 +249,6 @@ public class HomePage extends AppCompatActivity {
         events = DataManager.getInstance().getnewevents();
         HashMap<String, HashMap<String, ArrayList<Device>>> sector = DataManager.getInstance().getsector();
         ArrayList<Device> arrayList = DatabaseManager.getInstance().LoadDeviceList("devicelist");
-        Iterator<Device> iterator = arrayList.iterator();
         if (events != null && events.size()> 0) {
             System.out.println("********************** event schedule");
             Iterator<WeekViewEvent> eventIterator = events.iterator();
@@ -271,11 +270,12 @@ public class HomePage extends AppCompatActivity {
                             ArrayList<Device> deviceArrayList = sector.get(username).get(sectorname);
                             if (deviceArrayList != null) {
                                 for (Device device : deviceArrayList) {
-                                    while (iterator.hasNext()) {
-                                        Device device1 = iterator.next();
+                                    Iterator<Device> deviceiterator = arrayList.iterator();
+                                    while (deviceiterator.hasNext()) {
+                                        Device device1 = deviceiterator.next();
                                         if (device1.getDeviceName().equals(device.getDeviceName())) {
                                             System.out.println(device1.getDeviceName() + " is turnning on ************************");
-                                            iterator.remove();
+                                            deviceiterator.remove();
                                         }
                                     }
                                     Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
@@ -313,10 +313,12 @@ public class HomePage extends AppCompatActivity {
                 }
             }
 
-            if (iterator != null) {
-                while (iterator.hasNext()) {
-                    Device device = iterator.next();
+            if (arrayList != null) {
+                Iterator<Device> deviceiterator = arrayList.iterator();
+                while (deviceiterator.hasNext()) {
+                    Device device = deviceiterator.next();
                     Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
+                    System.out.println(" turnning off**************************"+ thedevice.getDeviceName());
                     if (thedevice != null) {
                         if (thedevice.getChannelMark() != 5) {
                             byte[] data;
@@ -336,9 +338,10 @@ public class HomePage extends AppCompatActivity {
                 }
             }
         }else{
-            if (iterator != null) {
-                while (iterator.hasNext()) {
-                    Device device = iterator.next();
+            Iterator<Device> deviceiterator = arrayList.iterator();
+            if (deviceiterator != null) {
+                while (deviceiterator.hasNext()) {
+                    Device device = deviceiterator.next();
                     Device thedevice = DatabaseManager.getInstance().getDeviceInforName(device.getDeviceName());
                     if (thedevice != null) {
                         if (thedevice.getChannelMark() != 5) {

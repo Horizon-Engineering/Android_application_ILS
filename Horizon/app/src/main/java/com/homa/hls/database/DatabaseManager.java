@@ -999,10 +999,7 @@ public class DatabaseManager {
                 FileInputStream fis = new FileInputStream(file);
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 ArrayList<Device> arrayList = (ArrayList) ois.readObject();
-                for (int i = 0; i< arrayList.size(); i++){
-                    newArraylist.add(arrayList.get(i));
-                }
-
+                newArraylist.addAll(arrayList);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
