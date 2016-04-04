@@ -124,7 +124,7 @@ public class HomePage extends AppCompatActivity {
 
 
         Calendar today = Calendar.getInstance();
-/*
+
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -132,8 +132,8 @@ public class HomePage extends AppCompatActivity {
                 System.out.println("*************running new thread");
                 GetNewEvent();
             }
-        }, today.getTime(), 1000 * 60 * 60 * 24);
-*/
+        }, today.getTime(), 1000 * 60*60*24);
+
 
         final Timer maintimer = new Timer();
         maintimer.scheduleAtFixedRate(new TimerTask() {
@@ -262,8 +262,7 @@ public class HomePage extends AppCompatActivity {
                 int intensity = event.getIntensity();
 
                 long mills = cal.getTimeInMillis() - start.getTimeInMillis();
-                int days = (int) mills / (1000 * 60 * 60 * 24);
-
+                long days = mills / (1000 * 60 * 60 * 24);
                 if (cal.before(finish) && cal.after(start)) {
                     Iterator<String> stringIterator = sectorsname.iterator();
                     while (stringIterator.hasNext()) {
@@ -309,6 +308,7 @@ public class HomePage extends AppCompatActivity {
                     }
                 }
                 if (sectorsname.size() == 0 || days > 30) {
+                    System.out.println("****************************** event is removed");
                     eventIterator.remove();
                 }
             }
